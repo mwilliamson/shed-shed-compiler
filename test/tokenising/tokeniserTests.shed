@@ -1,0 +1,26 @@
+package shed.compiler.tokenising;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.isList;
+import duck.equalTo;
+
+import shed.compiler.tokenising.tokens.Token;
+import shed.compiler.tokenising.tokens;
+import shed.compiler.tokenising.Tokeniser;
+
+def isTokenisedTo fun(input: String, expectedTokens: List[Token]) =>
+    fun() => do {
+        val tokeniser = Tokeniser();
+        val actualTokens = tokeniser.tokenise(input);
+        val expectedMatchers = expectedTokens.map(equalTo[Token]);
+        return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
+    }
+
+public val tokeniserTests = listOf[TestCase](
+    TestCase("empty string => end token", isTokenisedTo(
+        "",
+        listOf[Token](tokens.end())
+    ))
+);
+    
