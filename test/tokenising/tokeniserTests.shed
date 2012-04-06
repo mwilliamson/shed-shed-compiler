@@ -21,6 +21,13 @@ public val tokeniserTests = listOf[TestCase](
     TestCase("empty string => end token", isTokenisedTo(
         "",
         listOf[Token](tokens.end())
+    )),
+    TestCase("alphanumeric string => identifier", isTokenisedTo(
+        "blah",
+        listOf[Token](
+            tokens.identifier("blah"),
+            tokens.end()
+        )
     ))
 );
     

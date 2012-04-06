@@ -5,5 +5,8 @@ import shed.compiler.tokenising.tokens.Token;
 
 public def Tokeniser class() => {
     public def tokenise fun(input: String) =>
-        listOf[Token](tokens.end())
+        if input.length().greaterThan(0) then
+            listOf[Token](tokens.identifier(input), tokens.end())
+        else
+            listOf[Token](tokens.end())
 }
