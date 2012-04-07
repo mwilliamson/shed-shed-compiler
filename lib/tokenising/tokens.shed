@@ -2,19 +2,30 @@ package shed.compiler.tokenising;
 
 public val tokens = object {
     // TODO: need a better solution for methods with the same name as arguments
-    public def Token class(myName: String, myValue: String) => {
+    public def Token class(myName: String, myValue: String, mySource: StringRange) => {
         public def name fun() => myName;
         public def value fun() => myValue;
+        public def source fun() => mySource;
         
         public def equals fun(other: Token) => and(
             name().equals(other.name()),
-            value().equals(other.value())
+            value().equals(other.value()),
+            source().equals(other.source())
         );
         
         public def toRepresentation fun() =>
-            "Token(name=".concat(name()).concat(",value=").concat(value()).concat(")");
+            "Token(name="
+                .concat(name())
+                .concat(",value=")
+                .concat(value())
+                .concat(",source=")
+                .concat(representation(source()))   
+                .concat(")");
     }
     
-    public def end fun() => Token("end", "");
-    public def identifier fun(value: String) => Token("identifier", value);
+    public def end fun(source: StringRange) =>
+        Token("end", "", source);
+        
+    public def identifier fun(value: String, source: StringRange) =>
+        Token("identifier", value, source);
 };

@@ -5,29 +5,40 @@ import duck.assertThat;
 import duck.isList;
 import duck.equalTo;
 
+import shed.compiler.StringSource;
 import shed.compiler.tokenising.tokens.Token;
 import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.Tokeniser;
 
-def isTokenisedTo fun(input: String, expectedTokens: List[Token]) =>
-    fun() => do {
-        val tokeniser = Tokeniser();
-        val actualTokens = tokeniser.tokenise(input);
-        val expectedMatchers = expectedTokens.map(equalTo[Token]);
-        return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
-    }
+def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
+    val tokeniser = Tokeniser();
+    val actualTokens = tokeniser.tokenise(input);
+    val expectedMatchers = expectedTokens.map(equalTo[Token]);
+    return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
+};
+    
 
 public val tokeniserTests = listOf[TestCase](
-    TestCase("empty string => end token", isTokenisedTo(
-        "",
-        listOf[Token](tokens.end())
-    )),
-    TestCase("alphanumeric string => identifier", isTokenisedTo(
-        "blah",
-        listOf[Token](
-            tokens.identifier("blah"),
-            tokens.end()
-        )
-    ))
+    TestCase("empty string => end token", fun() => do {
+        val source = stringSource("");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](tokens.end(source.range(0, 0)))
+        );
+    }),
+    
+    TestCase("alphanumeric string => identifier", fun() => do {
+        val source = stringSource("blah");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.identifier("blah", source.range(0, 4)),
+                tokens.end(source.range(4, 4))
+            )
+        );
+    })
 );
+    
+def stringSource fun(string: String) =>
+    StringSource(string, "raw string");
     

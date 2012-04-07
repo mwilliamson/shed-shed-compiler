@@ -4,9 +4,14 @@ import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.tokens.Token;
 
 public def Tokeniser class() => {
-    public def tokenise fun(input: String) =>
-        if input.length().greaterThan(0) then
-            listOf[Token](tokens.identifier(input), tokens.end())
+    public def tokenise fun(input: StringSource) => do {
+        val string = input.asString();
+        return if string.length().greaterThan(0) then
+            listOf[Token](
+                tokens.identifier(string, input.range(0, string.length())),
+                tokens.end(input.range(string.length(), string.length()))
+            )
         else
-            listOf[Token](tokens.end())
-}
+            listOf[Token](tokens.end(input.range(0, 0)));
+    };
+};

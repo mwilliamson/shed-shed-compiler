@@ -1,0 +1,22 @@
+package shed.compiler;
+
+public def StringRange class
+  (mySource: StringSource, myStartIndex: Double, myEndIndex: Double) => {
+    
+    public def source fun() => mySource;
+    public def startIndex fun() => myStartIndex;
+    public def endIndex fun() => myEndIndex;
+      
+    public def equals fun(other: StringRange) => and(
+        source().equals(other.source()),
+        startIndex().equals(other.startIndex()),
+        endIndex().equals(other.endIndex())
+    );
+    
+    public def toRepresentation fun() =>
+        "StringRange("
+            .concat("source=").concat(representation(source()))
+            .concat(",startIndex=").concat(startIndex().toString())
+            .concat(",endIndex=").concat(endIndex().toString())
+            .concat(")")
+};

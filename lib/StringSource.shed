@@ -1,0 +1,21 @@
+package shed.compiler;
+
+import shed.compiler.StringRange;
+
+public def StringSource class(string: String, myDescription: String) => {
+    public def asString fun() => string;
+    public def description fun() => myDescription;
+    
+    public def range fun(startIndex: Double, endIndex: Double) =>
+        StringRange(StringSource(asString(), description()), startIndex, endIndex);
+    
+    public def equals fun(other: StringSource) => and(
+        asString().equals(other.asString()),
+        description().equals(other.description())
+    );
+    
+    public def toRepresentation fun() =>
+        "StringSource("
+            .concat("string=").concat(asString())
+            .concat(")");
+};
