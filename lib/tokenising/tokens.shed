@@ -14,12 +14,10 @@ public val tokens = object {
         );
         
         public def toRepresentation fun() =>
-            "Token(name="
-                .concat(name())
-                .concat(",value=")
-                .concat(value())
-                .concat(",source=")
-                .concat(representation(source()))   
+            "Token("
+                .concat("name=").concat(name())
+                .concat(",value=").concat(value())
+                .concat(",source=").concat(representation(source()))   
                 .concat(")");
     }
     
@@ -28,4 +26,7 @@ public val tokens = object {
         
     public def identifier fun(value: String, source: StringRange) =>
         Token("identifier", value, source);
+        
+    public def whitespace fun(value: String, source: StringRange) =>
+        Token("whitespace", value, source);
 };

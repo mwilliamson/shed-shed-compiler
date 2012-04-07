@@ -36,6 +36,17 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(4, 4))
             )
         );
+    }),
+    
+    TestCase("whitespace string => whitespace token", fun() => do {
+        val source = stringSource(" \t\n");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.whitespace(" \t\n", source.range(0, 3)),
+                tokens.end(source.range(3, 3))
+            )
+        );
     })
 );
     
