@@ -47,9 +47,24 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(3, 3))
             )
         );
+    }),
+    
+    TestCase("identifiers separated by whitespace", fun() => do {
+        val source = stringSource("first   second\t third");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.identifier("first", source.range(0, 5)),
+                tokens.whitespace("   ", source.range(5, 8)),
+                tokens.identifier("second", source.range(8, 14)),
+                tokens.whitespace("\t ", source.range(14, 16)),
+                tokens.identifier("third", source.range(16, 21)),
+                tokens.end(source.range(21, 21))
+            )
+        );
     })
 );
     
 def stringSource fun(string: String) =>
-    StringSource(string, "raw string");
+    StringSource(string, "raw string", 0);
     

@@ -8,13 +8,30 @@ import shed.compiler.tokenising.tokens.Token;
 public def Tokeniser class() => {
     public def tokenise fun(input: StringSource) => do {
         val length = input.asString().length();
-        return if length.greaterThan(0) then
-            listOf[Token](
-                stringToToken(input),
-                tokens.end(input.range(length, length))
-            )
-        else
+        return if length.greaterThan(0) then do {
+            val next = readNextToken(input);
+            return listOf[Token](next.token()).concat(tokenise(next.rest()));
+        } else
             listOf[Token](tokens.end(input.range(0, 0)));
+    };
+    
+    def readNextToken fun(input: StringSource) => do {
+        val string = input.asString();
+        return if whitespace.test(string) then do {
+            val regexResult = whitespace.exec(string);
+            val value = regexResult.capture(1);
+            return NextToken(
+                tokens.whitespace(value, input.range(0, value.length())),
+                input.slice(value.length())
+            );
+        } else do {
+            val regexResult = identifier.exec(string);
+            val value = regexResult.capture(1);
+            return NextToken(
+                tokens.identifier(value, input.range(0, value.length())),
+                input.slice(value.length())
+            );
+        };
     };
     
     def stringToToken fun(input: StringSource) =>
@@ -25,4 +42,12 @@ public def Tokeniser class() => {
             
     def isWhitespace fun(string: String) =>
         regex.create("\\s+").test(string)
+        
+    val whitespace = regex.create("^(\\s+)");
+    val identifier = regex.create("^(\\S+)");
+    
+    def NextToken class(myToken: Token, myRest: StringSource) => {
+        public def token fun() => myToken;
+        public def rest fun() => myRest;
+    }
 };
