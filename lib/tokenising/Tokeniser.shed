@@ -29,9 +29,6 @@ public def Tokeniser class() => {
         else
             tokens.identifier(input.asString(), input.range(0, input.asString().length()))
             
-    def isWhitespace fun(string: String) =>
-        regex.create("\\s+").test(string)
-        
     def readWhitespace fun(input: StringSource) => do {
         val string = input.asString();
         
