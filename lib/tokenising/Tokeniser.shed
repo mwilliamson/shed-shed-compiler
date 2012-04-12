@@ -24,15 +24,15 @@ public def Tokeniser class() => {
                 tokens.whitespace(value, input.range(0, value.length())),
                 input.slice(value.length())
             );
-        }).orElseDo(fun() => do {
+        }).orElse(fun() => do {
             return identifier.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
                 val value = regexResult.capture(1);
                 return NextToken(
                     tokens.identifier(value, input.range(0, value.length())),
                     input.slice(value.length())
                 );
-            }).orElse(1); // HACK!!! Should have a better default value
-        });
+            }); // HACK!!! Should have a better default value
+        }).valueOrElse(1);
     };
     
     def stringToToken fun(input: StringSource) =>
