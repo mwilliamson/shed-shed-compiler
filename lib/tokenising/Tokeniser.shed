@@ -28,33 +28,22 @@ public def Tokeniser class() => {
             tokens.whitespace(input.asString(), input.range(0, input.asString().length()))
         else
             tokens.identifier(input.asString(), input.range(0, input.asString().length()))
+       
+    def regexReader fun(regex: Regex, tokenBuilder: function[String, StringRange, Token]) =>
+        fun(input: StringSource) => do {
+            val string = input.asString();
             
-    def readWhitespace fun(input: StringSource) => do {
-        val string = input.asString();
-        
-        return whitespace.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
-            val value = regexResult.capture(1);
-            return NextToken(
-                tokens.whitespace(value, input.range(0, value.length())),
-                input.slice(value.length())
-            );
-        });
-    };
+            return regex.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
+                val value = regexResult.capture(1);
+                return NextToken(
+                    tokenBuilder(value, input.range(0, value.length())),
+                    input.slice(value.length())
+                );
+            });
+        };
     
-    def readIdentifier fun(input: StringSource) => do {
-        val string = input.asString();
-        
-        return identifier.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
-            val value = regexResult.capture(1);
-            return NextToken(
-                tokens.identifier(value, input.range(0, value.length())),
-                input.slice(value.length())
-            );
-        });
-    };
-    
-    val whitespace = regex.create("^(\\s+)");
-    val identifier = regex.create("^(\\S+)");
+    val readIdentifier = regexReader(regex.create("^(\\S+)"), tokens.identifier);
+    val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;
