@@ -31,8 +31,8 @@ public def Tokeniser class() => {
                     tokens.identifier(value, input.range(0, value.length())),
                     input.slice(value.length())
                 );
-            }); // HACK!!! Should have a better default value
-        }).valueOrElse(1);
+            });
+        }).valueOrElse(fun() => ()); // HACK!!! Should have a better default value
     };
     
     def stringToToken fun(input: StringSource) =>
