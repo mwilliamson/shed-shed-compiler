@@ -1,6 +1,7 @@
 package shed.compiler.tokenising;
 
 import regex;
+import options.none;
 
 import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.tokens.Token;
@@ -15,25 +16,12 @@ public def Tokeniser class() => {
             listOf[Token](tokens.end(input.range(0, 0)));
     };
     
-    def readNextToken fun(input: StringSource) => do {
-        val string = input.asString();
-        
-        return whitespace.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
-            val value = regexResult.capture(1);
-            return NextToken(
-                tokens.whitespace(value, input.range(0, value.length())),
-                input.slice(value.length())
-            );
-        }).orElse(fun() => do {
-            return identifier.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
-                val value = regexResult.capture(1);
-                return NextToken(
-                    tokens.identifier(value, input.range(0, value.length())),
-                    input.slice(value.length())
-                );
-            });
-        }).valueOrElse(fun() => ()); // HACK!!! Should have a better default value
-    };
+    def readNextToken fun(input: StringSource) =>
+        listOf(readWhitespace, readIdentifier)
+            .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
+                result.orElse(fun() => reader(input))
+            )
+            .valueOrElse(fun() => ()); // HACK!!! Should have a better default value
     
     def stringToToken fun(input: StringSource) =>
         if isWhitespace(input.asString()) then
@@ -44,6 +32,30 @@ public def Tokeniser class() => {
     def isWhitespace fun(string: String) =>
         regex.create("\\s+").test(string)
         
+    def readWhitespace fun(input: StringSource) => do {
+        val string = input.asString();
+        
+        return whitespace.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
+            val value = regexResult.capture(1);
+            return NextToken(
+                tokens.whitespace(value, input.range(0, value.length())),
+                input.slice(value.length())
+            );
+        });
+    };
+    
+    def readIdentifier fun(input: StringSource) => do {
+        val string = input.asString();
+        
+        return identifier.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
+            val value = regexResult.capture(1);
+            return NextToken(
+                tokens.identifier(value, input.range(0, value.length())),
+                input.slice(value.length())
+            );
+        });
+    };
+    
     val whitespace = regex.create("^(\\s+)");
     val identifier = regex.create("^(\\S+)");
     
