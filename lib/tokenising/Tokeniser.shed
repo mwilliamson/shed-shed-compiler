@@ -19,9 +19,9 @@ public def Tokeniser class() => {
     def readNextToken fun(input: StringSource) =>
         listOf(readWhitespace, readIdentifier)
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
-                result.orElse(fun() => reader(input))
+                result.orElse[NextToken](fun() => reader(input))
             )
-            .valueOrElse(fun() => ()); // HACK!!! Should have a better default value
+            .valueOrElse[NextToken](fun() => ()); // HACK!!! Should have a better default value
     
     def stringToToken fun(input: StringSource) =>
         if isWhitespace(input.asString()) then
