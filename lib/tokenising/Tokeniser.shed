@@ -3,6 +3,7 @@ package shed.compiler.tokenising;
 import regex;
 import options.none;
 import options.some;
+import sequences;
 import lists.sequenceToList;
 
 import shed.compiler.tokenising.tokens;
@@ -15,19 +16,16 @@ public def Tokeniser class() => {
     
     def readString fun(input: StringSource) => do {
         val length = input.asString().length();
-        return if length.greaterThan(0) then
-            TokenStream(readNextToken(input))
-        else
-            TokenStream(NextToken(tokens.end(input.range(0, 0)), none));
+        return if length.greaterThan(0) then do {
+            val nextToken = readNextToken(input);
+            return sequences.lazyCons[Token](
+                nextToken.token(),
+                fun() => readString(nextToken.rest())
+            );
+        } else
+            sequences.singleton[Token](tokens.end(input.range(0, 0)));
     };
         
-    
-    // <: Sequence[Token]
-    def TokenStream class(next: NextToken) => {
-        public def head fun() => next.token();
-        public def tail fun() => next.rest().map[TokenStream](readString);
-    }
-    
     def readNextToken fun(input: StringSource) =>
         listOf(readWhitespace, readIdentifier)
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
@@ -43,7 +41,7 @@ public def Tokeniser class() => {
                 val value = regexResult.capture(1);
                 return NextToken(
                     tokenBuilder(value, input.range(0, value.length())),
-                    some(StringSource)(input.slice(value.length()))
+                    input.slice(value.length())
                 );
             });
         };
@@ -51,7 +49,7 @@ public def Tokeniser class() => {
     val readIdentifier = regexReader(regex.create("^(\\S+)"), tokens.identifier);
     val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
     
-    def NextToken class(myToken: Token, myRest: Option[StringSource]) => {
+    def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;
         public def rest fun() => myRest;
     }
