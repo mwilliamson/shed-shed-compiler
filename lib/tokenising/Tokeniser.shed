@@ -5,12 +5,19 @@ import options.none;
 import options.some;
 import sequences;
 import lists.sequenceToList;
+import sets;
 
 import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.tokens.Token;
 import shed.compiler.StringSource;
 
 public def Tokeniser class() => {
+    val keywords = sets.fromList[String](listOf(
+        "true", "false", "return", "package", "import", "val", "var", "public",
+        "object", "class", "interface", "if", "else", "while", "fun", "for",
+        "def", "then", "do"
+    ));
+    
     public def tokenise fun(input: StringSource) =>
         sequenceToList[Token](readString(input));
     
@@ -45,8 +52,16 @@ public def Tokeniser class() => {
                 );
             });
         };
+        
+    def alphanumericToken fun(value: String, source: StringRange) => do {
+        val tokenBuilder = if keywords.contains(value) then
+            tokens.keyword
+        else
+            tokens.identifier;
+        return tokenBuilder(value, source);
+    }
     
-    val readIdentifier = regexReader(regex.create("^(\\S+)"), tokens.identifier);
+    val readIdentifier = regexReader(regex.create("^(\\S+)"), alphanumericToken);
     val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {

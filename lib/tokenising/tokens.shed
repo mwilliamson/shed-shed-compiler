@@ -27,6 +27,9 @@ public val tokens = object {
     public def identifier fun(value: String, source: StringRange) =>
         Token("identifier", value, source);
         
+    public def keyword fun(value: String, source: StringRange) =>
+        Token("keyword", value, source);
+        
     public def whitespace fun(value: String, source: StringRange) =>
         Token("whitespace", value, source);
 };
