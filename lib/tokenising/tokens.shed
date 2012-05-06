@@ -35,4 +35,7 @@ public val tokens = object {
         
     public def symbol fun(value: String, source: StringRange) =>
         Token("symbol", value, source);
+        
+    public def string fun(value: String, source: StringRange) =>
+        Token("string", value, source);
 };

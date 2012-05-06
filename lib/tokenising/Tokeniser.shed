@@ -27,22 +27,22 @@ public def Tokeniser class() => {
     ));
     
     public def tokenise fun(input: StringSource) =>
-        sequenceToList[Token](readString(input));
+        sequenceToList[Token](tokeniseString(input));
     
-    def readString fun(input: StringSource) => do {
+    def tokeniseString fun(input: StringSource) => do {
         val length = input.asString().length();
         return if length.greaterThan(0) then do {
             val nextToken = readNextToken(input);
             return sequences.lazyCons[Token](
                 nextToken.token(),
-                fun() => readString(nextToken.rest())
+                fun() => tokeniseString(nextToken.rest())
             );
         } else
             sequences.singleton[Token](tokens.end(input.range(0, 0)));
     };
         
     def readNextToken fun(input: StringSource) =>
-        listOf(readWhitespace, readSymbol, readIdentifier)
+        listOf(readWhitespace, readString, readSymbol, readIdentifier)
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
                 result.orElse[NextToken](fun() => reader(input))
             )
@@ -76,6 +76,11 @@ public def Tokeniser class() => {
     val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
     val symbolRegex = "^(".concat(strings.join("|", map[String, String](regex.escape, symbols))).concat(")");
     val readSymbol = regexReader(regex.create(symbolRegex), tokens.symbol);
+    
+    def createStringToken fun(value: String, source: StringRange) =>
+        tokens.string(value.substring(1, value.length().subtract(1)), source);
+    
+    val readString = regexReader(regex.create("^(\"[^\"]*\")"), createStringToken);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;
