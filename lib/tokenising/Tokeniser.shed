@@ -46,7 +46,10 @@ public def Tokeniser class() => {
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
                 result.orElse[NextToken](fun() => reader(input))
             )
-            .valueOrElse[NextToken](fun() => ()); // HACK!!! Should have a better default value
+            .valueOrElse[NextToken](fun() => NextToken(
+                tokens.symbol(input.asString().substring(0, 1), input.range(0, 1)),
+                input.slice(1)
+            ));
     
     def regexReader fun(regex: Regex, tokenBuilder: function[String, StringRange, Token]) =>
         fun(input: StringSource) => do {
@@ -69,7 +72,7 @@ public def Tokeniser class() => {
         return tokenBuilder(value, source);
     }
     
-    val readIdentifier = regexReader(regex.create("^(\\S+)"), alphanumericToken);
+    val readIdentifier = regexReader(regex.create("^([a-zA-Z][a-zA-Z0-9]*)"), alphanumericToken);
     val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
     val symbolRegex = "^(".concat(strings.join("|", map[String, String](regex.escape, symbols))).concat(")");
     val readSymbol = regexReader(regex.create(symbolRegex), tokens.symbol);

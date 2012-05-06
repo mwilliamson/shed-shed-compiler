@@ -107,6 +107,19 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(2, 2))
             )
         );
+    }),
+    
+    TestCase("whitespace is not required between identifier and symbol", fun() => do {
+        val source = stringSource("blah()");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.identifier("blah", source.range(0, 4)),
+                tokens.symbol("(", source.range(4, 5)),
+                tokens.symbol(")", source.range(5, 6)),
+                tokens.end(source.range(6, 6))
+            )
+        );
     })
 );
     
