@@ -32,4 +32,7 @@ public val tokens = object {
         
     public def whitespace fun(value: String, source: StringRange) =>
         Token("whitespace", value, source);
+        
+    public def symbol fun(value: String, source: StringRange) =>
+        Token("symbol", value, source);
 };

@@ -4,8 +4,10 @@ import regex;
 import options.none;
 import options.some;
 import sequences;
+import lazySequenceables.map;
 import lists.sequenceToList;
 import sets;
+import strings;
 
 import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.tokens.Token;
@@ -16,6 +18,12 @@ public def Tokeniser class() => {
         "true", "false", "return", "package", "import", "val", "var", "public",
         "object", "class", "interface", "if", "else", "while", "fun", "for",
         "def", "then", "do"
+    ));
+    
+    val symbols = sets.fromList[String](listOf(
+        "=>", "->", "<:", "`", "¬", "!", "£", "$", "%", "^", "&", "*", "(", ")", "-",
+        "=", "+", "[", "]", "{", "}", ";", ":", "'", "@", "#", "~", "<",
+        ">", ",", ".", "/", "?", "\\", "|"
     ));
     
     public def tokenise fun(input: StringSource) =>
@@ -34,7 +42,7 @@ public def Tokeniser class() => {
     };
         
     def readNextToken fun(input: StringSource) =>
-        listOf(readWhitespace, readIdentifier)
+        listOf(readWhitespace, readSymbol, readIdentifier)
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
                 result.orElse[NextToken](fun() => reader(input))
             )
@@ -63,6 +71,8 @@ public def Tokeniser class() => {
     
     val readIdentifier = regexReader(regex.create("^(\\S+)"), alphanumericToken);
     val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
+    val symbolRegex = "^(".concat(strings.join("|", map[String, String](regex.escape, symbols))).concat(")");
+    val readSymbol = regexReader(regex.create(symbolRegex), tokens.symbol);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;

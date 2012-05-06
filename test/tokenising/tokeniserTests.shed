@@ -73,6 +73,17 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(3, 3))
             )
         );
+    }),
+    
+    TestCase("single character symbol is tokenised", fun() => do {
+        val source = stringSource("(");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.symbol("(", source.range(0, 1)),
+                tokens.end(source.range(1, 1))
+            )
+        );
     })
 );
     
