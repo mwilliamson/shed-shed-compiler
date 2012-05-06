@@ -122,7 +122,18 @@ public val tokeniserTests = listOf[TestCase](
         );
     }),
     
-    TestCase("can parse simple string", fun() => do {
+    TestCase("can tokenise empty string", fun() => do {
+        val source = stringSource("\"\"");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.string("", source.range(0, 2)),
+                tokens.end(source.range(2, 2))
+            )
+        );
+    }),
+    
+    TestCase("can tokenise simple string", fun() => do {
         val source = stringSource("\"blah\"");
         return assertIsTokenisedTo(
             source,
