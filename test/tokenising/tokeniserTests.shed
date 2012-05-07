@@ -144,6 +144,17 @@ public val tokeniserTests = listOf[TestCase](
         );
     }),
     
+    TestCase("can tokenise string with escaped characters", fun() => do {
+        val source = stringSource("\"\\\"\\b\\t\\n\\f\\r\\\\\"");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.string("\"\b\t\n\f\r\\", source.range(0, 16)),
+                tokens.end(source.range(16, 16))
+            )
+        );
+    }),
+    
     TestCase("can tokenise zero literal", fun() => do {
         val source = stringSource("0");
         return assertIsTokenisedTo(

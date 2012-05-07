@@ -1,5 +1,6 @@
 package shed.compiler.tokenising;
 
+import json;
 import regex;
 import options.none;
 import options.some;
@@ -83,9 +84,9 @@ public def Tokeniser class() => {
     val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
     def createStringToken fun(value: String, source: StringRange) =>
-        tokens.string(value.substring(1, value.length().subtract(1)), source);
+        tokens.string(json.parseString(value), source);
     
-    val readString = regexReader(capture("\"[^\"]*\""), createStringToken);
+    val readString = regexReader(capture("\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""), createStringToken);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;
