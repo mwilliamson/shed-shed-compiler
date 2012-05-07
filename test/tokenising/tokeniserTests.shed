@@ -155,6 +155,21 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(10, 10))
             )
         );
+    }),
+    
+    TestCase("line comment ends at newline", fun() => do {
+        val source = stringSource("go // Blah\naway");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.identifier("go", source.range(0, 2)),
+                tokens.whitespace(" ", source.range(2, 3)),
+                tokens.comment("// Blah", source.range(3, 10)),
+                tokens.whitespace("\n", source.range(10, 11)),
+                tokens.identifier("away", source.range(11, 15)),
+                tokens.end(source.range(15, 15))
+            )
+        );
     })
 );
     
