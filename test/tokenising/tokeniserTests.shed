@@ -142,6 +142,19 @@ public val tokeniserTests = listOf[TestCase](
                 tokens.end(source.range(6, 6))
             )
         );
+    }),
+    
+    TestCase("double slash indicates start of line comment", fun() => do {
+        val source = stringSource("go // Blah");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.identifier("go", source.range(0, 2)),
+                tokens.whitespace(" ", source.range(2, 3)),
+                tokens.comment("// Blah", source.range(3, 10)),
+                tokens.end(source.range(10, 10))
+            )
+        );
     })
 );
     
