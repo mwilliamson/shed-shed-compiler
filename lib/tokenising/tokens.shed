@@ -39,6 +39,9 @@ public val tokens = object {
     public def string fun(value: String, source: StringRange) =>
         Token("string", value, source);
         
+    public def number fun(value: String, source: StringRange) =>
+        Token("number", value, source);
+        
     public def comment fun(value: String, source: StringRange) =>
         Token("comment", value, source);
 };

@@ -42,7 +42,7 @@ public def Tokeniser class() => {
     };
         
     def readNextToken fun(input: StringSource) =>
-        listOf(readLineComment, readWhitespace, readString, readSymbol, readIdentifier)
+        listOf(readLineComment, readWhitespace, readString, readSymbol, readNumber, readIdentifier)
             .foldLeft(none, fun(result: Option[NextToken], reader: Function[StringSource, Option[NextToken]]) =>
                 result.orElse[NextToken](fun() => reader(input))
             )
@@ -79,6 +79,7 @@ public def Tokeniser class() => {
     val readWhitespace = regexReader(capture("\\s+"), tokens.whitespace);
     val symbolRegex = capture(strings.join("|", map[String, String](regex.escape, symbols)));
     val readSymbol = regexReader(symbolRegex, tokens.symbol);
+    val readNumber = regexReader(capture("0"), tokens.number);
     val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
     def createStringToken fun(value: String, source: StringRange) =>

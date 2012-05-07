@@ -144,6 +144,17 @@ public val tokeniserTests = listOf[TestCase](
         );
     }),
     
+    TestCase("can tokenise zero literal", fun() => do {
+        val source = stringSource("0");
+        return assertIsTokenisedTo(
+            source,
+            listOf[Token](
+                tokens.number("0", source.range(0, 1)),
+                tokens.end(source.range(1, 1))
+            )
+        );
+    }),
+    
     TestCase("double slash indicates start of line comment", fun() => do {
         val source = stringSource("go // Blah");
         return assertIsTokenisedTo(
