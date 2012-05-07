@@ -79,7 +79,7 @@ public def Tokeniser class() => {
     val readWhitespace = regexReader(capture("\\s+"), tokens.whitespace);
     val symbolRegex = capture(strings.join("|", map[String, String](regex.escape, symbols)));
     val readSymbol = regexReader(symbolRegex, tokens.symbol);
-    val readNumber = regexReader(capture("0"), tokens.number);
+    val readNumber = regexReader(capture("[0-9]+"), tokens.number);
     val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
     def createStringToken fun(value: String, source: StringRange) =>
