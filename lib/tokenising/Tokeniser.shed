@@ -72,16 +72,19 @@ public def Tokeniser class() => {
         return tokenBuilder(value, source);
     }
     
-    val readIdentifier = regexReader(regex.create("^([a-zA-Z][a-zA-Z0-9]*)"), alphanumericToken);
-    val readWhitespace = regexReader(regex.create("^(\\s+)"), tokens.whitespace);
-    val symbolRegex = "^(".concat(strings.join("|", map[String, String](regex.escape, symbols))).concat(")");
-    val readSymbol = regexReader(regex.create(symbolRegex), tokens.symbol);
-    val readLineComment = regexReader(regex.create("^(//.*)"), tokens.comment);
+    def capture fun(value: String) =>
+        regex.create("^(".concat(value).concat(")"));
+    
+    val readIdentifier = regexReader(capture("[a-zA-Z][a-zA-Z0-9]*"), alphanumericToken);
+    val readWhitespace = regexReader(capture("\\s+"), tokens.whitespace);
+    val symbolRegex = capture(strings.join("|", map[String, String](regex.escape, symbols)));
+    val readSymbol = regexReader(symbolRegex, tokens.symbol);
+    val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
     def createStringToken fun(value: String, source: StringRange) =>
         tokens.string(value.substring(1, value.length().subtract(1)), source);
     
-    val readString = regexReader(regex.create("^(\"[^\"]*\")"), createStringToken);
+    val readString = regexReader(capture("\"[^\"]*\""), createStringToken);
     
     def NextToken class(myToken: Token, myRest: StringSource) => {
         public def token fun() => myToken;
