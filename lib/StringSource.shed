@@ -5,27 +5,27 @@ import shed.compiler.Range;
 public def StringSource class(string: String, myDescription: String, myRange: Range) => {
     public def asString fun() => string.substring(myRange.start(), myRange.end());
     public def description fun() => myDescription;
-    public def startIndex fun() => myRange.start();
+    public def indexRange fun() => myRange;
     
     public def range fun(rangeStart: Double, rangeEnd: Double) =>
         StringSource(
             string,
             description(),
-            Range(startIndex().add(rangeStart), startIndex().add(rangeEnd))
+            Range(myRange.start().add(rangeStart), myRange.start().add(rangeEnd))
         );
     
     public def equals fun(other: StringSource) => and(
         asString().equals(other.asString()),
         description().equals(other.description()),
-        startIndex().equals(other.startIndex())
+        indexRange().equals(other.indexRange())
     );
     
     public def sliceFrom fun(index: Double) =>
-        StringSource(string, description(), Range(startIndex().add(index), myRange.end()));
+        StringSource(string, description(), Range(myRange.start().add(index), myRange.end()));
     
     public def toRepresentation fun() =>
         "StringSource("
             .concat("string=").concat(asString())
-            .concat("startIndex=").concat(startIndex())
+            .concat("range=").concat(representation(myRange))
             .concat(")");
 };

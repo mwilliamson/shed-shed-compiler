@@ -3,4 +3,9 @@ package shed.compiler;
 public def Range class(myStart: Double, myEnd: Double) => {
     public def start fun() => myStart;
     public def end fun() => myEnd;
+    
+    public def equals fun(other: Range) => and(
+        start().equals(other.start()),
+        end().equals(other.end())
+    )
 }
