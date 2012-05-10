@@ -35,7 +35,14 @@ def isSuccess fun(node: Node) => object {
         matchesWithDescription(result).mismatchDescription();
         
     public def matchesWithDescription fun(result: Result) => match(result,
-        matchClass(Success, fun(result: Success) => equalTo[Node](node).matchesWithDescription(result.value())),
+        matchClass(Success, fun(result: Success) =>
+            if not(classOf(result.value()).equals(classOf(node))) then
+                MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
+            else if not(result.value().equals(node)) then
+                MatchResult(false, "node was: ".concat(representation(result.value())))
+            else
+                MatchResult(true, "")
+        ),
         matchDefault(fun(_: Any) => MatchResult(false, "was not success"))
     );
 }

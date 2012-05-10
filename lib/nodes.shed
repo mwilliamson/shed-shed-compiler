@@ -8,6 +8,7 @@ public val nodes = object {
     public def unit fun() => UnitNode();
     
     public def UnitNode class() => {
-        public def equals fun(other: Any) => UnitNode.equals(classOf(other));
+        public def equals fun(other: UnitNode) => true;
+        public def toRepresentation fun() => "UnitNode";
     }
 };
