@@ -3,14 +3,14 @@ package shed.compiler;
 import shed.compiler.StringRange;
 import shed.compiler.Range;
 
-public def StringSource class(string: String, myDescription: String, myStartIndex: Double) => {
-    public def asString fun() => string.sliceFrom(myStartIndex);
+public def StringSource class(string: String, myDescription: String, myRange: Range) => {
+    public def asString fun() => string.substring(myRange.start(), myRange.end());
     public def description fun() => myDescription;
-    public def startIndex fun() => myStartIndex;
+    public def startIndex fun() => myRange.start();
     
     public def range fun(rangeStart: Double, rangeEnd: Double) =>
         StringRange(
-            StringSource(string, description(), 0),
+            StringSource(string, description(), Range(0, string.length())),
             Range(startIndex().add(rangeStart), startIndex().add(rangeEnd))
         );
     
@@ -21,7 +21,7 @@ public def StringSource class(string: String, myDescription: String, myStartInde
     );
     
     public def sliceFrom fun(index: Double) =>
-        StringSource(string, description(), startIndex().add(index));
+        StringSource(string, description(), Range(startIndex().add(index), myRange.end()));
     
     public def toRepresentation fun() =>
         "StringSource("

@@ -6,6 +6,7 @@ import duck.isList;
 import duck.equalTo;
 
 import shed.compiler.StringSource;
+import shed.compiler.strings;
 import shed.compiler.tokenising.tokens.Token;
 import shed.compiler.tokenising.tokens;
 import shed.compiler.tokenising.Tokeniser;
@@ -207,5 +208,5 @@ public val tokeniserTests = listOf[TestCase](
 );
     
 def stringSource fun(string: String) =>
-    StringSource(string, "raw string", 0);
+    strings.createStringSource(string, "raw string");
     
