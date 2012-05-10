@@ -1,11 +1,9 @@
 package shed.compiler;
 
-public def StringRange class
-  (mySource: StringSource, myStartIndex: Double, myEndIndex: Double) => {
-    
+public def StringRange class(mySource: StringSource, myRange: Range) => {
     public def source fun() => mySource;
-    public def startIndex fun() => myStartIndex;
-    public def endIndex fun() => myEndIndex;
+    public def startIndex fun() => myRange.start();
+    public def endIndex fun() => myRange.end();
       
     public def equals fun(other: StringRange) => and(
         source().equals(other.source()),

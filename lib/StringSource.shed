@@ -1,6 +1,7 @@
 package shed.compiler;
 
 import shed.compiler.StringRange;
+import shed.compiler.Range;
 
 public def StringSource class(string: String, myDescription: String, myStartIndex: Double) => {
     public def asString fun() => string.sliceFrom(myStartIndex);
@@ -10,8 +11,7 @@ public def StringSource class(string: String, myDescription: String, myStartInde
     public def range fun(rangeStart: Double, rangeEnd: Double) =>
         StringRange(
             StringSource(string, description(), 0),
-            startIndex().add(rangeStart),
-            startIndex().add(rangeEnd)
+            Range(startIndex().add(rangeStart), startIndex().add(rangeEnd))
         );
     
     public def equals fun(other: StringSource) => and(
