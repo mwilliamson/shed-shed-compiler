@@ -2,7 +2,7 @@ package shed.compiler.tokenising;
 
 public val tokens = object {
     // TODO: need a better solution for methods with the same name as arguments
-    public def Token class(myName: String, myValue: String, mySource: StringRange) => {
+    public def Token class(myName: String, myValue: String, mySource: StringSource) => {
         public def name fun() => myName;
         public def value fun() => myValue;
         public def source fun() => mySource;
@@ -21,27 +21,27 @@ public val tokens = object {
                 .concat(")");
     }
     
-    public def end fun(source: StringRange) =>
+    public def end fun(source: StringSource) =>
         Token("end", "", source);
         
-    public def identifier fun(value: String, source: StringRange) =>
+    public def identifier fun(value: String, source: StringSource) =>
         Token("identifier", value, source);
         
-    public def keyword fun(value: String, source: StringRange) =>
+    public def keyword fun(value: String, source: StringSource) =>
         Token("keyword", value, source);
         
-    public def whitespace fun(value: String, source: StringRange) =>
+    public def whitespace fun(value: String, source: StringSource) =>
         Token("whitespace", value, source);
         
-    public def symbol fun(value: String, source: StringRange) =>
+    public def symbol fun(value: String, source: StringSource) =>
         Token("symbol", value, source);
         
-    public def string fun(value: String, source: StringRange) =>
+    public def string fun(value: String, source: StringSource) =>
         Token("string", value, source);
         
-    public def number fun(value: String, source: StringRange) =>
+    public def number fun(value: String, source: StringSource) =>
         Token("number", value, source);
         
-    public def comment fun(value: String, source: StringRange) =>
+    public def comment fun(value: String, source: StringSource) =>
         Token("comment", value, source);
 };

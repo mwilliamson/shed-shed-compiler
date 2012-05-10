@@ -52,7 +52,7 @@ public def Tokeniser class() => {
                 input.sliceFrom(1)
             ));
     
-    def regexReader fun(regex: Regex, tokenBuilder: function[String, StringRange, Token]) =>
+    def regexReader fun(regex: Regex, tokenBuilder: function[String, StringSource, Token]) =>
         fun(input: StringSource) => do {
             val string = input.asString();
             
@@ -65,7 +65,7 @@ public def Tokeniser class() => {
             });
         };
         
-    def alphanumericToken fun(value: String, source: StringRange) => do {
+    def alphanumericToken fun(value: String, source: StringSource) => do {
         val tokenBuilder = if keywords.contains(value) then
             tokens.keyword
         else
@@ -83,7 +83,7 @@ public def Tokeniser class() => {
     val readNumber = regexReader(capture("[0-9]+"), tokens.number);
     val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
-    def createStringToken fun(value: String, source: StringRange) =>
+    def createStringToken fun(value: String, source: StringSource) =>
         // HACK: should parse the string manually to avoid potential errors
         tokens.string(json.parseString(value), source);
     

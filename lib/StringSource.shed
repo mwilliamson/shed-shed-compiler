@@ -1,6 +1,5 @@
 package shed.compiler;
 
-import shed.compiler.StringRange;
 import shed.compiler.Range;
 
 public def StringSource class(string: String, myDescription: String, myRange: Range) => {
@@ -9,8 +8,9 @@ public def StringSource class(string: String, myDescription: String, myRange: Ra
     public def startIndex fun() => myRange.start();
     
     public def range fun(rangeStart: Double, rangeEnd: Double) =>
-        StringRange(
-            StringSource(string, description(), Range(0, string.length())),
+        StringSource(
+            string,
+            description(),
             Range(startIndex().add(rangeStart), startIndex().add(rangeEnd))
         );
     
