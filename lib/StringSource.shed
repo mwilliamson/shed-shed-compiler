@@ -3,7 +3,7 @@ package shed.compiler;
 import shed.compiler.StringRange;
 
 public def StringSource class(string: String, myDescription: String, myStartIndex: Double) => {
-    public def asString fun() => string.slice(myStartIndex);
+    public def asString fun() => string.sliceFrom(myStartIndex);
     public def description fun() => myDescription;
     public def startIndex fun() => myStartIndex;
     
@@ -20,7 +20,7 @@ public def StringSource class(string: String, myDescription: String, myStartInde
         startIndex().equals(other.startIndex())
     );
     
-    public def slice fun(index: Double) =>
+    public def sliceFrom fun(index: Double) =>
         StringSource(string, description(), startIndex().add(index));
     
     public def toRepresentation fun() =>

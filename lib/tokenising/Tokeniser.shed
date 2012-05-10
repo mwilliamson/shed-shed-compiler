@@ -49,7 +49,7 @@ public def Tokeniser class() => {
             )
             .valueOrElse[NextToken](fun() => NextToken(
                 tokens.symbol(input.asString().substring(0, 1), input.range(0, 1)),
-                input.slice(1)
+                input.sliceFrom(1)
             ));
     
     def regexReader fun(regex: Regex, tokenBuilder: function[String, StringRange, Token]) =>
@@ -60,7 +60,7 @@ public def Tokeniser class() => {
                 val value = regexResult.capture(1);
                 return NextToken(
                     tokenBuilder(value, input.range(0, value.length())),
-                    input.slice(value.length())
+                    input.sliceFrom(value.length())
                 );
             });
         };
@@ -84,6 +84,7 @@ public def Tokeniser class() => {
     val readLineComment = regexReader(capture("//.*"), tokens.comment);
     
     def createStringToken fun(value: String, source: StringRange) =>
+        // HACK: should parse the string manually to avoid potential errors
         tokens.string(json.parseString(value), source);
     
     val readString = regexReader(capture("\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""), createStringToken);
