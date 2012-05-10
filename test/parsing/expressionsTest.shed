@@ -7,6 +7,7 @@ import duck.equalTo;
 import duck.MatchResult;
 
 import shed.compiler.StringSource;
+import shed.compiler.Range;
 import shed.compiler.strings;
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
@@ -15,18 +16,24 @@ import shed.compiler.parsing.expressions;
 import shed.compiler.parsing.results.Success;
 
 public val expressionsTest = listOf[TestCase](
-    TestCase("can parse unit", fun() => do {
-        val result = parse("()");
-        return assertThat[Node](result, isSuccess(nodes.unit()));
-    }));
-    
-def parse fun(input: String) =>
-    Parser().parse(expressions.expression, stringSource(input));
+    TestCase("can parse unit", fun() =>
+        assertSuccessfulParse("()", nodes.unit())
+    )
+);
+
+def assertSuccessfulParse fun(input: String, expected: Node) => do {
+    val source = stringSource(input);
+    val result = Parser().parse(expressions.expression, source);
+    return assertThat[Node](result, isSuccess(expected, input.length()));
+}
     
 def stringSource fun(string: String) =>
     strings.createStringSource(string, "raw string");
     
-def isSuccess fun(node: Node) => object {
+def parse fun(input: StringSource) =>
+    Parser().parse(expressions.expression, input);
+
+def isSuccess fun(node: Node, sourceLength: Double) => object {
     public def describeSelf fun() => "success with node ".concat(representation(node));
     
     public def matches fun(result: ParseResult) =>
@@ -41,9 +48,14 @@ def isSuccess fun(node: Node) => object {
                 MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
             else if not(result.value().equals(node)) then
                 MatchResult(false, "node was: ".concat(representation(result.value())))
+            else if not(expectedRemainingIndexRange.equals(result.remaining().indexRange())) then
+                MatchResult(false, "entire input was not consumed, remaining was: "
+                    .concat(result.remaining().asString()))
             else
                 MatchResult(true, "")
         ),
         matchDefault(fun(_: Any) => MatchResult(false, "was not success"))
     );
+    
+    val expectedRemainingIndexRange = Range(sourceLength, sourceLength);
 }

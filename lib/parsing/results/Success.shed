@@ -1,5 +1,6 @@
 package shed.compiler.parsing.results;
 
-public def Success class(myValue: Node) => {
+public def Success class(myValue: Node, myRemaining: StringSource) => {
     public def value fun() => myValue;
+    public def remaining fun() => myRemaining;
 }

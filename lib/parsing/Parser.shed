@@ -4,5 +4,6 @@ import shed.compiler.parsing.results.Success;
 import shed.compiler.nodes;
 
 public def Parser class() => {
-    public def parse fun(rule: Rule, input: StringSource) => Success(nodes.unit());
+    public def parse fun(rule: Rule, input: StringSource) =>
+        Success(nodes.unit(), input.sliceFrom(input.asString().length()));
 }
