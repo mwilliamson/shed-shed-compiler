@@ -1,0 +1,41 @@
+package shed.compiler.tokenising;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.isList;
+import duck.equalTo;
+import duck.MatchResult;
+
+import shed.compiler.StringSource;
+import shed.compiler.nodes;
+import shed.compiler.nodes.Node;
+import shed.compiler.parsing.Parser;
+import shed.compiler.parsing.expressions;
+import shed.compiler.parsing.results.Success;
+
+public val expressionsTest = listOf[TestCase](
+    TestCase("can parse unit", fun() => do {
+        val result = parse("()");
+        return assertThat[Node](result, isSuccess(nodes.unit()));
+    }));
+    
+def parse fun(input: String) =>
+    Parser().parse(expressions.expression, stringSource(input));
+    
+def stringSource fun(string: String) =>
+    StringSource(string, "raw string", 0);
+    
+def isSuccess fun(node: Node) => object {
+    public def describeSelf fun() => "success with node ".concat(representation(node));
+    
+    public def matches fun(result: ParseResult) =>
+        matchesWithDescription(result).matches();
+    
+    public def describeMismatch fun(result: ParseResult) =>
+        matchesWithDescription(result).mismatchDescription();
+        
+    public def matchesWithDescription fun(result: Result) => match(result,
+        matchClass(Success, fun(result: Success) => equalTo[Node](node).matchesWithDescription(result.value())),
+        matchDefault(fun(_: Any) => MatchResult(false, "was not success"))
+    );
+}

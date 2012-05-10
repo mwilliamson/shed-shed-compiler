@@ -1,0 +1,8 @@
+package shed.compiler.parsing;
+
+import shed.compiler.parsing.results.Success;
+import shed.compiler.nodes;
+
+public def Parser class() => {
+    public def parse fun(rule: Rule, input: StringSource) => Success(nodes.unit());
+}

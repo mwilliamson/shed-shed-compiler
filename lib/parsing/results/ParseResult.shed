@@ -1,0 +1,4 @@
+package shed.compiler.parsing.results;
+
+// TODO: should be an interface
+public def ParseResult class() => {}

@@ -1,0 +1,13 @@
+package shed.compiler;
+
+public val nodes = object {
+    // TODO: should be an interface
+    public def Node class() => {
+    }
+    
+    public def unit fun() => UnitNode();
+    
+    public def UnitNode class() => {
+        public def equals fun(other: Any) => UnitNode.equals(classOf(other));
+    }
+};

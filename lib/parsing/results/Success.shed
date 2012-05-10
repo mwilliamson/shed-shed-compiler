@@ -1,0 +1,5 @@
+package shed.compiler.parsing.results;
+
+public def Success class(myValue: Node) => {
+    public def value fun() => myValue;
+}

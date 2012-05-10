@@ -1,0 +1,4 @@
+package shed.compiler.parsing;
+
+public val expressions = object {
+};
