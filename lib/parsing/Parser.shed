@@ -4,6 +4,7 @@ import shed.compiler.parsing.results.Success;
 import shed.compiler.nodes;
 
 public def Parser class() => {
+    // TODO: should be in terms of tokens rather than StringSource
     public def parse fun(rule: Rule, input: StringSource) =>
         Success(nodes.unit(), input.sliceFrom(input.asString().length()));
 }
