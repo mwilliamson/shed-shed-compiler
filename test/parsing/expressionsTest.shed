@@ -1,6 +1,8 @@
 package shed.compiler.tokenising;
 
 import sequences;
+import strings;
+import lazySequences;
 
 import hat.TestCase;
 import duck.assertThat;
@@ -10,9 +12,10 @@ import duck.MatchResult;
 
 import shed.compiler.StringSource;
 import shed.compiler.Range;
-import shed.compiler.strings;
+import shed.compiler.strings.createStringSource;
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
+import shed.compiler.tokenising.tokens.Token;
 import shed.compiler.parsing.Parser;
 import shed.compiler.parsing.expressions;
 import shed.compiler.parsing.results.Success;
@@ -34,7 +37,7 @@ def assertSuccessfulParse fun(input: String, expected: Node) => do {
 }
     
 def stringSource fun(string: String) =>
-    strings.createStringSource(string, "raw string");
+    createStringSource(string, "raw string");
     
 def parse fun(input: StringSource) =>
     Parser().parse(expressions.expression, input);
@@ -55,7 +58,9 @@ def isSuccess fun(node: Node, sourceLength: Double) => object {
             else if not(result.value().equals(node)) then
                 MatchResult(false, "node was: ".concat(representation(result.value())))
             else if not(sequences.isNil(result.remaining())) then
-                MatchResult(false, "entire input was not consumed, remaining was: TODO")
+                MatchResult(false, "entire input was not consumed, remaining was: ".concat(
+                    strings.joinSequence(", ", lazySequences.map[Token, String](representation, result.remaining()))
+                ))
             else
                 MatchResult(true, "")
         else
