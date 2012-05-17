@@ -1,5 +1,7 @@
 package shed.compiler.tokenising;
 
+import sequences;
+
 import hat.TestCase;
 import duck.assertThat;
 import duck.isList;
@@ -52,13 +54,10 @@ def isSuccess fun(node: Node, sourceLength: Double) => object {
                 MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
             else if not(result.value().equals(node)) then
                 MatchResult(false, "node was: ".concat(representation(result.value())))
-            //else if not(expectedRemainingIndexRange.equals(result.remaining().indexRange())) then
-            //    MatchResult(false, "entire input was not consumed, remaining was: "
-            //        .concat(result.remaining().asString()))
+            else if not(sequences.isNil(result.remaining())) then
+                MatchResult(false, "entire input was not consumed, remaining was: TODO")
             else
                 MatchResult(true, "")
         else
             MatchResult(false, "was not success, was ".concat(representation(result)))
-    
-    val expectedRemainingIndexRange = Range(sourceLength, sourceLength);
 }
