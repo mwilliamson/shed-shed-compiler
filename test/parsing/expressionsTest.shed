@@ -18,12 +18,16 @@ import shed.compiler.parsing.results.Success;
 public val expressionsTest = listOf[TestCase](
     TestCase("can parse unit", fun() =>
         assertSuccessfulParse("()", nodes.unit())
+    ),
+    
+    TestCase("can parse number literal", fun() =>
+        assertSuccessfulParse("42", nodes.number("42"))
     )
 );
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);
-    val result = Parser().parse(expressions.expression, source);
+    val result = Parser().parse(expressions.expressionRule, source);
     return assertThat[Node](result, isSuccess(expected, input.length()));
 }
     
@@ -42,20 +46,19 @@ def isSuccess fun(node: Node, sourceLength: Double) => object {
     public def describeMismatch fun(result: ParseResult) =>
         matchesWithDescription(result).mismatchDescription();
         
-    public def matchesWithDescription fun(result: Result) => match(result,
-        matchClass(Success, fun(result: Success) =>
+    public def matchesWithDescription fun(result: Result) =>
+        if result.isSuccess() then
             if not(classOf(result.value()).equals(classOf(node))) then
                 MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
             else if not(result.value().equals(node)) then
                 MatchResult(false, "node was: ".concat(representation(result.value())))
-            else if not(expectedRemainingIndexRange.equals(result.remaining().indexRange())) then
-                MatchResult(false, "entire input was not consumed, remaining was: "
-                    .concat(result.remaining().asString()))
+            //else if not(expectedRemainingIndexRange.equals(result.remaining().indexRange())) then
+            //    MatchResult(false, "entire input was not consumed, remaining was: "
+            //        .concat(result.remaining().asString()))
             else
                 MatchResult(true, "")
-        ),
-        matchDefault(fun(_: Any) => MatchResult(false, "was not success"))
-    );
+        else
+            MatchResult(false, "was not success, was ".concat(representation(result)))
     
     val expectedRemainingIndexRange = Range(sourceLength, sourceLength);
 }

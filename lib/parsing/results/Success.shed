@@ -1,6 +1,14 @@
 package shed.compiler.parsing.results;
 
-public def Success class(myValue: Node, myRemaining: StringSource) => {
+public def Success class[T] => (myValue: T, myRemaining: StringSource) => {
     public def value fun() => myValue;
     public def remaining fun() => myRemaining;
+    
+    public def map fun[R] => (func: Function[T, R]) =>
+        Success[R](func(myValue), myRemaining);
+        
+    public def isSuccess fun() => true;
+    
+    public def toRepresentation fun() =>
+        "Success"
 }

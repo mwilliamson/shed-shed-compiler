@@ -7,8 +7,20 @@ public val nodes = object {
     
     public def unit fun() => UnitNode();
     
+    public def number fun(value: String) => NumberNode(value);
+    
     public def UnitNode class() => {
         public def equals fun(other: UnitNode) => true;
         public def toRepresentation fun() => "UnitNode";
+    }
+    
+    public def NumberNode class(myValue: Double) => {
+        public def value fun() => myValue;
+        
+        public def equals fun(other: NumberNode) =>
+            myValue.equals(other.value());
+        
+        public def toRepresentation fun() =>
+            "NumberNode(".concat(representation(myValue)).concat(")");
     }
 };

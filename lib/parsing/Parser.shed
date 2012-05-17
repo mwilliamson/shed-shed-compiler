@@ -1,10 +1,15 @@
 package shed.compiler.parsing;
 
+import shed.compiler.tokenising.Tokeniser;
 import shed.compiler.parsing.results.Success;
 import shed.compiler.nodes;
 
 public def Parser class() => {
-    // TODO: should be in terms of tokens rather than StringSource
-    public def parse fun(rule: Rule, input: StringSource) =>
-        Success(nodes.unit(), input.sliceFrom(input.asString().length()));
+    val tokeniser = Tokeniser();
+    
+    public def parse fun(rule: Rule, input: StringSource) => do {
+        val tokens = tokeniser.tokenise(input);
+        return rule(tokens.toSequence());
+        //return Success(nodes.unit(), input.sliceFrom(input.asString().length()));
+    }
 }
