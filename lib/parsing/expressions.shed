@@ -7,6 +7,7 @@ import sequences;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.NumberNode;
+import shed.compiler.nodes.UnitNode;
 import shed.compiler.tokenising.tokens.Token;
 import shed.compiler.parsing.results.ParseResult;
 import shed.compiler.parsing.results.Success;
@@ -51,15 +52,30 @@ val rules = object {
     public def token fun(name: String, value: String) =>
         fun(tokens: Sequence[Token]) =>
             sequences.head[Token](tokens).map[ParseResult](fun(token: Token) =>
-                if and(token.name().equals(name), tokens.value().equals(value)) then
+                if and(token.name().equals(name), token.value().equals(value)) then
                     results.success[String](token.value(), tokens.tail())
                 else
                     results.failure()
-            ).valueOrElse(fun() => results.failure())
+            ).valueOrElse[ParseResult](fun() => results.failure())
     
     public def map fun[F, T] => (rule: Rule, func: Function[F, T]) =>
         fun(tokens: Sequence[Token]) =>
             rule(tokens).map[T](func)
+            
+    public def sequence fun[T] => (rules: Sequenceable[Rule]) =>
+        sequence2[T](rules.toSequence());
+    
+    public def sequence2 fun[T] => (rules: Sequence[Rule]) =>
+        fun(tokens: Sequence[Token]) =>
+            sequences.head[Rule](rules).map[ParseResult](fun(rule: Rule) => do {
+                val result = rule(tokens);
+                return if result.isSuccess() then
+                    sequence2[T](rules.tail())(result.remaining())
+                else
+                    result;
+            })
+            .valueOrElse[ParseResult](fun() => results.success[Unit]((), tokens))
+                
 };
 
 public val expressions = object {
@@ -71,19 +87,17 @@ public val expressions = object {
         nodes.number
     );
     
-    //val unitRule = rules.map(
-    //    rules.sequence(
-    //        symbolRule("("),
-    //        symbolRule(")")
-    //    ),
-    //    fun(_: Any) => nodes.unit()
-    //);
-    
-    public val expressionRule = numberRule;
+    val unitRule = rules.map[Unit, UnitNode](
+        rules.sequence[Unit](listOf(
+            symbolRule("("),
+            symbolRule(")")
+        )),
+        fun(_: Any) => nodes.unit()
+    );
     
     public val expressionRule = rules.firstOf("expression",
         listOf(
-            //unitRule,
+            unitRule,
             numberRule
         )
     );
