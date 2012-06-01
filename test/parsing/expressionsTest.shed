@@ -31,6 +31,10 @@ public val expressionsTest = listOf[TestCase](
     
     TestCase("can parse true literal", fun() =>
         assertSuccessfulParse("true", nodes.boolean(true))
+    ),
+    
+    TestCase("can parse false literal", fun() =>
+        assertSuccessfulParse("false", nodes.boolean(false))
     )
 );
 

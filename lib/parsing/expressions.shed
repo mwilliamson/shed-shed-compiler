@@ -96,10 +96,17 @@ public val expressions = object {
         fun(_: Any) => nodes.unit()
     );
     
-    val booleanRule = rules.map[Unit, BooleanNode](
+    val trueRule = rules.map[Unit, BooleanNode](
         rules.token("keyword", "true"),
         fun() => nodes.boolean(true)
     );
+    
+    val falseRule = rules.map[Unit, BooleanNode](
+        rules.token("keyword", "false"),
+        fun() => nodes.boolean(false)
+    ); 
+    
+    val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
     
     public val expressionRule = rules.firstOf("expression",
         listOf(
