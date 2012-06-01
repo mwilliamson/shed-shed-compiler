@@ -12,6 +12,8 @@ public def Parser class() => {
     
     public def parse fun(rule: Rule, input: StringSource) => do {
         // TODO: consider removing the notion of an end token entirely
+        // it's useful for handling errors though... (we don't have to special
+        // case the end of a string to produce a nice error message)
         val tokens = lazySequences.filter[Token](
             fun(token: Token) => not(token.name().equals("end")),
             tokeniser.tokenise(input).toSequence()
