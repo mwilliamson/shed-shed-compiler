@@ -15,7 +15,7 @@ import shed.compiler.Range;
 import shed.compiler.strings.createStringSource;
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.tokenising.tokens.Token;
+import shed.compiler.tokenising.Token;
 import shed.compiler.parsing.Parser;
 import shed.compiler.parsing.expressions;
 import shed.compiler.parsing.results.Success;

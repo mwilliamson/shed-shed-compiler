@@ -11,7 +11,7 @@ import sets;
 import strings;
 
 import shed.compiler.tokenising.tokens;
-import shed.compiler.tokenising.tokens.Token;
+import shed.compiler.tokenising.Token;
 import shed.compiler.StringSource;
 
 public def Tokeniser class() => {

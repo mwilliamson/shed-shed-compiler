@@ -7,3 +7,4 @@ build-tests:
 test: build-tests
 	node _build/tests.js shed.compiler.tokenising.tokeniserTests
 	node _build/tests.js shed.compiler.tokenising.expressionsTest
+	node _build/tests.js shed.compiler.tokenising.rulesTest

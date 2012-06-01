@@ -5,7 +5,7 @@ import sequenceables;
 import lazySequences;
 import sequences;
 
-import shed.compiler.tokenising.tokens.Token;
+import shed.compiler.tokenising.Token;
 import shed.compiler.parsing.results.ParseResult;
 import shed.compiler.parsing.results.Success;
 import shed.compiler.parsing.results.Failure;
@@ -19,7 +19,7 @@ val results = object {
 };
 
 public val rules = object {
-    // TODO: should be type Rule = Fun(Sequence[Token]) => ParseResult
+    // TODO: should be type Rule[T] = Fun(Sequence[Token]) => ParseResult[T]
     def Rule class() => {}
     
     public def firstOf fun(name: String, rules: List[Rule]) =>

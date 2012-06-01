@@ -1,0 +1,57 @@
+package shed.compiler.tokenising;
+
+import sequences;
+import strings;
+import lazySequences;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.isList;
+import duck.equalTo;
+import duck.MatchResult;
+
+import shed.compiler.parsing.rules;
+import shed.compiler.parsing.results.Success;
+import shed.compiler.tokenising.Token;
+import shed.compiler.StringSource;
+import shed.compiler.strings.createStringSource;
+
+def source fun(value: String) => createStringSource(value, "raw string");
+
+public val rulesTest = listOf[TestCase](
+    TestCase("rules.token fails if input token is of wrong type", fun() =>
+        assertFailedParse[String](
+            rules.token("identifier", "true"),
+            listOf(Token("keyword", "true", source("true")))
+        )
+    )
+);
+
+
+def assertFailedParse fun[T] => (rule: Rule[T], input: List[Token]) => do {
+    return assertParse[T](rule, input, failureMatcher);
+};
+
+def assertParse fun[T] => (rule: Rule[T], input: List[Token], matcher: Matcher) => do {
+    val result = rule(input);
+    return assertThat[T](result, matcher);
+};
+    
+def stringSource fun(string: String) =>
+    createStringSource(string, "raw string");
+    
+val failureMatcher = object {
+    public def describeSelf fun() => "failure";
+    
+    public def matches fun(result: ParseResult) =>
+        matchesWithDescription(result).matches();
+    
+    public def describeMismatch fun(result: ParseResult) =>
+        matchesWithDescription(result).mismatchDescription();
+        
+    public def matchesWithDescription fun(result: Result) =>
+        if result.isSuccess() then
+            MatchResult(false, "was not failure, was ".concat(representation(result)))
+        else
+            MatchResult(true, "");
+};
