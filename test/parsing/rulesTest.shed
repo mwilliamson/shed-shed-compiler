@@ -1,4 +1,4 @@
-package shed.compiler.tokenising;
+package shed.compiler.parsing;
 
 import sequences;
 import strings;
@@ -15,6 +15,8 @@ import shed.compiler.parsing.results.Success;
 import shed.compiler.tokenising.Token;
 import shed.compiler.StringSource;
 import shed.compiler.strings.createStringSource;
+import shed.compiler.parsing.testing.isSuccess;
+import shed.compiler.parsing.testing.isFailure;
 
 def source fun(value: String) => createStringSource(value, "raw string");
 
@@ -31,34 +33,29 @@ public val rulesTest = listOf[TestCase](
             rules.token("identifier", "true"),
             listOf(Token("identifier", "false", source("false")))
         )
+    ),
+    
+    TestCase("rules.token succeeds if type and value match", fun() =>
+        assertSuccessfulParse[String](
+            rules.token("identifier", "true"),
+            listOf(Token("identifier", "true", source("true"))),
+            "true"
+        )
     )
 );
-
-
-def assertFailedParse fun[T] => (rule: Rule[T], input: List[Token]) => do {
-    return assertParse[T](rule, input, failureMatcher);
-};
-
-def assertParse fun[T] => (rule: Rule[T], input: List[Token], matcher: Matcher) => do {
-    val result = rule(input);
-    return assertThat[T](result, matcher);
-};
     
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
-    
-val failureMatcher = object {
-    public def describeSelf fun() => "failure";
-    
-    public def matches fun(result: ParseResult) =>
-        matchesWithDescription(result).matches();
-    
-    public def describeMismatch fun(result: ParseResult) =>
-        matchesWithDescription(result).mismatchDescription();
-        
-    public def matchesWithDescription fun(result: Result) =>
-        if result.isSuccess() then
-            MatchResult(false, "was not failure, was ".concat(representation(result)))
-        else
-            MatchResult(true, "");
+
+def assertFailedParse fun[T] => (rule: Rule[T], input: List[Token]) => do {
+    return assertParse[T](rule, input, isFailure);
+};
+
+def assertSuccessfulParse fun[T] => (rule: Rule[T], input: List[Token], value: T) => do {
+    return assertParse[T](rule, input, isSuccess[T](value));
+};
+
+def assertParse fun[T] => (rule: Rule[T], input: List[Token], matcher: Matcher) => do {
+    val result = rule(input.toSequence());
+    return assertThat[T](result, matcher);
 };

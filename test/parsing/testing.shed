@@ -1,0 +1,49 @@
+package shed.compiler.parsing;
+
+import sequences;
+import lazySequences;
+
+import duck.MatchResult;
+
+public val testing = object {
+    public val isFailure = object {
+        public def describeSelf fun() => "failure";
+        
+        public def matches fun(result: ParseResult) =>
+            matchesWithDescription(result).matches();
+        
+        public def describeMismatch fun(result: ParseResult) =>
+            matchesWithDescription(result).mismatchDescription();
+            
+        public def matchesWithDescription fun(result: Result) =>
+            if result.isSuccess() then
+                MatchResult(false, "was not failure, was ".concat(representation(result)))
+            else
+                MatchResult(true, "");
+    };
+
+    public def isSuccess fun[T] => (node: T) => object {
+        public def describeSelf fun() => "success with node ".concat(representation(node));
+        
+        public def matches fun(result: ParseResult) =>
+            matchesWithDescription(result).matches();
+        
+        public def describeMismatch fun(result: ParseResult) =>
+            matchesWithDescription(result).mismatchDescription();
+            
+        public def matchesWithDescription fun(result: Result) =>
+            if result.isSuccess() then
+                if not(classOf(result.value()).equals(classOf(node))) then
+                    MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
+                else if not(result.value().equals(node)) then
+                    MatchResult(false, "node was: ".concat(representation(result.value())))
+                else if not(sequences.isNil(result.remaining())) then
+                    MatchResult(false, "entire input was not consumed, remaining was: ".concat(
+                        strings.joinSequence(", ", lazySequences.map[Token, String](representation, result.remaining()))
+                    ))
+                else
+                    MatchResult(true, "")
+            else
+                MatchResult(false, "was not success, was ".concat(representation(result)))
+    }
+};

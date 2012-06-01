@@ -1,4 +1,4 @@
-package shed.compiler.tokenising;
+package shed.compiler.parsing;
 
 import sequences;
 import strings;
@@ -19,6 +19,7 @@ import shed.compiler.tokenising.Token;
 import shed.compiler.parsing.Parser;
 import shed.compiler.parsing.expressions;
 import shed.compiler.parsing.results.Success;
+import shed.compiler.parsing.testing.isSuccess;
 
 public val expressionsTest = listOf[TestCase](
     TestCase("can parse unit", fun() =>
@@ -37,12 +38,6 @@ public val expressionsTest = listOf[TestCase](
         assertSuccessfulParse("false", nodes.boolean(false))
     )
 );
-
-def assertSuccessfulParse fun(input: String, expected: Node) => do {
-    val source = stringSource(input);
-    val result = Parser().parse(expressions.expressionRule, source);
-    return assertThat[Node](result, isSuccess(expected, input.length()));
-}
     
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
@@ -50,27 +45,8 @@ def stringSource fun(string: String) =>
 def parse fun(input: StringSource) =>
     Parser().parse(expressions.expression, input);
 
-def isSuccess fun(node: Node, sourceLength: Double) => object {
-    public def describeSelf fun() => "success with node ".concat(representation(node));
-    
-    public def matches fun(result: ParseResult) =>
-        matchesWithDescription(result).matches();
-    
-    public def describeMismatch fun(result: ParseResult) =>
-        matchesWithDescription(result).mismatchDescription();
-        
-    public def matchesWithDescription fun(result: Result) =>
-        if result.isSuccess() then
-            if not(classOf(result.value()).equals(classOf(node))) then
-                MatchResult(false, "was node of type: ".concat(representation(classOf(result.value()))))
-            else if not(result.value().equals(node)) then
-                MatchResult(false, "node was: ".concat(representation(result.value())))
-            else if not(sequences.isNil(result.remaining())) then
-                MatchResult(false, "entire input was not consumed, remaining was: ".concat(
-                    strings.joinSequence(", ", lazySequences.map[Token, String](representation, result.remaining()))
-                ))
-            else
-                MatchResult(true, "")
-        else
-            MatchResult(false, "was not success, was ".concat(representation(result)))
+def assertSuccessfulParse fun(input: String, expected: Node) => do {
+    val source = stringSource(input);
+    val result = Parser().parse(expressions.expressionRule, source);
+    return assertThat[Node](result, isSuccess[Node](expected));
 }
