@@ -1,9 +1,0 @@
-package shed.compiler.parsing.results;
-
-public def Failure class() => {
-    public def map fun[R] => () => Failure();
-    public def isSuccess fun() => false;
-    
-    public def toRepresentation fun() =>
-        "Failure"
-}

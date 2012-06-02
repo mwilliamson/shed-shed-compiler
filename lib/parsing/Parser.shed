@@ -2,9 +2,9 @@ package shed.compiler.parsing;
 
 import lazySequences;
 
-import shed.compiler.tokenising.Token;
+import lop.Token;
 import shed.compiler.tokenising.Tokeniser;
-import shed.compiler.parsing.results.Success;
+import lop.results.Success;
 import shed.compiler.nodes;
 
 public def Parser class() => {

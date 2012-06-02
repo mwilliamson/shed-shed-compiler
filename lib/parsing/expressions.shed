@@ -4,7 +4,7 @@ import shed.compiler.nodes;
 import shed.compiler.nodes.NumberNode;
 import shed.compiler.nodes.UnitNode;
 import shed.compiler.nodes.BooleanNode;
-import shed.compiler.parsing.rules;
+import lop.rules;
 
 public val expressions = object {
     def symbolRule fun(value: String) =>

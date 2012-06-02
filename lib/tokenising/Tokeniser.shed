@@ -11,8 +11,8 @@ import sets;
 import strings;
 
 import shed.compiler.tokenising.tokens;
-import shed.compiler.tokenising.Token;
-import shed.compiler.StringSource;
+import lop.Token;
+import lop.StringSource;
 
 public def Tokeniser class() => {
     val keywords = sets.fromList[String](listOf(

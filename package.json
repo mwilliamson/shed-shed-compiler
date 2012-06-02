@@ -2,7 +2,8 @@
     "name": "shed-shed-compiler",
     "version": "0.1.0",
     "dependencies": {
-        "shed-compiler": "git://github.com/mwilliamson/node-shed-compiler.git"
+        "shed-compiler": "git://github.com/mwilliamson/node-shed-compiler.git",
+        "shed-lop": "git://github.com/mwilliamson/shed-lop.git"
     },
     "devDependencies": {
         "shed-hat": "git://github.com/mwilliamson/shed-hat.git",

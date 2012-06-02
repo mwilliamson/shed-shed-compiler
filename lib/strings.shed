@@ -1,9 +1,0 @@
-package shed.compiler;
-
-import shed.compiler.StringSource;
-import shed.compiler.Range;
-
-public val strings = object {
-    public def createStringSource fun(string: String, description: String) =>
-        StringSource(string, description, Range(0, string.length()));
-};

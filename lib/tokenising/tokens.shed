@@ -1,6 +1,6 @@
 package shed.compiler.tokenising;
 
-import shed.compiler.tokenising.Token;
+import lop.Token;
 
 public val tokens = object {
     public def end fun(source: StringSource) =>

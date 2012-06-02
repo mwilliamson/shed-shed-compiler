@@ -10,16 +10,16 @@ import duck.isList;
 import duck.equalTo;
 import duck.MatchResult;
 
-import shed.compiler.StringSource;
-import shed.compiler.Range;
-import shed.compiler.strings.createStringSource;
+import lop.StringSource;
+import lop.Range;
+import lop.strings.createStringSource;
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.tokenising.Token;
+import lop.Token;
 import shed.compiler.parsing.Parser;
 import shed.compiler.parsing.expressions;
-import shed.compiler.parsing.results.Success;
-import shed.compiler.parsing.testing.isSuccess;
+import lop.results.Success;
+import lop.testing.isSuccess;
 
 public val expressionsTest = listOf[TestCase](
     TestCase("can parse unit", fun() =>
