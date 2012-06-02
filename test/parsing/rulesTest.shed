@@ -41,6 +41,21 @@ public val rulesTest = listOf[TestCase](
             listOf(Token("identifier", "true", source("true"))),
             "true"
         )
+    ),
+    
+    TestCase("rules.tokenOfType fails if input token is of wrong type", fun() =>
+        assertFailedParse[String](
+            rules.token("identifier", "true"),
+            listOf(Token("keyword", "true", source("true")))
+        )
+    ),
+    
+    TestCase("rules.tokenOfType succeeds with value of token if token type matches", fun() =>
+        assertSuccessfulParse[String](
+            rules.token("keyword", "true"),
+            listOf(Token("keyword", "true", source("true"))),
+            "true"
+        )
     )
 );
     
