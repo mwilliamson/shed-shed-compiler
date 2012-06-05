@@ -16,7 +16,7 @@ public val expressions = object {
     );
     
     val unitRule = rules.map[Unit, UnitNode](
-        rules.sequence[Unit](listOf(
+        rules.sequence(listOf(
             symbolRule("("),
             symbolRule(")")
         )),
