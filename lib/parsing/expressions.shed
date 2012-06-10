@@ -19,7 +19,7 @@ public val expressions = object {
         rules.sequence()
             .next(symbolRule("("))
             .next(symbolRule(")"))
-            .noValue(),
+            .end(),
         fun(_: Any) => nodes.unit()
     );
     
