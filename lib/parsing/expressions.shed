@@ -16,10 +16,10 @@ public val expressions = object {
     );
     
     val unitRule = rules.map[Unit, UnitNode](
-        rules.sequence(listOf(
-            symbolRule("("),
-            symbolRule(")")
-        )),
+        rules.sequence()
+            .next(symbolRule("("))
+            .next(symbolRule(")"))
+            .noValue(),
         fun(_: Any) => nodes.unit()
     );
     
