@@ -33,6 +33,13 @@ public val expressions = object {
         fun() => nodes.boolean(false)
     );
     
+    val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
+            
+    val stringRule = rules.map(
+        rules.tokenOfType("string"),
+        nodes.string
+    );
+    
     def bracketedRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
             .next(symbolRule("("))
@@ -41,13 +48,12 @@ public val expressions = object {
             .end()
             (tokens)
     
-    val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
-    
     public val expressionRule = rules.firstOf("expression",
         listOf(
             unitRule,
             numberRule,
             booleanRule,
+            stringRule,
             bracketedRule
         )
     );

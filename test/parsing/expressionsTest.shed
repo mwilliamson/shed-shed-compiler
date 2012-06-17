@@ -38,6 +38,10 @@ public val expressionsTest = listOf[TestCase](
         assertSuccessfulParse("false", nodes.boolean(false))
     ),
     
+    TestCase("can parse string literal", fun() =>
+        assertSuccessfulParse("\"blah\"", nodes.string("blah"))
+    ),
+    
     TestCase("can parse bracketed expression", fun() =>
         assertSuccessfulParse("(false)", nodes.boolean(false))
     )

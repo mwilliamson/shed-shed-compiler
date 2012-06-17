@@ -11,6 +11,8 @@ public val nodes = object {
     
     public def boolean fun(value: Boolean) => BooleanNode(value);
     
+    public def string fun(value: String) => StringNode(value);
+    
     public def UnitNode class() => {
         public def equals fun(other: UnitNode) => true;
         public def toRepresentation fun() => "UnitNode";
@@ -34,5 +36,19 @@ public val nodes = object {
         
         public def toRepresentation fun() =>
             "BooleanNode(".concat(if myValue then "true" else "false").concat(")");
+    }
+    
+    public def StringNode class(value: String) => {
+        members {
+            value fun() => value,
+            equals,
+            toRepresentation
+        }
+        
+        def equals fun(other: StringNode) =>
+            value.equals(other.value())
+            
+        def toRepresentation fun() =>
+            "StringNode(".concat(representation(value)).concat(")")
     }
 };
