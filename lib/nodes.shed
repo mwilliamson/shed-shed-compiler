@@ -15,7 +15,7 @@ public val nodes = object {
     
     public def UnitNode class() => {
         public def equals fun(other: UnitNode) => true;
-        public def toRepresentation fun() => "UnitNode";
+        public def represent fun() => "UnitNode";
     }
     
     public def NumberNode class(myValue: Double) => {
@@ -24,8 +24,8 @@ public val nodes = object {
         public def equals fun(other: NumberNode) =>
             myValue.equals(other.value());
         
-        public def toRepresentation fun() =>
-            "NumberNode(".concat(representation(myValue)).concat(")");
+        public def represent fun() =>
+            "NumberNode(".concat(represent(myValue)).concat(")");
     }
     
     public def BooleanNode class(myValue: Boolean) => {
@@ -34,7 +34,7 @@ public val nodes = object {
         public def equals fun(other: Boolean) =>
             if myValue then other.value() else not(other.value());
         
-        public def toRepresentation fun() =>
+        public def represent fun() =>
             "BooleanNode(".concat(if myValue then "true" else "false").concat(")");
     }
     
@@ -42,13 +42,13 @@ public val nodes = object {
         members {
             value fun() => value,
             equals,
-            toRepresentation
+            represent
         }
         
         def equals fun(other: StringNode) =>
             value.equals(other.value())
             
-        def toRepresentation fun() =>
-            "StringNode(".concat(representation(value)).concat(")")
+        def represent fun() =>
+            "StringNode(".concat(represent(value)).concat(")")
     }
 };
