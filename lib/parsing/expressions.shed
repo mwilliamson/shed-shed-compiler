@@ -42,6 +42,11 @@ public val expressions = object {
         nodes.string
     );
     
+    val variableReferenceRule = rules.map(
+        rules.tokenOfType("identifier"),
+        nodes.variableReference
+    );
+    
     def bracketedRule fun(tokens: Sequence[Token]) =>
         rules.map(
             rules.sequence()
@@ -58,6 +63,7 @@ public val expressions = object {
             numberRule,
             booleanRule,
             stringRule,
+            variableReferenceRule,
             bracketedRule
         )
     );

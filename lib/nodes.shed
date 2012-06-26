@@ -6,12 +6,10 @@ public val nodes = object {
     }
     
     public def unit fun() => UnitNode();
-    
     public def number fun(value: String) => NumberNode(value);
-    
     public def boolean fun(value: Boolean) => BooleanNode(value);
-    
     public def string fun(value: String) => StringNode(value);
+    public def variableReference fun(identifier: String) => VariableReferenceNode(identifier);
     
     public def UnitNode class() => {
         public def equals fun(other: UnitNode) => true;
@@ -50,5 +48,19 @@ public val nodes = object {
             
         def represent fun() =>
             "StringNode(".concat(represent(value)).concat(")")
+    }
+    
+    public def VariableReferenceNode class(identifier: String) => {
+        members {
+            identifier fun() => identifier,
+            equals,
+            represent
+        }
+        
+        def equals fun(other: VariableReferenceNode) =>
+            identifier.equals(other.identifier())
+            
+        def represent fun() =>
+            "VariableReferenceNode(".concat(identifier.represent()).concat(")")
     }
 };
