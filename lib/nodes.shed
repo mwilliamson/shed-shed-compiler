@@ -1,5 +1,7 @@
 package shed.compiler;
 
+import structs;
+
 public val nodes = object {
     // TODO: should be an interface
     public def Node class() => {
@@ -12,55 +14,36 @@ public val nodes = object {
     public def variableReference fun(identifier: String) => VariableReferenceNode(identifier);
     
     public def UnitNode class() => {
-        public def equals fun(other: UnitNode) => true;
-        public def represent fun() => "UnitNode";
+        members {
+            struct fun() => structs.create(UnitNode, emptyList)
+        }
     }
     
-    public def NumberNode class(myValue: Double) => {
-        public def value fun() => myValue;
-        
-        public def equals fun(other: NumberNode) =>
-            myValue.equals(other.value());
-        
-        public def represent fun() =>
-            "NumberNode(".concat(represent(myValue)).concat(")");
+    public def NumberNode class(value: Double) => {
+        members {
+            value fun() => value,
+            struct fun() => structs.create(NumberNode, listOf(value))
+        }
     }
     
-    public def BooleanNode class(myValue: Boolean) => {
-        public def value fun() => myValue;
-        
-        public def equals fun(other: Boolean) =>
-            if myValue then other.value() else not(other.value());
-        
-        public def represent fun() =>
-            "BooleanNode(".concat(if myValue then "true" else "false").concat(")");
+    public def BooleanNode class(value: Boolean) => {
+        members {
+            value fun() => value,
+            struct fun() => structs.create(BooleanNode, listOf(value))
+        }
     }
     
     public def StringNode class(value: String) => {
         members {
             value fun() => value,
-            equals,
-            represent
+            struct fun() => structs.create(StringNode, listOf(value))
         }
-        
-        def equals fun(other: StringNode) =>
-            value.equals(other.value())
-            
-        def represent fun() =>
-            "StringNode(".concat(represent(value)).concat(")")
     }
     
     public def VariableReferenceNode class(identifier: String) => {
         members {
             identifier fun() => identifier,
-            equals,
-            represent
+            struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
         }
-        
-        def equals fun(other: VariableReferenceNode) =>
-            identifier.equals(other.identifier())
-            
-        def represent fun() =>
-            "VariableReferenceNode(".concat(identifier.represent()).concat(")")
     }
 };
