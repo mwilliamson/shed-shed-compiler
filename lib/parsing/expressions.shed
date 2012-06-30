@@ -56,8 +56,18 @@ public val expressions = object {
                 .end(),
             tuples.head
         )(tokens)
+        
+    def callRule fun(tokens: Sequence[Token]) =>
+        rules.map(
+            rules.sequence()
+                .capture(primaryExpressionRule)
+                .next(symbolRule("("))
+                .next(symbolRule(")"))
+                .end(),
+            fun(values: Tuple[ExpressionNode]) => nodes.call(tuples.head(values), emptyList)
+        )(tokens)
     
-    public val expressionRule = rules.firstOf("expression",
+    val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(
             unitRule,
             numberRule,
@@ -65,6 +75,13 @@ public val expressions = object {
             stringRule,
             variableReferenceRule,
             bracketedRule
+        )
+    );
+    
+    public val expressionRule = rules.firstOf("expression",
+        listOf(
+            callRule,
+            primaryExpressionRule
         )
     );
 };

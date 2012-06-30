@@ -48,6 +48,10 @@ public val expressionsTest = listOf[TestCase](
     
     TestCase("can parse bracketed expression", fun() =>
         assertSuccessfulParse("(false)", nodes.boolean(false))
+    ),
+    
+    TestCase("can parse function call with no arguments", fun() =>
+        assertSuccessfulParse("go()", nodes.call(nodes.ref("go"), emptyList))
     )
 );
     

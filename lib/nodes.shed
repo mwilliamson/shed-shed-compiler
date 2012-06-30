@@ -3,15 +3,19 @@ package shed.compiler;
 import structs;
 
 public val nodes = object {
+    members {
+        unit UnitNode,
+        number NumberNode,
+        boolean BooleanNode,
+        string StringNode,
+        variableReference VariableReferenceNode,
+        ref VariableReferenceNode,
+        call CallNode
+    }
+    
     // TODO: should be an interface
     public def Node class() => {
     }
-    
-    public def unit fun() => UnitNode();
-    public def number fun(value: String) => NumberNode(value);
-    public def boolean fun(value: Boolean) => BooleanNode(value);
-    public def string fun(value: String) => StringNode(value);
-    public def variableReference fun(identifier: String) => VariableReferenceNode(identifier);
     
     public def UnitNode class() => {
         members {
@@ -44,6 +48,14 @@ public val nodes = object {
         members {
             identifier fun() => identifier,
             struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
+        }
+    }
+    
+    public def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
+        members {
+            callee fun() => callee,
+            args fun() => args,
+            struct fun() => structs.create(CallNode, listOf(callee, args))
         }
     }
 };
