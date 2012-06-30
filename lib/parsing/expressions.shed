@@ -62,9 +62,10 @@ public val expressions = object {
             rules.sequence()
                 .capture(primaryExpressionRule)
                 .next(symbolRule("("))
+                .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
                 .next(symbolRule(")"))
                 .end(),
-            fun(values: Tuple[ExpressionNode]) => nodes.call(tuples.head(values), emptyList)
+            pack(nodes.call)
         )(tokens)
     
     val primaryExpressionRule = rules.firstOf("primary expression",

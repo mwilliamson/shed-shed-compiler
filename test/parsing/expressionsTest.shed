@@ -52,6 +52,20 @@ public val expressionsTest = listOf[TestCase](
     
     TestCase("can parse function call with no arguments", fun() =>
         assertSuccessfulParse("go()", nodes.call(nodes.ref("go"), emptyList))
+    ),
+    
+    TestCase("can parse function call with one argument", fun() =>
+        assertSuccessfulParse(
+            "print(\"Hello\")",
+            nodes.call(nodes.ref("print"), listOf(nodes.string("Hello")))
+        )
+    ),
+    
+    TestCase("can parse function call with multiple arguments", fun() =>
+        assertSuccessfulParse(
+            "equal(1,2)",
+            nodes.call(nodes.ref("equal"), listOf(nodes.number("1"), nodes.number("2")))
+        )
     )
 );
     
