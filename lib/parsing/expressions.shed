@@ -1,7 +1,5 @@
 package shed.compiler.parsing;
 
-import tuples;
-
 import shed.compiler.nodes;
 import shed.compiler.nodes.NumberNode;
 import shed.compiler.nodes.UnitNode;
@@ -17,13 +15,11 @@ public val expressions = object {
         nodes.number
     );
     
-    val unitRule = rules.map[Unit, UnitNode](
+    val unitRule =
         rules.sequence()
             .next(symbolRule("("))
             .next(symbolRule(")"))
-            .tuple(),
-        fun(_: Any) => nodes.unit()
-    );
+            .map(fun() => nodes.unit());
     
     val trueRule = rules.map[Unit, BooleanNode](
         rules.token("keyword", "true"),
@@ -48,14 +44,12 @@ public val expressions = object {
     );
     
     def bracketedRule fun(tokens: Sequence[Token]) =>
-        rules.map(
-            rules.sequence()
-                .next(symbolRule("("))
-                .capture(expressionRule)
-                .next(symbolRule(")"))
-                .tuple(),
-            tuples.head
-        )(tokens)
+        rules.sequence()
+            .next(symbolRule("("))
+            .capture(expressionRule)
+            .next(symbolRule(")"))
+            .head()
+            (tokens)
         
     def callRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
