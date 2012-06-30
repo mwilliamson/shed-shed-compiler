@@ -58,15 +58,13 @@ public val expressions = object {
         )(tokens)
         
     def callRule fun(tokens: Sequence[Token]) =>
-        rules.map(
-            rules.sequence()
-                .capture(primaryExpressionRule)
-                .next(symbolRule("("))
-                .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
-                .next(symbolRule(")"))
-                .tuple(),
-            pack(nodes.call)
-        )(tokens)
+        rules.sequence()
+            .capture(primaryExpressionRule)
+            .next(symbolRule("("))
+            .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
+            .next(symbolRule(")"))
+            .map(nodes.call)
+            (tokens)
     
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(
