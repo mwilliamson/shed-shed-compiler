@@ -5,6 +5,7 @@ import shed.compiler.nodes.NumberNode;
 import shed.compiler.nodes.UnitNode;
 import shed.compiler.nodes.BooleanNode;
 import lop.rules;
+import lop.pratt;
 
 public val expressions = object {
     def symbolRule fun(value: String) =>
@@ -51,13 +52,13 @@ public val expressions = object {
             .head()
             (tokens)
         
-    def callRule fun(tokens: Sequence[Token]) =>
+    def partialCallRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
-            .capture(primaryExpressionRule)
             .next(symbolRule("("))
             .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
             .next(symbolRule(")"))
-            .map(nodes.call)
+            .map(fun(args: List[ExpressionNode]) =>
+                fun(left: ExpressionNode) => nodes.call(left, args))
             (tokens)
     
     val primaryExpressionRule = rules.firstOf("primary expression",
@@ -71,10 +72,12 @@ public val expressions = object {
         )
     );
     
-    public val expressionRule = rules.firstOf("expression",
+    val expressionParser = pratt.parser("expression",
+        listOf(primaryExpressionRule),
         listOf(
-            callRule,
-            primaryExpressionRule
+            pratt.infix("call", partialCallRule)
         )
     );
+    
+    public val expressionRule = expressionParser.rule();
 };
