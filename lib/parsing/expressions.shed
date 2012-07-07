@@ -48,6 +48,7 @@ public val expressions = object {
         rules.sequence()
             .next(symbolRule("("))
             .capture(expressionRule)
+            .cut()
             .next(symbolRule(")"))
             .head()
             (tokens)
@@ -55,6 +56,7 @@ public val expressions = object {
     def partialCallRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
             .next(symbolRule("("))
+            .cut()
             .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
             .next(symbolRule(")"))
             .map(fun(args: List[ExpressionNode]) =>
