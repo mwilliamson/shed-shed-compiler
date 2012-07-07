@@ -4,6 +4,9 @@ public val js = object {
     members {
         string StringNode,
         StringNode,
+        ref VariableReferenceNode,
+        variableReference VariableReferenceNode,
+        VariableReferenceNode,
         call CallNode,
         CallNode,
         expressionStatement ExpressionStatementNode,
@@ -15,6 +18,12 @@ public val js = object {
     def StringNode class(value: String) => {
         members {
             value fun() => value
+        }
+    }
+    
+    def VariableReferenceNode class(identifier: String) => {
+        members {
+            identifier fun() => identifier
         }
     }
     

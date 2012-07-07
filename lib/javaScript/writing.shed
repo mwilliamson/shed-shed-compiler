@@ -1,6 +1,7 @@
 package shed.compiler.javaScript;
 
 import json;
+import strings;
 
 import shed.compiler.javaScript.js;
 
@@ -11,9 +12,28 @@ public val writing = object {
     
     def write fun(javaScriptNode: JavaScriptNode) =>
         match(javaScriptNode,
-            matchClass(js.StringNode, writeString)
+            matchClass(js.StringNode, writeString),
+            matchClass(js.CallNode, writeCall),
+            matchClass(js.VariableReferenceNode, writeVariableReference),
+            matchClass(js.ExpressionStatementNode, writeExpressionStatement),
+            matchClass(js.StatementsNode, writeStatements)
         )
         
     def writeString fun(string: StringNode) =>
         json.stringifyString(string.value())
+        
+    def writeCall fun(call: CallNode) =>
+        write(call.callee())
+            .concat("(")
+            .concat(strings.join(", ", call.args().map(write)))
+            .concat(")")
+        
+    def writeVariableReference fun(ref: VariableReferenceNode) =>
+        ref.identifier()
+        
+    def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
+        write(expressionStatement.expression()).concat(";")
+        
+    def writeStatements fun(statements: StatementsNode) =>
+        strings.join("\n", statements.statements().map(write))
 };

@@ -10,5 +10,33 @@ import shed.compiler.javaScript.js;
 public val writingTest = listOf(
     TestCase("can write strings", fun() =>
         assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
+    ),
+    
+    TestCase("can write variable referenences", fun() =>
+        assertThat(
+            write(js.ref("print")),
+            equalTo("print")
+        )
+    ),
+    
+    TestCase("can write function calls", fun() =>
+        assertThat(
+            write(js.call(js.ref("print"), listOf(js.string("Hello world")))),
+            equalTo("print(\"Hello world\")")
+        )
+    ),
+    
+    TestCase("can write expression statements", fun() =>
+        assertThat(
+            write(js.expressionStatement(js.call(js.ref("print"), listOf(js.string("Hello world"))))),
+            equalTo("print(\"Hello world\");")
+        )
+    ),
+    
+    TestCase("can write list of statements", fun() =>
+        assertThat(
+            write(js.statements(listOf(js.expressionStatement(js.ref("one")), js.expressionStatement(js.ref("two"))))),
+            equalTo("one;\ntwo;")
+        )
     )
 );
