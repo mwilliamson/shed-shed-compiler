@@ -14,5 +14,6 @@ public val modules = object {
     
     val moduleRule = rules.sequence()
         .capture(moduleBodyRule)
+        .next(rules.tokenOfType("end"))
         .map(nodes.module);
 };

@@ -10,11 +10,17 @@ import shed.compiler.nodes;
 public def Parser class() => {
     val tokeniser = Tokeniser();
     
-    public def parse fun(rule: Rule, input: StringSource) => do {
-        val tokens = lazySequences.filter[Token](
-            fun(token: Token) => not(or(token.name().equals("end"), token.name().equals("whitespace"))),
-            tokeniser.tokenise(input).toSequence()
-        );
-        return rule(tokens);
-    }
+    def filteredParse fun(predicate: Function[Token, Boolean]) =>
+        fun(rule: Rule, input: StringSource) =>
+            rule(lazySequences.filter(predicate, tokenise(input)))
+            
+    public val parse = 
+        filteredParse(fun(token: Token) => not(token.name().equals("whitespace")));
+    
+    public val parseWithoutEndToken =
+        filteredParse(fun(token: Token) =>
+            not(or(token.name().equals("whitespace"), token.name().equals("end"))));
+    
+    def tokenise fun(input: StringSource) =>
+        tokeniser.tokenise(input).toSequence();
 }

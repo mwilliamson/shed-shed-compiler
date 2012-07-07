@@ -84,6 +84,6 @@ def parse fun(input: StringSource) =>
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);
-    val result = Parser().parse(expressions.expressionRule, source);
+    val result = Parser().parseWithoutEndToken(expressions.expressionRule, source);
     return assertThat[Node](result, isSuccess[Node](equalTo[Node](expected)));
 }
