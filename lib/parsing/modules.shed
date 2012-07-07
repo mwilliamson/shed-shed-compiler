@@ -1,0 +1,18 @@
+package shed.compiler.parsing;
+
+import lop.rules;
+
+import shed.compiler.nodes;
+import shed.compiler.parsing.statements;
+
+public val modules = object {
+    members {
+        moduleRule
+    }
+    
+    val moduleBodyRule = rules.zeroOrMore(statements.statementRule);
+    
+    val moduleRule = rules.sequence()
+        .capture(moduleBodyRule)
+        .map(nodes.module);
+};

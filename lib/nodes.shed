@@ -10,7 +10,9 @@ public val nodes = object {
         string StringNode,
         variableReference VariableReferenceNode,
         ref VariableReferenceNode,
-        call CallNode
+        call CallNode,
+        expressionStatement ExpressionStatementNode,
+        module ModuleNode
     }
     
     // TODO: should be an interface
@@ -56,6 +58,20 @@ public val nodes = object {
             callee fun() => callee,
             args fun() => args,
             struct fun() => structs.create(CallNode, listOf(callee, args))
+        }
+    }
+    
+    public def ExpressionStatementNode class(expression: ExpressionNode) => {
+        members {
+            expression fun() => expression,
+            struct fun() => structs.create(ExpressionStatementNode, listOf(expression))
+        }
+    }
+    
+    public def ModuleNode class(statements: List[StatementNode]) => {
+        members {
+            statements fun() => statements,
+            struct fun() => structs.create(ModuleNode, listOf(statements))
         }
     }
 };

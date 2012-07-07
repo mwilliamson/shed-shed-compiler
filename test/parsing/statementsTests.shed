@@ -1,0 +1,46 @@
+package shed.compiler.parsing;
+
+import sequences;
+import strings;
+import lazySequences;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.isList;
+import duck.equalTo;
+import duck.MatchResult;
+
+import lop.strings.createStringSource;
+import lop.Token;
+import lop.testing.isSuccess;
+
+import shed.compiler.nodes;
+import shed.compiler.nodes.Node;
+import shed.compiler.parsing.Parser;
+import shed.compiler.parsing.statements;
+
+public val statementsTest = listOf[TestCase](
+    TestCase("can parse expression statement", fun() =>
+        assertSuccessfulParse(
+            "print(\"Hello\");",
+            nodes.expressionStatement(
+                nodes.call(
+                    nodes.variableReference("print"),
+                    listOf(nodes.string("Hello"))
+                )
+            )
+        )
+    )
+);
+    
+def stringSource fun(string: String) =>
+    createStringSource(string, "raw string");
+    
+def parse fun(input: StringSource) =>
+    Parser().parse(expressions.expression, input);
+
+def assertSuccessfulParse fun(input: String, expected: Node) => do {
+    val source = stringSource(input);
+    val result = Parser().parse(statements.statementRule, source);
+    return assertThat(result, isSuccess(equalTo(expected)));
+}
