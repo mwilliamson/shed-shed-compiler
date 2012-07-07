@@ -9,4 +9,5 @@ test: build-tests
 	node _build/tests.js shed.compiler.parsing.expressionsTest
 	node _build/tests.js shed.compiler.parsing.statementsTest
 	node _build/tests.js shed.compiler.parsing.modulesTest
+	node _build/tests.js shed.compiler.javaScript.writingTest
 	node _build/tests.js shed.compiler.compilationTest

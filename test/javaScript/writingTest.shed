@@ -1,0 +1,14 @@
+package shed.compiler.javaScript;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.equalTo;
+
+import shed.compiler.javaScript.writing.write;
+import shed.compiler.javaScript.js;
+
+public val writingTest = listOf(
+    TestCase("can write strings", fun() =>
+        assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
+    )
+);

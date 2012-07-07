@@ -1,0 +1,19 @@
+package shed.compiler.javaScript;
+
+import json;
+
+import shed.compiler.javaScript.js;
+
+public val writing = object {
+    members {
+        write
+    }
+    
+    def write fun(javaScriptNode: JavaScriptNode) =>
+        match(javaScriptNode,
+            matchClass(js.StringNode, writeString)
+        )
+        
+    def writeString fun(string: StringNode) =>
+        json.stringifyString(string.value())
+};

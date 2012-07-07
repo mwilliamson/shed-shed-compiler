@@ -1,0 +1,39 @@
+package shed.compiler.javaScript;
+
+public val js = object {
+    members {
+        string StringNode,
+        StringNode,
+        call CallNode,
+        CallNode,
+        expressionStatement ExpressionStatementNode,
+        ExpressionStatementNode,
+        statements StatementsNode,
+        StatementsNode
+    }
+    
+    def StringNode class(value: String) => {
+        members {
+            value fun() => value
+        }
+    }
+    
+    def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
+        members {
+            callee fun() => callee,
+            args fun() => args
+        }
+    }
+    
+    def ExpressionStatementNode class(expression: ExpressionNode) => {
+        members {
+            expression fun() => expression
+        }
+    }
+    
+    def StatementsNode class(statements: List[StatementNode]) => {
+        members {
+            statements fun() => statements
+        }
+    }
+};
