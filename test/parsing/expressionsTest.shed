@@ -1,25 +1,16 @@
 package shed.compiler.parsing;
 
-import sequences;
-import strings;
-import lazySequences;
-
 import hat.TestCase;
 import duck.assertThat;
-import duck.isList;
 import duck.equalTo;
-import duck.MatchResult;
 
-import lop.StringSource;
-import lop.Range;
 import lop.strings.createStringSource;
+import lop.testing.isSuccess;
+
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import lop.Token;
 import shed.compiler.parsing.Parser;
 import shed.compiler.parsing.expressions;
-import lop.results.Success;
-import lop.testing.isSuccess;
 
 public val expressionsTest = listOf[TestCase](
     TestCase("can parse unit", fun() =>

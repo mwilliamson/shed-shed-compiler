@@ -1,17 +1,10 @@
 package shed.compiler.parsing;
 
-import sequences;
-import strings;
-import lazySequences;
-
 import hat.TestCase;
 import duck.assertThat;
-import duck.isList;
 import duck.equalTo;
-import duck.MatchResult;
 
 import lop.strings.createStringSource;
-import lop.Token;
 import lop.testing.isSuccess;
 
 import shed.compiler.nodes;
