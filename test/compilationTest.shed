@@ -1,0 +1,44 @@
+package shed.compiler;
+
+import nodejs;
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.MatchResult;
+
+import shed.compiler.compilation;
+
+def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
+    val tokeniser = Tokeniser();
+    val actualTokens = tokeniser.tokenise(input);
+    val expectedMatchers = expectedTokens.map(equalTo[Token]);
+    return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
+};
+
+public val compilationTest = listOf(
+    TestCase("can execute program containing print statement", fun() => do {
+        val shedProgram = "print(\"Hello world\");";
+        val jsProgram = compilation.compileString(shedProgram);
+        
+        return nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+            assertThat(result, isSuccessWithOutput("Hello world"))
+        );
+    })
+);
+    
+def isSuccessWithOutput fun(expectedOutput: String) => object {
+    public def describeSelf fun() => "successful exit with output: ".concat(expectedOutput);
+    public def matches fun(result: ParseResult) =>
+        matchesWithDescription(result).matches();
+    
+    public def describeMismatch fun(result: ParseResult) =>
+        matchesWithDescription(result).mismatchDescription();
+        
+    public def matchesWithDescription fun(result: ExecutionResult) =>
+        if not(result.isSuccess()) then
+            MatchResult(false, "exit code was ".concat(result.exitCode().toString()))
+        else if not(equal(result.stdout(), expectedOutput)) then
+            MatchResult(false, "output was: ".concat(result.stdout()))
+        else
+            MatchResult(true, "");
+}

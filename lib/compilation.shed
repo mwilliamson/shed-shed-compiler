@@ -1,0 +1,9 @@
+package shed.compiler;
+
+public val compilation = object {
+    members {
+        compileString
+    }
+    
+    def compileString fun(input: String) => "process.stdout.write(\"Hello world\");"
+};
