@@ -17,6 +17,7 @@ def compileString fun(input: String) => do {
     val source = createStringSource(input, "raw string");
     val shedNode = parser.parse(moduleRule, source).value();
     val javaScriptNode = microJavaScript.generate(shedNode);
-    return "var print = function(value) { process.stdout.write(value); };"
+    return "var $shed = {string: function(value) { return {$value: value}; } };"
+        .concat("var print = function(value) { process.stdout.write(value.$value); };")
         .concat(writing.write(javaScriptNode));
 }

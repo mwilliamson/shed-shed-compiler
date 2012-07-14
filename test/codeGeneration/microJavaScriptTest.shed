@@ -36,10 +36,10 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed string generates JavaScript string", fun() =>
+    TestCase("Shed string generates boxed JavaScript string", fun() =>
         assertThat(
             generate(shed.string("blah")),
-            equalTo(js.string("blah"))
+            equalTo(js.call(js.propertyAccess(js.ref("$shed"), "string"), listOf(js.string("blah"))))
         )
     ),
     

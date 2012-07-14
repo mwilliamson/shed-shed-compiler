@@ -18,6 +18,8 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         generate generatorGenerate
     }
     
+    val shedGlobal = js.ref("$shed");
+    
     def generatorGenerate fun(node: ShedNode) =>
         match(node,
             matchClass(shed.UnitNode, unit),
@@ -31,7 +33,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         )
 
     def unit fun(unit: UnitNode) =>
-        js.propertyAccess(js.ref("$shed"), "unit")
+        js.propertyAccess(shedGlobal, "unit")
 
     def boolean fun(boolean: BooleanNode) =>
         js.boolean(boolean.value())
@@ -40,7 +42,10 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.number(number.value())
 
     def string fun(string: StringNode) =>
-        js.string(string.value())
+        js.call(
+            js.propertyAccess(shedGlobal, "string"),
+            listOf(js.string(string.value()))
+        )
 
     def variableReference fun(variableReference: VariableReferenceNode) =>
         js.ref(variableReference.identifier())
