@@ -39,7 +39,10 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.boolean(boolean.value())
 
     def number fun(number: NumberNode) =>
-        js.number(number.value())
+        js.call(
+            js.propertyAccess(shedGlobal, "number"),
+            listOf(js.number(number.value()))
+        )
 
     def string fun(string: StringNode) =>
         js.call(

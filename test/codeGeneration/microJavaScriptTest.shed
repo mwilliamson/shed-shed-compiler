@@ -29,10 +29,10 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed number generates JavaScript number", fun() =>
+    TestCase("Shed number generates boxed JavaScript number", fun() =>
         assertThat(
             generate(shed.number("4.2")),
-            equalTo(js.number("4.2"))
+            equalTo(js.call(js.propertyAccess(js.ref("$shed"), "number"), listOf(js.number("4.2"))))
         )
     ),
     
