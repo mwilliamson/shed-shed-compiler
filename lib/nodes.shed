@@ -16,7 +16,6 @@ members {
     BooleanNode,
     StringNode,
     VariableReferenceNode,
-    VariableReferenceNode,
     CallNode,
     ExpressionStatementNode,
     ModuleNode
