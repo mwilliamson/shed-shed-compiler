@@ -67,6 +67,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed member access generates JavaScript property access", fun() =>
+        assertThat(
+            generate(shed.memberAccess(shed.ref("bob"), "name")),
+            equalTo(js.propertyAccess(stub(shed.ref("bob")), "name"))
+        )
+    ),
+    
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(
             generate(shed.expressionStatement(shed.string("Hello"))),

@@ -29,6 +29,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.VariableReferenceNode, variableReference),
             matchClass(shed.IfThenElseNode, ifThenElse),
             matchClass(shed.CallNode, call),
+            matchClass(shed.MemberAccessNode, memberAccess),
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ModuleNode, moduleNode)
         )
@@ -63,6 +64,9 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     
     def call fun(call: CallNode) =>
         js.call(generate(call.callee()), call.args().map(generate))
+    
+    def memberAccess fun(memberAccess: MemberAccessNode) =>
+        js.propertyAccess(generate(memberAccess.left()), memberAccess.memberName())
 
     def expressionStatement fun(expressionStatement: ExpressionStatementNode) =>
         js.expressionStatement(generate(expressionStatement.expression()))
