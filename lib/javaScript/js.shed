@@ -40,7 +40,8 @@ def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
 
 def ExpressionStatementNode class(expression: ExpressionNode) => {
     members {
-        expression fun() => expression
+        expression fun() => expression,
+        struct fun() => structs.create(ExpressionStatementNode, listOf(expression))
     }
 }
 

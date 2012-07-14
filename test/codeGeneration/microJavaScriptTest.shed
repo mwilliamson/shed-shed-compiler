@@ -34,6 +34,13 @@ val testCases = listOf(
             generate(shed.call(shed.ref("print"), listOf(shed.string("Hello")))),
             equalTo(js.call(stub(shed.ref("print")), listOf(stub(shed.string("Hello")))))
         )
+    ),
+    
+    TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
+        assertThat(
+            generate(shed.expressionStatement(shed.string("Hello"))),
+            equalTo(js.expressionStatement(stub(shed.string("Hello"))))
+        )
     )
 );
 
@@ -41,7 +48,7 @@ def subGenerate fun(node: ShedNode) =>
     stub(node)
     
 def stub fun(node: ShedNode) =>
-    js.ref("$".concat(classOf(node).identifier()))
+    js.ref("$".concat(represent(node)))
 
 val generator = Generator(subGenerate);
 val generate = generator.generate;
