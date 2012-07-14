@@ -7,6 +7,7 @@ members {
     string StringNode,
     variableReference VariableReferenceNode,
     ref VariableReferenceNode,
+    ifThenElse IfThenElseNode,
     call CallNode,
     expressionStatement ExpressionStatementNode,
     moduleNode ModuleNode,
@@ -16,6 +17,7 @@ members {
     BooleanNode,
     StringNode,
     VariableReferenceNode,
+    IfThenElseNode,
     CallNode,
     ExpressionStatementNode,
     ModuleNode
@@ -58,6 +60,15 @@ def VariableReferenceNode class(identifier: String) => {
     members {
         identifier fun() => identifier,
         struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
+    }
+}
+
+def IfThenElseNode class(condition: ExpressionNode, trueValue: ExpressionNode, falseValue: ExpressionNode) => {
+    members {
+        condition fun() => condition,
+        trueValue fun() => trueValue,
+        falseValue fun() => falseValue,
+        struct fun() => structs.create(IfThenElseNode, listOf(condition, trueValue, falseValue))
     }
 }
 

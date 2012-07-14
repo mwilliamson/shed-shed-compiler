@@ -41,6 +41,17 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse("blah", nodes.variableReference("blah"))
     ),
     
+    TestCase("can parse if-then-else expression", fun() =>
+        assertSuccessfulParse(
+            "if true then 1 else 0",
+            nodes.ifThenElse(
+                nodes.boolean(true),
+                nodes.number("1"),
+                nodes.number("0")
+            )
+        )
+    ),
+    
     TestCase("can parse bracketed expression", fun() =>
         assertSuccessfulParse("(false)", nodes.boolean(false))
     ),

@@ -14,6 +14,9 @@ import lop.pratt;
 def symbolRule fun(value: String) =>
     rules.token("symbol", value);
     
+def keywordRule fun(value: String) =>
+    rules.token("keyword", value);
+    
 val numberRule = rules.map[String, NumberNode](
     rules.tokenOfType("number"),
     nodes.number
@@ -47,6 +50,18 @@ val variableReferenceRule = rules.map(
     nodes.variableReference
 );
 
+def ifThenElseRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .next(keywordRule("if"))
+        .cut()
+        .capture(expressionRule)
+        .next(keywordRule("then"))
+        .capture(expressionRule)
+        .next(keywordRule("else"))
+        .capture(expressionRule)
+        .map(nodes.ifThenElse)
+        (tokens)
+
 def bracketedRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
         .next(symbolRule("("))
@@ -73,6 +88,7 @@ val primaryExpressionRule = rules.firstOf("primary expression",
         booleanRule,
         stringRule,
         variableReferenceRule,
+        ifThenElseRule,
         bracketedRule
     )
 );
