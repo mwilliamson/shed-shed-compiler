@@ -5,6 +5,8 @@ members {
     UnitNode,
     boolean BooleanNode,
     BooleanNode,
+    number NumberNode,
+    NumberNode,
     string StringNode,
     StringNode,
     ref VariableReferenceNode,
@@ -40,6 +42,13 @@ def BooleanNode class(value: Boolean) => {
     members {
         value fun() => value,
         struct fun() => structs.create(BooleanNode, listOf(value))
+    }
+}
+
+def NumberNode class(value: String) => {
+    members {
+        value fun() => value,
+        struct fun() => structs.create(NumberNode, listOf(value))
     }
 }
 

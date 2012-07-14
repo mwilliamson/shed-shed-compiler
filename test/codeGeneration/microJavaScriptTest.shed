@@ -29,6 +29,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed number generates JavaScript number", fun() =>
+        assertThat(
+            generate(shed.number("4.2")),
+            equalTo(js.number("4.2"))
+        )
+    ),
+    
     TestCase("Shed string generates JavaScript string", fun() =>
         assertThat(
             generate(shed.string("blah")),
