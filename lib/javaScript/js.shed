@@ -47,6 +47,7 @@ def ExpressionStatementNode class(expression: ExpressionNode) => {
 
 def StatementsNode class(statements: List[StatementNode]) => {
     members {
-        statements fun() => statements
+        statements fun() => statements,
+        struct fun() => structs.create(StatementsNode, listOf(statements))
     }
 }

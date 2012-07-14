@@ -41,7 +41,15 @@ val testCases = listOf(
             generate(shed.expressionStatement(shed.string("Hello"))),
             equalTo(js.expressionStatement(stub(shed.string("Hello"))))
         )
-    )
+    ),
+    
+    TestCase("Shed module generates list of JavaScript statements", fun() => do {
+        val shedStatement = shed.expressionStatement(shed.string("Hello"));
+        return assertThat(
+            generate(shed.moduleNode(listOf(shedStatement))),
+            equalTo(js.statements(listOf(stub(shedStatement))))
+        );
+    })
 );
 
 def subGenerate fun(node: ShedNode) =>
