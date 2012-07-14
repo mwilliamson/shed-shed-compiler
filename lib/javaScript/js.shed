@@ -12,6 +12,8 @@ members {
     ref VariableReferenceNode,
     variableReference VariableReferenceNode,
     VariableReferenceNode,
+    conditional ConditionalOperatorNode,
+    ConditionalOperatorNode,
     call CallNode,
     CallNode,
     propertyAccess PropertyAccessNode,
@@ -56,6 +58,15 @@ def VariableReferenceNode class(identifier: String) => {
     members {
         identifier fun() => identifier,
         struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
+    }
+}
+
+def ConditionalOperatorNode class(condition: ExpressionNode, trueValue: ExpressionNode, falseValue: ExpressionNode) => {
+    members {
+        condition fun() => condition,
+        trueValue fun() => trueValue,
+        falseValue fun() => falseValue,
+        struct fun() => structs.create(ConditionalOperatorNode, listOf(condition, trueValue, falseValue))
     }
 }
 

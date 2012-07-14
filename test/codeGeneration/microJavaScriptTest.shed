@@ -50,6 +50,16 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed if-then-else expression generates JavaScript conditional operator", fun() => do {
+        val condition = shed.ref("condition");
+        val trueValue = shed.ref("trueValue");
+        val falseValue = shed.ref("falseValue");
+        return assertThat(
+            generate(shed.ifThenElse(condition, trueValue, falseValue)),
+            equalTo(js.conditional(stub(condition), stub(trueValue), stub(falseValue)))
+        );
+    }),
+    
     TestCase("Shed call generates JavaScript call", fun() =>
         assertThat(
             generate(shed.call(shed.ref("print"), listOf(shed.string("Hello")))),

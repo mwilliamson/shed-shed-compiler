@@ -27,6 +27,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.NumberNode, number),
             matchClass(shed.StringNode, string),
             matchClass(shed.VariableReferenceNode, variableReference),
+            matchClass(shed.IfThenElseNode, ifThenElse),
             matchClass(shed.CallNode, call),
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ModuleNode, moduleNode)
@@ -52,7 +53,14 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
 
     def variableReference fun(variableReference: VariableReferenceNode) =>
         js.ref(variableReference.identifier())
-        
+    
+    def ifThenElse fun(ifThenElse: IfThenElseNode) =>
+        js.conditional(
+            generate(ifThenElse.condition()),
+            generate(ifThenElse.trueValue()),
+            generate(ifThenElse.falseValue())
+        )
+    
     def call fun(call: CallNode) =>
         js.call(generate(call.callee()), call.args().map(generate))
 
