@@ -80,6 +80,15 @@ def partialCallRule fun(tokens: Sequence[Token]) =>
         .map(fun(args: List[ExpressionNode]) =>
             fun(left: ExpressionNode) => nodes.call(left, args))
         (tokens)
+    
+def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .next(symbolRule("."))
+        .cut()
+        .capture(rules.tokenOfType("identifier"))
+        .map(fun(memberName: String) =>
+            fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
+        (tokens)
 
 val primaryExpressionRule = rules.firstOf("primary expression",
     listOf(
@@ -96,7 +105,8 @@ val primaryExpressionRule = rules.firstOf("primary expression",
 val expressionParser = pratt.parser("expression",
     listOf(primaryExpressionRule),
     listOf(
-        pratt.infix("call", partialCallRule)
+        pratt.infix("call", partialCallRule),
+        pratt.infix("memberAccess", partialMemberAccessRule)
     )
 );
 

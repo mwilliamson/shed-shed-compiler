@@ -9,6 +9,7 @@ members {
     ref VariableReferenceNode,
     ifThenElse IfThenElseNode,
     call CallNode,
+    memberAccess MemberAccessNode,
     expressionStatement ExpressionStatementNode,
     moduleNode ModuleNode,
     Node,
@@ -19,6 +20,7 @@ members {
     VariableReferenceNode,
     IfThenElseNode,
     CallNode,
+    MemberAccessNode,
     ExpressionStatementNode,
     ModuleNode
 }
@@ -77,6 +79,14 @@ def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
         callee fun() => callee,
         args fun() => args,
         struct fun() => structs.create(CallNode, listOf(callee, args))
+    }
+}
+
+def MemberAccessNode class(left: ExpressionNode, memberName: String) => {
+    members {
+        left fun() => left,
+        memberName fun() => memberName,
+        struct fun() => structs.create(MemberAccessNode, listOf(left, memberName))
     }
 }
 

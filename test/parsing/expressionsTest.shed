@@ -94,6 +94,13 @@ val testCases = listOf[TestCase](
             "go()()()",
             nodes.call(nodes.call(nodes.call(nodes.ref("go"), emptyList), emptyList), emptyList)
         )
+    ),
+    
+    TestCase("can parse member access", fun() =>
+        assertSuccessfulParse(
+            "bob.name",
+            nodes.memberAccess(nodes.ref("bob"), "name")
+        )
     )
 );
     
