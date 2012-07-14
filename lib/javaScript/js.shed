@@ -3,6 +3,8 @@ module shed.compiler.javaScript.js;
 members {
     unit UnitNode,
     UnitNode,
+    boolean BooleanNode,
+    BooleanNode,
     string StringNode,
     StringNode,
     ref VariableReferenceNode,
@@ -31,6 +33,13 @@ def StringNode class(value: String) => {
     members {
         value fun() => value,
         struct fun() => structs.create(StringNode, listOf(value))
+    }
+}
+
+def BooleanNode class(value: Boolean) => {
+    members {
+        value fun() => value,
+        struct fun() => structs.create(BooleanNode, listOf(value))
     }
 }
 
