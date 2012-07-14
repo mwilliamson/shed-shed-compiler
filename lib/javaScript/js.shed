@@ -1,6 +1,8 @@
 module shed.compiler.javaScript.js;
 
 members {
+    unit UnitNode,
+    UnitNode,
     string StringNode,
     StringNode,
     ref VariableReferenceNode,
@@ -8,6 +10,8 @@ members {
     VariableReferenceNode,
     call CallNode,
     CallNode,
+    propertyAccess PropertyAccessNode,
+    PropertyAccessNode,
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
     statements StatementsNode,
@@ -15,6 +19,13 @@ members {
 }
 
 import structs;
+
+def UnitNode class() => {
+    members {
+        value fun() => value,
+        struct fun() => structs.create(UnitNode, emptyList)
+    }
+}
 
 def StringNode class(value: String) => {
     members {
@@ -35,6 +46,14 @@ def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
         callee fun() => callee,
         args fun() => args,
         struct fun() => structs.create(CallNode, listOf(callee, args))
+    }
+}
+
+def PropertyAccessNode class(left: ExpressionNode, propertyName: String) => {
+    members {
+        left fun() => left,
+        propertyName fun() => propertyName,
+        struct fun() => structs.create(PropertyAccessNode, listOf(left, propertyName))
     }
 }
 

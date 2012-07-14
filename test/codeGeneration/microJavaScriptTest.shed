@@ -15,6 +15,13 @@ import shed.compiler.javaScript.js;
 val shed = nodes;
 
 val testCases = listOf(
+    TestCase("Shed unit generates reference to $shed.unit", fun() =>
+        assertThat(
+            generate(shed.unit()),
+            equalTo(js.propertyAccess(js.ref("$shed"), "unit"))
+        )
+    ),
+    
     TestCase("Shed string generates JavaScript string", fun() =>
         assertThat(
             generate(shed.string("blah")),
