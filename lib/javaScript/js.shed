@@ -14,9 +14,12 @@ members {
     StatementsNode
 }
 
+import structs;
+
 def StringNode class(value: String) => {
     members {
-        value fun() => value
+        value fun() => value,
+        struct fun() => structs.create(StringNode, listOf(value))
     }
 }
 

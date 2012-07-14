@@ -1,0 +1,26 @@
+module shed.compiler.codeGeneration.microJavaScriptTest;
+
+members {
+    testCases
+}
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.equalTo;
+
+import shed.compiler.codeGeneration.microJavaScript.Generator;
+import shed.compiler.nodes;
+import shed.compiler.javaScript.js;
+
+val shed = nodes;
+
+val generator = Generator();
+
+val testCases = listOf(
+    TestCase("shed string generates JavaScript string", fun() =>
+        assertThat(
+            generator.string(shed.string("blah")),
+            equalTo(js.string("blah"))
+        )
+    )
+);
