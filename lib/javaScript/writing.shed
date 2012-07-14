@@ -12,6 +12,7 @@ import shed.compiler.javaScript.js;
 def write fun(javaScriptNode: JavaScriptNode) =>
     match(javaScriptNode,
         matchClass(js.BooleanNode, writeBoolean),
+        matchClass(js.NumberNode, writeNumber),
         matchClass(js.StringNode, writeString),
         matchClass(js.VariableReferenceNode, writeVariableReference),
         matchClass(js.CallNode, writeCall),
@@ -22,6 +23,9 @@ def write fun(javaScriptNode: JavaScriptNode) =>
     
 def writeBoolean fun(boolean: BooleanNode) =>
     if boolean.value() then "true" else "false"
+    
+def writeNumber fun(number: NumberNode) =>
+    number.value()
     
 def writeString fun(string: StringNode) =>
     json.stringifyString(string.value())

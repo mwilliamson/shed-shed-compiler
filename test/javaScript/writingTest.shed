@@ -20,6 +20,10 @@ val testCases = listOf(
         assertThat(write(js.boolean(false)), equalTo("false"))
     ),
     
+    TestCase("can write numbers", fun() =>
+        assertThat(write(js.number("4.2")), equalTo("4.2"))
+    ),
+    
     TestCase("can write strings", fun() =>
         assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
     ),
