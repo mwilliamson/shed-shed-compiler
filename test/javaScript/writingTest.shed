@@ -16,7 +16,7 @@ val testCases = listOf(
         assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
     ),
     
-    TestCase("can write variable referenences", fun() =>
+    TestCase("can write variable references", fun() =>
         assertThat(
             write(js.ref("print")),
             equalTo("print")
