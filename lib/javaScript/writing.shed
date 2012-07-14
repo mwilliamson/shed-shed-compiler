@@ -12,8 +12,9 @@ import shed.compiler.javaScript.js;
 def write fun(javaScriptNode: JavaScriptNode) =>
     match(javaScriptNode,
         matchClass(js.StringNode, writeString),
-        matchClass(js.CallNode, writeCall),
         matchClass(js.VariableReferenceNode, writeVariableReference),
+        matchClass(js.CallNode, writeCall),
+        matchClass(js.PropertyAccessNode, writePropertyAccess),
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
         matchClass(js.StatementsNode, writeStatements)
     )
@@ -21,14 +22,19 @@ def write fun(javaScriptNode: JavaScriptNode) =>
 def writeString fun(string: StringNode) =>
     json.stringifyString(string.value())
     
+def writeVariableReference fun(ref: VariableReferenceNode) =>
+    ref.identifier()
+    
 def writeCall fun(call: CallNode) =>
     write(call.callee())
         .concat("(")
         .concat(strings.join(", ", call.args().map(write)))
         .concat(")")
-    
-def writeVariableReference fun(ref: VariableReferenceNode) =>
-    ref.identifier()
+        
+def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
+    write(propertyAccess.left())
+        .concat(".")
+        .concat(propertyAccess.propertyName())
     
 def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
     write(expressionStatement.expression()).concat(";")
