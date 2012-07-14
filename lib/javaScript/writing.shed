@@ -15,6 +15,7 @@ def write fun(javaScriptNode: JavaScriptNode) =>
         matchClass(js.NumberNode, writeNumber),
         matchClass(js.StringNode, writeString),
         matchClass(js.VariableReferenceNode, writeVariableReference),
+        matchClass(js.ConditionalOperatorNode, writeConditionalOperator),
         matchClass(js.CallNode, writeCall),
         matchClass(js.PropertyAccessNode, writePropertyAccess),
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
@@ -32,6 +33,13 @@ def writeString fun(string: StringNode) =>
     
 def writeVariableReference fun(ref: VariableReferenceNode) =>
     ref.identifier()
+    
+def writeConditionalOperator fun(conditional: ConditionalOperatorNode) =>
+    write(conditional.condition())
+        .concat(" ? ")
+        .concat(write(conditional.trueValue()))
+        .concat(" : ")
+        .concat(write(conditional.falseValue()))
     
 def writeCall fun(call: CallNode) =>
     write(call.callee())

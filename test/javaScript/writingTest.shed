@@ -35,6 +35,17 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("can write conditional operator", fun() =>
+        assertThat(
+            write(js.conditional(
+                js.ref("condition"),
+                js.ref("trueValue"),
+                js.ref("falseValue")
+            )),
+            equalTo("condition ? trueValue : falseValue")
+        )
+    ),
+    
     TestCase("can write function calls", fun() =>
         assertThat(
             write(js.call(js.ref("print"), listOf(js.string("Hello world")))),
