@@ -12,6 +12,14 @@ import shed.compiler.javaScript.writing.write;
 import shed.compiler.javaScript.js;
 
 val testCases = listOf(
+    TestCase("can write boolean true", fun() =>
+        assertThat(write(js.boolean(true)), equalTo("true"))
+    ),
+    
+    TestCase("can write boolean false", fun() =>
+        assertThat(write(js.boolean(false)), equalTo("false"))
+    ),
+    
     TestCase("can write strings", fun() =>
         assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
     ),
