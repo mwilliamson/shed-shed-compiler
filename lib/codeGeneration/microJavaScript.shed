@@ -1,7 +1,8 @@
 module shed.compiler.codeGeneration.microJavaScript;
 
 members {
-    generate
+    generate,
+    Generator
 }
 
 import shed.compiler.nodes;
@@ -9,26 +10,36 @@ import shed.compiler.javaScript.js;
 
 val shed = nodes;
     
-def generate fun(node: Node) =>
-    match(node,
-        matchClass(shed.StringNode, generateString),
-        matchClass(shed.VariableReferenceNode, generateVariableReference),
-        matchClass(shed.CallNode, generateCall),
-        matchClass(shed.ExpressionStatementNode, generateExpressionStatement),
-        matchClass(shed.ModuleNode, generateModule)
-    )
-    
-def generateString fun(string: StringNode) =>
-    js.string(string.value())
+def generate fun(node: Node) => do {
+    val generator = Generator(generate);
+    return match(node,
+        matchClass(shed.StringNode, generator.string),
+        matchClass(shed.VariableReferenceNode, generator.variableReference),
+        matchClass(shed.CallNode, generator.call),
+        matchClass(shed.ExpressionStatementNode, generator.expressionStatement),
+        matchClass(shed.ModuleNode, generator.moduleNode)
+    );
+}
 
-def generateVariableReference fun(variableReference: VariableReferenceNode) =>
-    js.ref(variableReference.identifier())
-    
-def generateCall fun(call: CallNode) =>
-    js.call(generate(call.callee()), call.args().map(generate))
+def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
+    members {
+        string, variableReference, call,
+        expressionStatement,
+        moduleNode
+    }
 
-def generateExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
-    js.expressionStatement(generate(expressionStatement.expression()))
-    
-def generateModule fun(moduleNode: ModuleNode) =>
-    js.statements(moduleNode.statements().map(generate))
+    def string fun(string: StringNode) =>
+        js.string(string.value())
+
+    def variableReference fun(variableReference: VariableReferenceNode) =>
+        js.ref(variableReference.identifier())
+        
+    def call fun(call: CallNode) =>
+        js.call(generate(call.callee()), call.args().map(generate))
+
+    def expressionStatement fun(expressionStatement: ExpressionStatementNode) =>
+        js.expressionStatement(generate(expressionStatement.expression()))
+        
+    def moduleNode fun(moduleNode: ModuleNode) =>
+        js.statements(moduleNode.statements().map(generate))
+}
