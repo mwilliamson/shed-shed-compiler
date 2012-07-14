@@ -10,23 +10,22 @@ import shed.compiler.javaScript.js;
 
 val shed = nodes;
     
-def generate fun(node: Node) => do {
-    val generator = Generator(generate);
-    return match(node,
-        matchClass(shed.StringNode, generator.string),
-        matchClass(shed.VariableReferenceNode, generator.variableReference),
-        matchClass(shed.CallNode, generator.call),
-        matchClass(shed.ExpressionStatementNode, generator.expressionStatement),
-        matchClass(shed.ModuleNode, generator.moduleNode)
-    );
-}
+def generate fun(node: Node) =>
+    Generator(generate).generate(node)
 
 def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     members {
-        string, variableReference, call,
-        expressionStatement,
-        moduleNode
+        generate generatorGenerate
     }
+    
+    def generatorGenerate fun(node: ShedNode) =>
+        match(node,
+            matchClass(shed.StringNode, string),
+            matchClass(shed.VariableReferenceNode, variableReference),
+            matchClass(shed.CallNode, call),
+            matchClass(shed.ExpressionStatementNode, expressionStatement),
+            matchClass(shed.ModuleNode, moduleNode)
+        )
 
     def string fun(string: StringNode) =>
         js.string(string.value())

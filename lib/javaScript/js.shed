@@ -25,7 +25,8 @@ def StringNode class(value: String) => {
 
 def VariableReferenceNode class(identifier: String) => {
     members {
-        identifier fun() => identifier
+        identifier fun() => identifier,
+        struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
     }
 }
 

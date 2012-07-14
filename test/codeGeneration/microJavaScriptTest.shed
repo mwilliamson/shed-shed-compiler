@@ -17,10 +17,18 @@ val shed = nodes;
 val generator = Generator();
 
 val testCases = listOf(
-    TestCase("shed string generates JavaScript string", fun() =>
+    TestCase("Shed string generates JavaScript string", fun() =>
         assertThat(
-            generator.string(shed.string("blah")),
+            generator.generate(shed.string("blah")),
             equalTo(js.string("blah"))
         )
+    ),
+    
+    TestCase("Shed variable reference generates JavaScript variable reference", fun() =>
+        assertThat(
+            generator.generate(shed.ref("blah")),
+            equalTo(js.ref("blah"))
+        )
     )
+    
 );
