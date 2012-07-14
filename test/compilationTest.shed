@@ -1,4 +1,8 @@
-package shed.compiler;
+module shed.compiler.compilationTest;
+
+members {
+    testCases
+}
 
 import nodejs;
 
@@ -15,7 +19,7 @@ def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) =>
     return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
 };
 
-public val compilationTest = listOf(
+val testCases = listOf(
     TestCase("can execute program containing print statement", fun() => do {
         val shedProgram = "print(\"Hello world\");";
         val jsProgram = compilation.compileString(shedProgram);

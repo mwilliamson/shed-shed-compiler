@@ -1,24 +1,22 @@
-package shed.compiler;
+module shed.compiler.compilation;
+
+members {
+    compileString
+}
 
 import lop.strings.createStringSource;
 
-import shed.compiler.parsing.Parser;
+import shed.compiler.parsing.parser.Parser;
 import shed.compiler.parsing.modules.moduleRule;
 import shed.compiler.codeGeneration.microJavaScript;
 import shed.compiler.javaScript.writing;
 
-public val compilation = object {
-    members {
-        compileString
-    }
-    
-    val parser = Parser();
-    
-    def compileString fun(input: String) => do {
-        val source = createStringSource(input, "raw string");
-        val shedNode = parser.parse(moduleRule, source).value();
-        val javaScriptNode = microJavaScript.generate(shedNode);
-        return "var print = function(value) { process.stdout.write(value); };"
-            .concat(writing.write(javaScriptNode));
-    }
-};
+val parser = Parser();
+
+def compileString fun(input: String) => do {
+    val source = createStringSource(input, "raw string");
+    val shedNode = parser.parse(moduleRule, source).value();
+    val javaScriptNode = microJavaScript.generate(shedNode);
+    return "var print = function(value) { process.stdout.write(value); };"
+        .concat(writing.write(javaScriptNode));
+}

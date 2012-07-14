@@ -1,24 +1,22 @@
-package shed.compiler.parsing;
+module shed.compiler.parsing.statements;
+
+members {
+    statementRule
+}
 
 import lop.rules;
 
 import shed.compiler.nodes;
 import shed.compiler.parsing.expressions;
 
-public val statements = object {
-    members {
-        statementRule
-    }
-    
-    val expressionStatementRule =
-        rules.sequence()
-            .capture(expressions.expressionRule)
-            .next(rules.token("symbol", ";"))
-            .map(nodes.expressionStatement);
-    
-    val statementRule = rules.firstOf("statement",
-        listOf(
-            expressionStatementRule
-        )
-    );
-};
+val expressionStatementRule =
+    rules.sequence()
+        .capture(expressions.expressionRule)
+        .next(rules.token("symbol", ";"))
+        .map(nodes.expressionStatement);
+
+val statementRule = rules.firstOf("statement",
+    listOf(
+        expressionStatementRule
+    )
+);

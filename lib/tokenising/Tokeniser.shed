@@ -1,4 +1,8 @@
-package shed.compiler.tokenising;
+module shed.compiler.tokenising.tokeniser;
+
+members {
+    Tokeniser
+}
 
 import json;
 import regex;
@@ -11,10 +15,10 @@ import sets;
 import strings;
 
 import shed.compiler.tokenising.tokens;
-import lop.Token;
-import lop.StringSource;
+import lop.token.Token;
+import lop.sources.StringSource;
 
-public def Tokeniser class() => {
+def Tokeniser class() => {
     val keywords = sets.fromList[String](listOf(
         "true", "false", "return", "package", "import", "val", "var", "public",
         "object", "class", "interface", "if", "else", "while", "fun", "for",

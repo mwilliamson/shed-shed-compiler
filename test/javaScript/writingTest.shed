@@ -1,4 +1,8 @@
-package shed.compiler.javaScript;
+module shed.compiler.javaScript.writingTest;
+
+members {
+    testCases
+}
 
 import hat.TestCase;
 import duck.assertThat;
@@ -7,7 +11,7 @@ import duck.equalTo;
 import shed.compiler.javaScript.writing.write;
 import shed.compiler.javaScript.js;
 
-public val writingTest = listOf(
+val testCases = listOf(
     TestCase("can write strings", fun() =>
         assertThat(write(js.string("Hello world")), equalTo("\"Hello world\""))
     ),

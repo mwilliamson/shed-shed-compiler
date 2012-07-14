@@ -1,29 +1,38 @@
-package shed.compiler.tokenising;
+module shed.compiler.tokenising.tokens;
 
-import lop.Token;
+members {
+    end,
+    identifier,
+    keyword,
+    whitespace,
+    symbol,
+    string,
+    number,
+    comment
+}
 
-public val tokens = object {
-    public def end fun(source: StringSource) =>
-        Token("end", "", source);
-        
-    public def identifier fun(value: String, source: StringSource) =>
-        Token("identifier", value, source);
-        
-    public def keyword fun(value: String, source: StringSource) =>
-        Token("keyword", value, source);
-        
-    public def whitespace fun(value: String, source: StringSource) =>
-        Token("whitespace", value, source);
-        
-    public def symbol fun(value: String, source: StringSource) =>
-        Token("symbol", value, source);
-        
-    public def string fun(value: String, source: StringSource) =>
-        Token("string", value, source);
-        
-    public def number fun(value: String, source: StringSource) =>
-        Token("number", value, source);
-        
-    public def comment fun(value: String, source: StringSource) =>
-        Token("comment", value, source);
-};
+import lop.token.Token;
+
+def end fun(source: StringSource) =>
+    Token("end", "", source);
+    
+def identifier fun(value: String, source: StringSource) =>
+    Token("identifier", value, source);
+    
+def keyword fun(value: String, source: StringSource) =>
+    Token("keyword", value, source);
+    
+def whitespace fun(value: String, source: StringSource) =>
+    Token("whitespace", value, source);
+    
+def symbol fun(value: String, source: StringSource) =>
+    Token("symbol", value, source);
+    
+def string fun(value: String, source: StringSource) =>
+    Token("string", value, source);
+    
+def number fun(value: String, source: StringSource) =>
+    Token("number", value, source);
+    
+def comment fun(value: String, source: StringSource) =>
+    Token("comment", value, source);

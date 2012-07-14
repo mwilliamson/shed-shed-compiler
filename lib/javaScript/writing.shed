@@ -1,39 +1,37 @@
-package shed.compiler.javaScript;
+module shed.compiler.javaScript.writing;
+
+members {
+    write
+}
 
 import json;
 import strings;
 
 import shed.compiler.javaScript.js;
 
-public val writing = object {
-    members {
-        write
-    }
+def write fun(javaScriptNode: JavaScriptNode) =>
+    match(javaScriptNode,
+        matchClass(js.StringNode, writeString),
+        matchClass(js.CallNode, writeCall),
+        matchClass(js.VariableReferenceNode, writeVariableReference),
+        matchClass(js.ExpressionStatementNode, writeExpressionStatement),
+        matchClass(js.StatementsNode, writeStatements)
+    )
     
-    def write fun(javaScriptNode: JavaScriptNode) =>
-        match(javaScriptNode,
-            matchClass(js.StringNode, writeString),
-            matchClass(js.CallNode, writeCall),
-            matchClass(js.VariableReferenceNode, writeVariableReference),
-            matchClass(js.ExpressionStatementNode, writeExpressionStatement),
-            matchClass(js.StatementsNode, writeStatements)
-        )
-        
-    def writeString fun(string: StringNode) =>
-        json.stringifyString(string.value())
-        
-    def writeCall fun(call: CallNode) =>
-        write(call.callee())
-            .concat("(")
-            .concat(strings.join(", ", call.args().map(write)))
-            .concat(")")
-        
-    def writeVariableReference fun(ref: VariableReferenceNode) =>
-        ref.identifier()
-        
-    def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
-        write(expressionStatement.expression()).concat(";")
-        
-    def writeStatements fun(statements: StatementsNode) =>
-        strings.join("\n", statements.statements().map(write))
-};
+def writeString fun(string: StringNode) =>
+    json.stringifyString(string.value())
+    
+def writeCall fun(call: CallNode) =>
+    write(call.callee())
+        .concat("(")
+        .concat(strings.join(", ", call.args().map(write)))
+        .concat(")")
+    
+def writeVariableReference fun(ref: VariableReferenceNode) =>
+    ref.identifier()
+    
+def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
+    write(expressionStatement.expression()).concat(";")
+    
+def writeStatements fun(statements: StatementsNode) =>
+    strings.join("\n", statements.statements().map(write))

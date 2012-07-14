@@ -1,4 +1,8 @@
-package shed.compiler.parsing;
+module shed.compiler.parsing.modulesTest;
+
+members {
+    testCases
+}
 
 import hat.TestCase;
 import duck.assertThat;
@@ -9,18 +13,18 @@ import lop.testing.isSuccess;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.parsing.Parser;
+import shed.compiler.parsing.parser.Parser;
 import shed.compiler.parsing.modules;
 
-public val modulesTest = listOf[TestCase](
+val testCases = listOf[TestCase](
     TestCase("can parse module with no statements", fun() =>
-        assertSuccessfulParse("", nodes.module(emptyList))
+        assertSuccessfulParse("", nodes.moduleNode(emptyList))
     ),
     
     TestCase("can parse module with expressionStatements", fun() =>
         assertSuccessfulParse(
             "print(\"Hello\"); print(\" world\");",
-            nodes.module(listOf(
+            nodes.moduleNode(listOf(
                 nodes.expressionStatement(
                     nodes.call(
                         nodes.variableReference("print"),

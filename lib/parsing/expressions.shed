@@ -1,4 +1,8 @@
-package shed.compiler.parsing;
+module shed.compiler.parsing.expressions;
+
+members {
+    expressionRule
+}
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.NumberNode;
@@ -7,79 +11,77 @@ import shed.compiler.nodes.BooleanNode;
 import lop.rules;
 import lop.pratt;
 
-public val expressions = object {
-    def symbolRule fun(value: String) =>
-        rules.token("symbol", value);
+def symbolRule fun(value: String) =>
+    rules.token("symbol", value);
+    
+val numberRule = rules.map[String, NumberNode](
+    rules.tokenOfType("number"),
+    nodes.number
+);
+
+val unitRule =
+    rules.sequence()
+        .next(symbolRule("("))
+        .next(symbolRule(")"))
+        .map(fun() => nodes.unit());
+
+val trueRule = rules.map[Unit, BooleanNode](
+    rules.token("keyword", "true"),
+    fun() => nodes.boolean(true)
+);
+
+val falseRule = rules.map[Unit, BooleanNode](
+    rules.token("keyword", "false"),
+    fun() => nodes.boolean(false)
+);
+
+val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
         
-    val numberRule = rules.map[String, NumberNode](
-        rules.tokenOfType("number"),
-        nodes.number
-    );
+val stringRule = rules.map(
+    rules.tokenOfType("string"),
+    nodes.string
+);
+
+val variableReferenceRule = rules.map(
+    rules.tokenOfType("identifier"),
+    nodes.variableReference
+);
+
+def bracketedRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .next(symbolRule("("))
+        .capture(expressionRule)
+        .cut()
+        .next(symbolRule(")"))
+        .head()
+        (tokens)
     
-    val unitRule =
-        rules.sequence()
-            .next(symbolRule("("))
-            .next(symbolRule(")"))
-            .map(fun() => nodes.unit());
-    
-    val trueRule = rules.map[Unit, BooleanNode](
-        rules.token("keyword", "true"),
-        fun() => nodes.boolean(true)
-    );
-    
-    val falseRule = rules.map[Unit, BooleanNode](
-        rules.token("keyword", "false"),
-        fun() => nodes.boolean(false)
-    );
-    
-    val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
-            
-    val stringRule = rules.map(
-        rules.tokenOfType("string"),
-        nodes.string
-    );
-    
-    val variableReferenceRule = rules.map(
-        rules.tokenOfType("identifier"),
-        nodes.variableReference
-    );
-    
-    def bracketedRule fun(tokens: Sequence[Token]) =>
-        rules.sequence()
-            .next(symbolRule("("))
-            .capture(expressionRule)
-            .cut()
-            .next(symbolRule(")"))
-            .head()
-            (tokens)
-        
-    def partialCallRule fun(tokens: Sequence[Token]) =>
-        rules.sequence()
-            .next(symbolRule("("))
-            .cut()
-            .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
-            .next(symbolRule(")"))
-            .map(fun(args: List[ExpressionNode]) =>
-                fun(left: ExpressionNode) => nodes.call(left, args))
-            (tokens)
-    
-    val primaryExpressionRule = rules.firstOf("primary expression",
-        listOf(
-            unitRule,
-            numberRule,
-            booleanRule,
-            stringRule,
-            variableReferenceRule,
-            bracketedRule
-        )
-    );
-    
-    val expressionParser = pratt.parser("expression",
-        listOf(primaryExpressionRule),
-        listOf(
-            pratt.infix("call", partialCallRule)
-        )
-    );
-    
-    public val expressionRule = expressionParser.rule();
-};
+def partialCallRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .next(symbolRule("("))
+        .cut()
+        .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
+        .next(symbolRule(")"))
+        .map(fun(args: List[ExpressionNode]) =>
+            fun(left: ExpressionNode) => nodes.call(left, args))
+        (tokens)
+
+val primaryExpressionRule = rules.firstOf("primary expression",
+    listOf(
+        unitRule,
+        numberRule,
+        booleanRule,
+        stringRule,
+        variableReferenceRule,
+        bracketedRule
+    )
+);
+
+val expressionParser = pratt.parser("expression",
+    listOf(primaryExpressionRule),
+    listOf(
+        pratt.infix("call", partialCallRule)
+    )
+);
+
+val expressionRule = expressionParser.rule();

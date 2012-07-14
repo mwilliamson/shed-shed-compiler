@@ -1,13 +1,17 @@
-package shed.compiler.parsing;
+module shed.compiler.parsing.parser;
+
+members {
+    Parser
+}
 
 import lazySequences;
 
-import lop.Token;
-import shed.compiler.tokenising.Tokeniser;
+import lop.token.Token;
+import shed.compiler.tokenising.tokeniser.Tokeniser;
 import lop.results.Success;
 import shed.compiler.nodes;
 
-public def Parser class() => {
+def Parser class() => {
     val tokeniser = Tokeniser();
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>

@@ -1,4 +1,8 @@
-package shed.compiler.parsing;
+module shed.compiler.parsing.statementsTest;
+
+members {
+    testCases
+}
 
 import hat.TestCase;
 import duck.assertThat;
@@ -9,10 +13,10 @@ import lop.testing.isSuccess;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.parsing.Parser;
+import shed.compiler.parsing.parser.Parser;
 import shed.compiler.parsing.statements;
 
-public val statementsTest = listOf[TestCase](
+val testCases = listOf[TestCase](
     TestCase("can parse expression statement", fun() =>
         assertSuccessfulParse(
             "print(\"Hello\");",
