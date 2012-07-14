@@ -33,7 +33,8 @@ def VariableReferenceNode class(identifier: String) => {
 def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
     members {
         callee fun() => callee,
-        args fun() => args
+        args fun() => args,
+        struct fun() => structs.create(CallNode, listOf(callee, args))
     }
 }
 
