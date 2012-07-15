@@ -97,6 +97,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed return statement generates JavaScript return statement", fun() =>
+        assertThat(
+            generate(shed.ret(shed.string("Hello"))),
+            equalTo(js.ret(stub(shed.string("Hello"))))
+        )
+    ),
+    
     TestCase("Shed module generates list of JavaScript statements", fun() => do {
         val shedStatement = shed.expressionStatement(shed.string("Hello"));
         return assertThat(

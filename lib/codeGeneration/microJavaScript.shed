@@ -33,6 +33,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.FunctionNode, func),
             
             matchClass(shed.ExpressionStatementNode, expressionStatement),
+            matchClass(shed.ReturnStatementNode, returnStatement),
             
             matchClass(shed.ModuleNode, moduleNode)
         )
@@ -82,7 +83,10 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
 
     def expressionStatement fun(expressionStatement: ExpressionStatementNode) =>
         js.expressionStatement(generate(expressionStatement.expression()))
-        
+    
+    def returnStatement fun(returnStatement: ReturnStatementNode) =>
+        js.ret(generate(returnStatement.value()))
+    
     def moduleNode fun(moduleNode: ModuleNode) =>
         js.statements(moduleNode.statements().map(generate))
 }

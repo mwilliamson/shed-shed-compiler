@@ -28,6 +28,7 @@ members {
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
+    ret ReturnStatementNode,
     returnStatement ReturnStatementNode,
     ReturnStatementNode,
     valDeclaration ValDeclarationNode,
