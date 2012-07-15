@@ -84,6 +84,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("can write var declarations", fun() =>
+        assertThat(
+            write(js.varDeclaration("message", js.ref("hello"))),
+            equalTo("var message = hello;")
+        )
+    ),
+    
     TestCase("can write list of statements", fun() =>
         assertThat(
             write(js.statements(listOf(js.expressionStatement(js.ref("one")), js.expressionStatement(js.ref("two"))))),

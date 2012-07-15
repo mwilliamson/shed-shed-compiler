@@ -22,6 +22,7 @@ def write fun(javaScriptNode: JavaScriptNode) =>
         
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
         matchClass(js.ReturnNode, writeReturn),
+        matchClass(js.VarDeclarationNode, writeVar),
         
         matchClass(js.StatementsNode, writeStatements)
     )
@@ -76,6 +77,13 @@ def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =
 
 def writeReturn fun(returnStatement: ReturnNode) =>
     "return ".concat(write(returnStatement.value())).concat(";")
+
+def writeVar fun(varDeclaration: VarDeclarationNode) =>
+    "var "
+        .concat(varDeclaration.name())
+        .concat(" = ")
+        .concat(write(varDeclaration.initialValue()))
+        .concat(";")
 
 def writeStatements fun(statements: StatementsNode) =>
     strings.join("\n", statements.statements().map(write))
