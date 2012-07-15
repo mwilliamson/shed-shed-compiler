@@ -18,6 +18,7 @@ def write fun(javaScriptNode: JavaScriptNode) =>
         matchClass(js.ConditionalOperatorNode, writeConditionalOperator),
         matchClass(js.CallNode, writeCall),
         matchClass(js.PropertyAccessNode, writePropertyAccess),
+        matchClass(js.FunctionNode, writeFunction),
         
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
         matchClass(js.ReturnNode, writeReturn),
@@ -54,6 +55,21 @@ def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
     write(propertyAccess.left())
         .concat(".")
         .concat(propertyAccess.propertyName())
+    
+def writeFunction fun(func: FunctionNode) =>
+    "function("
+        .concat(strings.join(", ", func.formalArgs()))
+        .concat(") {")
+        .concat(writeIndentedStatements(func.statements()))
+        .concat("\n}")
+        
+def writeIndentedStatements fun(statements: List[StatementNode]) =>
+    strings.join(
+        "",
+        statements
+            .map(write)
+            .map(fun(statement: String) => "\n    ".concat(statement))
+    )
     
 def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
     write(expressionStatement.expression()).concat(";")

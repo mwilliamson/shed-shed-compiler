@@ -60,6 +60,16 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("can write functions", fun() =>
+        assertThat(
+            write(js.function(
+                listOf("name", "age"),
+                listOf(js.ret(js.ref("name")))
+            )),
+            equalTo("function(name, age) {\n    return name;\n}")
+        )
+    ),
+    
     TestCase("can write expression statements", fun() =>
         assertThat(
             write(js.expressionStatement(js.call(js.ref("print"), listOf(js.string("Hello world"))))),
