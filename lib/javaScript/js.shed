@@ -25,6 +25,8 @@ members {
     ExpressionStatementNode,
     ret ReturnNode,
     ReturnNode,
+    varDeclaration VarDeclarationNode,
+    VarDeclarationNode,
     
     statements StatementsNode,
     StatementsNode
@@ -111,6 +113,14 @@ def ReturnNode class(value: ExpressionNode) => {
     members {
         value fun() => value,
         struct fun() => structs.create(ReturnNode, listOf(value))
+    }
+}
+
+def VarDeclarationNode class(name: String, initialValue: ExpressionNode) => {
+    members {
+        name fun() => name,
+        initialValue fun() => initialValue,
+        struct fun() => structs.create(VarDeclarationNode, listOf(name, initialValue))
     }
 }
 

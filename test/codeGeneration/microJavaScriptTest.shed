@@ -104,6 +104,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed val declaration generates JavaScript var declaration", fun() =>
+        assertThat(
+            generate(shed.valDeclaration("name", shed.string("Bob"))),
+            equalTo(js.varDeclaration("name", stub(shed.string("Bob"))))
+        )
+    ),
+    
     TestCase("Shed module generates list of JavaScript statements", fun() => do {
         val shedStatement = shed.expressionStatement(shed.string("Hello"));
         return assertThat(
