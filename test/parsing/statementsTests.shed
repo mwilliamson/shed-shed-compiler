@@ -8,10 +8,11 @@ import hat.TestCase;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
+import shed.compiler.parsing.expressions.expressionRule;
 import shed.compiler.parsing.statements.statementRule;
 import shed.compiler.parsing.testing.createAssertSuccessfulParse;
 
-val testCases = listOf[TestCase](
+val testCases = listOf(
     TestCase("can parse expression statement", fun() =>
         assertSuccessfulParse(
             "print(\"Hello\");",
@@ -25,4 +26,4 @@ val testCases = listOf[TestCase](
     )
 );
 
-val assertSuccessfulParse = createAssertSuccessfulParse(statementRule);
+val assertSuccessfulParse = createAssertSuccessfulParse(statementRule(expressionRule));

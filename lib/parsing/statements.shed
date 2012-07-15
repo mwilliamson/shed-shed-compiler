@@ -7,16 +7,17 @@ members {
 import lop.rules;
 
 import shed.compiler.nodes;
-import shed.compiler.parsing.expressions;
 
-val expressionStatementRule =
-    rules.sequence()
-        .capture(expressions.expressionRule)
-        .next(rules.token("symbol", ";"))
-        .map(nodes.expressionStatement);
+def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
+    val expressionStatementRule =
+        rules.sequence()
+            .capture(expressionRule)
+            .next(rules.token("symbol", ";"))
+            .map(nodes.expressionStatement);
 
-val statementRule = rules.firstOf("statement",
-    listOf(
-        expressionStatementRule
-    )
-);
+    return rules.firstOf("statement",
+        listOf(
+            expressionStatementRule
+        )
+    );
+}
