@@ -4,18 +4,15 @@ members {
     expressionRule
 }
 
+import lop.rules;
+import lop.pratt;
+
 import shed.compiler.nodes;
 import shed.compiler.nodes.NumberNode;
 import shed.compiler.nodes.UnitNode;
 import shed.compiler.nodes.BooleanNode;
-import lop.rules;
-import lop.pratt;
 
-def symbolRule fun(value: String) =>
-    rules.token("symbol", value);
-    
-def keywordRule fun(value: String) =>
-    rules.token("keyword", value);
+import shed.compiler.parsing.tokenRules;
     
 val numberRule = rules.map[String, NumberNode](
     rules.tokenOfType("number"),
@@ -24,8 +21,8 @@ val numberRule = rules.map[String, NumberNode](
 
 val unitRule =
     rules.sequence()
-        .next(symbolRule("("))
-        .next(symbolRule(")"))
+        .next(tokenRules.symbol("("))
+        .next(tokenRules.symbol(")"))
         .map(fun() => nodes.unit());
 
 val trueRule = rules.map[Unit, BooleanNode](
@@ -52,40 +49,40 @@ val variableReferenceRule = rules.map(
 
 def ifThenElseRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(keywordRule("if"))
+        .next(tokenRules.keyword("if"))
         .cut()
         .capture(expressionRule)
-        .next(keywordRule("then"))
+        .next(tokenRules.keyword("then"))
         .capture(expressionRule)
-        .next(keywordRule("else"))
+        .next(tokenRules.keyword("else"))
         .capture(expressionRule)
         .map(nodes.ifThenElse)
         (tokens)
 
 def bracketedRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(symbolRule("("))
+        .next(tokenRules.symbol("("))
         .capture(expressionRule)
         .cut()
-        .next(symbolRule(")"))
+        .next(tokenRules.symbol(")"))
         .head()
         (tokens)
 
 def functionRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(keywordRule("fun"))
+        .next(tokenRules.keyword("fun"))
         .cut()
         .capture(formalArgumentListRule)
-        .next(symbolRule("=>"))
+        .next(tokenRules.symbol("=>"))
         .capture(expressionRule)
         .map(nodes.function)
         (tokens)
 
 def formalArgumentListRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(symbolRule("("))
-        .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, symbolRule(",")))
-        .next(symbolRule(")"))
+        .next(tokenRules.symbol("("))
+        .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, tokenRules.symbol(",")))
+        .next(tokenRules.symbol(")"))
         .head()
         (tokens)
         
@@ -93,7 +90,7 @@ def formalArgumentRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
         .capture(rules.tokenOfType("identifier"))
         .cut()
-        .next(symbolRule(":"))
+        .next(tokenRules.symbol(":"))
         .capture(expressionRule)
         .map(nodes.formalArgument)
         (tokens)
@@ -113,17 +110,17 @@ val primaryExpressionRule = rules.firstOf("primary expression",
     
 def partialCallRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(symbolRule("("))
+        .next(tokenRules.symbol("("))
         .cut()
-        .capture(rules.zeroOrMoreWithSeparator(expressionRule, symbolRule(",")))
-        .next(symbolRule(")"))
+        .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
+        .next(tokenRules.symbol(")"))
         .map(fun(args: List[ExpressionNode]) =>
             fun(left: ExpressionNode) => nodes.call(left, args))
         (tokens)
     
 def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .next(symbolRule("."))
+        .next(tokenRules.symbol("."))
         .cut()
         .capture(rules.tokenOfType("identifier"))
         .map(fun(memberName: String) =>
