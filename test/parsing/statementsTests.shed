@@ -20,6 +20,13 @@ val testCases = listOf(
             "hello;",
             nodes.expressionStatement(nodes.ref("hello"))
         )
+    ),
+    
+    TestCase("return statement is return keyword followed by expression", fun() =>
+        assertSuccessfulParse(
+            "return hello;",
+            nodes.returnStatement(nodes.ref("hello"))
+        )
     )
 );
 

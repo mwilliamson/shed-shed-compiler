@@ -28,6 +28,8 @@ members {
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
+    returnStatement ReturnStatementNode,
+    ReturnStatementNode,
     
     moduleNode ModuleNode,
     ModuleNode
@@ -118,6 +120,13 @@ def ExpressionStatementNode class(expression: ExpressionNode) => {
     members {
         expression fun() => expression,
         struct fun() => structs.create(ExpressionStatementNode, listOf(expression))
+    }
+}
+
+def ReturnStatementNode class(value: ExpressionNode) => {
+    members {
+        value fun() => value,
+        struct fun() => structs.create(ReturnStatementNode, listOf(value))  
     }
 }
 

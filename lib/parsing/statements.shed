@@ -7,6 +7,7 @@ members {
 import lop.rules;
 
 import shed.compiler.nodes;
+import shed.compiler.parsing.tokenRules;
 
 def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
     val expressionStatementRule =
@@ -14,9 +15,18 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             .capture(expressionRule)
             .next(rules.token("symbol", ";"))
             .map(nodes.expressionStatement);
-
+    
+    val returnRule =
+        rules.sequence()
+            .next(tokenRules.keyword("return"))
+            .cut()
+            .capture(expressionRule)
+            .next(tokenRules.symbol(";"))
+            .map(nodes.returnStatement);
+    
     return rules.firstOf("statement",
         listOf(
+            returnRule,
             expressionStatementRule
         )
     );
