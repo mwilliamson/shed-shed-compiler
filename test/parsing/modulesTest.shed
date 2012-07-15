@@ -44,9 +44,6 @@ val testCases = listOf[TestCase](
     
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
-    
-def parse fun(input: StringSource) =>
-    Parser().parse(expressions.expression, input);
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);

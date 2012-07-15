@@ -5,16 +5,11 @@ members {
 }
 
 import hat.TestCase;
-import duck.assertThat;
-import duck.equalTo;
-
-import lop.strings.createStringSource;
-import lop.testing.isSuccess;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.parsing.parser.Parser;
-import shed.compiler.parsing.expressions;
+import shed.compiler.parsing.expressions.expressionRule;
+import shed.compiler.parsing.testing.createAssertSuccessfulParse;
 
 val testCases = listOf[TestCase](
     TestCase("can parse variable reference", fun() =>
@@ -106,12 +101,5 @@ val testCases = listOf[TestCase](
         )
     )
 );
-    
-def stringSource fun(string: String) =>
-    createStringSource(string, "raw string");
 
-def assertSuccessfulParse fun(input: String, expected: Node) => do {
-    val source = stringSource(input);
-    val result = Parser().parseWithoutEndToken(expressions.expressionRule, source);
-    return assertThat[Node](result, isSuccess[Node](equalTo[Node](expected)));
-}
+val assertSuccessfulParse = createAssertSuccessfulParse(expressionRule);
