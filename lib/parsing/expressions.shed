@@ -92,6 +92,7 @@ def formalArgumentListRule fun(tokens: Sequence[Token]) =>
 def formalArgumentRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
         .capture(rules.tokenOfType("identifier"))
+        .cut()
         .next(symbolRule(":"))
         .capture(expressionRule)
         .map(nodes.formalArgument)
