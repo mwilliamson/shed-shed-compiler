@@ -101,6 +101,16 @@ val testCases = listOf[TestCase](
             "bob.name",
             nodes.memberAccess(nodes.ref("bob"), "name")
         )
+    ),
+    
+    TestCase("can parse function with no arguments", fun() =>
+        assertSuccessfulParse(
+            "fun() => ()",
+            nodes.function(
+                emptyList,
+                nodes.unit()
+            )
+        )
     )
 );
     

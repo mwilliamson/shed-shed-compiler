@@ -70,6 +70,30 @@ def bracketedRule fun(tokens: Sequence[Token]) =>
         .next(symbolRule(")"))
         .head()
         (tokens)
+
+def functionRule fun(tokens: Sequence[Tokens]) =>
+    rules.sequence()
+        .next(keywordRule("fun"))
+        .cut()
+        .next(symbolRule("("))
+        .next(symbolRule(")"))
+        .next(symbolRule("=>"))
+        .capture(expressionRule)
+        .map(fun(body: ExpressionNode) => nodes.function(emptyList, body))
+        (tokens)
+
+val primaryExpressionRule = rules.firstOf("primary expression",
+    listOf(
+        unitRule,
+        numberRule,
+        booleanRule,
+        stringRule,
+        variableReferenceRule,
+        ifThenElseRule,
+        bracketedRule,
+        functionRule
+    )
+);
     
 def partialCallRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
@@ -89,18 +113,6 @@ def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
         .map(fun(memberName: String) =>
             fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
         (tokens)
-
-val primaryExpressionRule = rules.firstOf("primary expression",
-    listOf(
-        unitRule,
-        numberRule,
-        booleanRule,
-        stringRule,
-        variableReferenceRule,
-        ifThenElseRule,
-        bracketedRule
-    )
-);
 
 val expressionParser = pratt.parser("expression",
     listOf(primaryExpressionRule),
