@@ -10,10 +10,12 @@ import shed.compiler.nodes;
 import shed.compiler.parsing.tokenRules;
 
 def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
+    val statementTerminator = tokenRules.symbol(";");
+    
     val expressionStatementRule =
         rules.sequence()
             .capture(expressionRule)
-            .next(rules.token("symbol", ";"))
+            .next(statementTerminator)
             .map(nodes.expressionStatement);
     
     val returnRule =
@@ -21,12 +23,23 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             .next(tokenRules.keyword("return"))
             .cut()
             .capture(expressionRule)
-            .next(tokenRules.symbol(";"))
+            .next(statementTerminator)
             .map(nodes.returnStatement);
+    
+    val valRule =
+        rules.sequence()
+            .next(tokenRules.keyword("val"))
+            .cut()
+            .capture(tokenRules.identifier())
+            .next(tokenRules.symbol("="))
+            .capture(expressionRule)
+            .next(statementTerminator)
+            .map(nodes.valDeclaration);
     
     return rules.firstOf("statement",
         listOf(
             returnRule,
+            valRule,
             expressionStatementRule
         )
     );

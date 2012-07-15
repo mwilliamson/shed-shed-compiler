@@ -27,6 +27,13 @@ val testCases = listOf(
             "return hello;",
             nodes.returnStatement(nodes.ref("hello"))
         )
+    ),
+    
+    TestCase("val statement is val keyword and identifier and initial value", fun() =>
+        assertSuccessfulParse(
+            "val loneliestNumber = one;",
+            nodes.valDeclaration("loneliestNumber", nodes.ref("one"))
+        )
     )
 );
 
