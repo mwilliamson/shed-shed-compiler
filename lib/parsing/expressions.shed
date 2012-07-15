@@ -71,15 +71,30 @@ def bracketedRule fun(tokens: Sequence[Token]) =>
         .head()
         (tokens)
 
-def functionRule fun(tokens: Sequence[Tokens]) =>
+def functionRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
         .next(keywordRule("fun"))
         .cut()
-        .next(symbolRule("("))
-        .next(symbolRule(")"))
+        .capture(formalArgumentListRule)
         .next(symbolRule("=>"))
         .capture(expressionRule)
-        .map(fun(body: ExpressionNode) => nodes.function(emptyList, body))
+        .map(nodes.function)
+        (tokens)
+
+def formalArgumentListRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .next(symbolRule("("))
+        .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, symbolRule(",")))
+        .next(symbolRule(")"))
+        .head()
+        (tokens)
+        
+def formalArgumentRule fun(tokens: Sequence[Token]) =>
+    rules.sequence()
+        .capture(rules.tokenOfType("identifier"))
+        .next(symbolRule(":"))
+        .capture(expressionRule)
+        .map(nodes.formalArgument)
         (tokens)
 
 val primaryExpressionRule = rules.firstOf("primary expression",

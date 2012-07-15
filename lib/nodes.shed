@@ -1,29 +1,35 @@
 module shed.compiler.nodes;
 
 members {
+    Node,
+    
+    formalArgument FormalArgumentNode,
+    FormalArgumentNode,
+    
     unit UnitNode,
+    UnitNode,
     number NumberNode,
+    NumberNode,
     boolean BooleanNode,
+    BooleanNode,
     string StringNode,
+    StringNode,
     variableReference VariableReferenceNode,
+    VariableReferenceNode,
     ref VariableReferenceNode,
     ifThenElse IfThenElseNode,
-    call CallNode,
-    memberAccess MemberAccessNode,
-    function FunctionNode,
-    expressionStatement ExpressionStatementNode,
-    moduleNode ModuleNode,
-    Node,
-    UnitNode,
-    NumberNode,
-    BooleanNode,
-    StringNode,
-    VariableReferenceNode,
     IfThenElseNode,
+    call CallNode,
     CallNode,
+    memberAccess MemberAccessNode,
     MemberAccessNode,
+    function FunctionNode,
     FunctionNode,
+    
+    expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
+    
+    moduleNode ModuleNode,
     ModuleNode
 }
 
@@ -31,6 +37,14 @@ import structs;
 
 // TODO: should be an interface
 def Node class() => {
+}
+
+def FormalArgumentNode class(name: String, type: ExpressionNode) => {
+    members {
+        name fun() => name,
+        type fun() => type,
+        struct fun() => structs.create(FormalArgumentNode, listOf(name, type))
+    }
 }
 
 def UnitNode class() => {

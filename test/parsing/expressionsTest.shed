@@ -111,6 +111,19 @@ val testCases = listOf[TestCase](
                 nodes.unit()
             )
         )
+    ),
+    
+    TestCase("can parse function with formal arguments", fun() =>
+        assertSuccessfulParse(
+            "fun(first: String, second: Any) => ()",
+            nodes.function(
+                listOf(
+                    nodes.formalArgument("first", nodes.ref("String")),
+                    nodes.formalArgument("second", nodes.ref("Any"))
+                ),
+                nodes.unit()
+            )
+        )
     )
 );
     
