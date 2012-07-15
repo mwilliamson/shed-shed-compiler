@@ -18,8 +18,14 @@ members {
     CallNode,
     propertyAccess PropertyAccessNode,
     PropertyAccessNode,
+    function FunctionNode,
+    FunctionNode,
+    
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
+    ret ReturnNode,
+    ReturnNode,
+    
     statements StatementsNode,
     StatementsNode
 }
@@ -86,10 +92,25 @@ def PropertyAccessNode class(left: ExpressionNode, propertyName: String) => {
     }
 }
 
+def FunctionNode class(formalArgs: List[String], body: List[StatementNode]) => {
+    members {
+        formalArgs fun() => formalArgs,
+        body fun() => body,
+        struct fun() => structs.create(FunctionNode, listOf(formalArgs, body))
+    }
+}
+
 def ExpressionStatementNode class(expression: ExpressionNode) => {
     members {
         expression fun() => expression,
         struct fun() => structs.create(ExpressionStatementNode, listOf(expression))
+    }
+}
+
+def ReturnNode class(value: ExpressionNode) => {
+    members {
+        value fun() => value,
+        struct fun() => structs.create(ReturnNode, listOf(value))
     }
 }
 

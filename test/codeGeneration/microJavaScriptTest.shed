@@ -74,6 +74,22 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed function generates JavaScript function wrapped in $shed.function", fun() =>
+        assertThat(
+            generate(shed.function(
+                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.unit()
+            )),
+            equalTo(js.call(
+                js.propertyAccess(js.ref("$shed"), "function"),
+                listOf(js.function(
+                    listOf("name"),
+                    listOf(js.ret(stub(shed.unit())))
+                ))
+            ))
+        )
+    ),
+    
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(
             generate(shed.expressionStatement(shed.string("Hello"))),
