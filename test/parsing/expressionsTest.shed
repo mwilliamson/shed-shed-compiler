@@ -17,26 +17,6 @@ import shed.compiler.parsing.parser.Parser;
 import shed.compiler.parsing.expressions;
 
 val testCases = listOf[TestCase](
-    TestCase("can parse unit", fun() =>
-        assertSuccessfulParse("()", nodes.unit())
-    ),
-    
-    TestCase("can parse number literal", fun() =>
-        assertSuccessfulParse("42", nodes.number("42"))
-    ),
-    
-    TestCase("can parse true literal", fun() =>
-        assertSuccessfulParse("true", nodes.boolean(true))
-    ),
-    
-    TestCase("can parse false literal", fun() =>
-        assertSuccessfulParse("false", nodes.boolean(false))
-    ),
-    
-    TestCase("can parse string literal", fun() =>
-        assertSuccessfulParse("\"blah\"", nodes.string("blah"))
-    ),
-    
     TestCase("can parse variable reference", fun() =>
         assertSuccessfulParse("blah", nodes.variableReference("blah"))
     ),
@@ -129,9 +109,6 @@ val testCases = listOf[TestCase](
     
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
-    
-def parse fun(input: StringSource) =>
-    Parser().parse(expressions.expression, input);
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);

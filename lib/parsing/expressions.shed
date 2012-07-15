@@ -13,35 +13,8 @@ import shed.compiler.nodes.UnitNode;
 import shed.compiler.nodes.BooleanNode;
 
 import shed.compiler.parsing.tokenRules;
+import shed.compiler.parsing.literals;
     
-val numberRule = rules.map[String, NumberNode](
-    rules.tokenOfType("number"),
-    nodes.number
-);
-
-val unitRule =
-    rules.sequence()
-        .next(tokenRules.symbol("("))
-        .next(tokenRules.symbol(")"))
-        .map(fun() => nodes.unit());
-
-val trueRule = rules.map[Unit, BooleanNode](
-    tokenRules.keyword("true"),
-    fun() => nodes.boolean(true)
-);
-
-val falseRule = rules.map[Unit, BooleanNode](
-    tokenRules.keyword("false"),
-    fun() => nodes.boolean(false)
-);
-
-val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
-        
-val stringRule = rules.map(
-    rules.tokenOfType("string"),
-    nodes.string
-);
-
 val variableReferenceRule = rules.map(
     tokenRules.identifier(),
     nodes.variableReference
@@ -97,10 +70,7 @@ def formalArgumentRule fun(tokens: Sequence[Token]) =>
 
 val primaryExpressionRule = rules.firstOf("primary expression",
     listOf(
-        unitRule,
-        numberRule,
-        booleanRule,
-        stringRule,
+        literals.literalRule,
         variableReferenceRule,
         ifThenElseRule,
         bracketedRule,

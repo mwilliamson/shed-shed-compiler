@@ -1,0 +1,45 @@
+module shed.compiler.parsing.literals;
+
+members {
+    literalRule
+}
+
+import lop.rules;
+
+import shed.compiler.nodes;
+import shed.compiler.parsing.tokenRules;
+
+val numberRule = rules.map[String, NumberNode](
+    rules.tokenOfType("number"),
+    nodes.number
+);
+
+val unitRule =
+    rules.sequence()
+        .next(tokenRules.symbol("("))
+        .next(tokenRules.symbol(")"))
+        .map(fun() => nodes.unit());
+
+val trueRule = rules.map[Unit, BooleanNode](
+    tokenRules.keyword("true"),
+    fun() => nodes.boolean(true)
+);
+
+val falseRule = rules.map[Unit, BooleanNode](
+    tokenRules.keyword("false"),
+    fun() => nodes.boolean(false)
+);
+
+val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
+        
+val stringRule = rules.map(
+    rules.tokenOfType("string"),
+    nodes.string
+);
+
+val literalRule = rules.firstOf("literal", listOf(
+    numberRule,
+    unitRule,
+    booleanRule,
+    stringRule
+));
