@@ -1,7 +1,7 @@
 module shed.compiler.parsing.tokenRules;
 
 members {
-    symbol, keyword
+    symbol, keyword, identifier
 }
 
 import lop.rules;
@@ -12,5 +12,5 @@ def symbol fun(value: String) =>
 def keyword fun(value: String) =>
     rules.token("keyword", value);
     
-def identifier fun(value: String) =>
-    rules.token("identifier", value);
+def identifier fun() =>
+    rules.tokenOfType("identifier");

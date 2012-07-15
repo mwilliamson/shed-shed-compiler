@@ -26,12 +26,12 @@ val unitRule =
         .map(fun() => nodes.unit());
 
 val trueRule = rules.map[Unit, BooleanNode](
-    rules.token("keyword", "true"),
+    tokenRules.keyword("true"),
     fun() => nodes.boolean(true)
 );
 
 val falseRule = rules.map[Unit, BooleanNode](
-    rules.token("keyword", "false"),
+    tokenRules.keyword("false"),
     fun() => nodes.boolean(false)
 );
 
@@ -43,7 +43,7 @@ val stringRule = rules.map(
 );
 
 val variableReferenceRule = rules.map(
-    rules.tokenOfType("identifier"),
+    tokenRules.identifier(),
     nodes.variableReference
 );
 
@@ -88,7 +88,7 @@ def formalArgumentListRule fun(tokens: Sequence[Token]) =>
         
 def formalArgumentRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
-        .capture(rules.tokenOfType("identifier"))
+        .capture(tokenRules.identifier())
         .cut()
         .next(tokenRules.symbol(":"))
         .capture(expressionRule)
@@ -122,7 +122,7 @@ def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
     rules.sequence()
         .next(tokenRules.symbol("."))
         .cut()
-        .capture(rules.tokenOfType("identifier"))
+        .capture(tokenRules.identifier())
         .map(fun(memberName: String) =>
             fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
         (tokens)
