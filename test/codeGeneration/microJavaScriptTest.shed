@@ -152,6 +152,21 @@ val testCases = listOf(
         );
     }),
     
+    TestCase("Shed do block generates JavaScript function that's immediately called", fun() => do {
+        val firstStatement = shed.expressionStatement(shed.string("Hello"));
+        val secondStatement = shed.ret(shed.string("world"));
+        return assertThat(
+            generate(shed.doBlock(listOf(firstStatement, secondStatement))),
+            equalTo(js.call(
+                js.function(
+                    emptyList,
+                    listOf(stub(firstStatement), stub(secondStatement))
+                ),
+                emptyList
+            ))
+        );
+    }),
+    
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(
             generate(shed.expressionStatement(shed.string("Hello"))),

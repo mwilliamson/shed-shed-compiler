@@ -33,6 +33,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.FunctionNode, func),
             matchClass(shed.ClassNode, classDeclaration),
             matchClass(shed.ObjectNode, obj),
+            matchClass(shed.DoBlockNode, doBlock),
             
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ReturnStatementNode, returnStatement),
@@ -96,6 +97,15 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     def obj fun(obj: ObjectNode) =>
         js.call(
             generate(shed.classDeclaration(emptyList, obj)),
+            emptyList
+        )
+
+    def doBlock fun(doBlock: DoBlockNode) =>
+        js.call(
+            js.function(
+                emptyList,
+                doBlock.statements().map(generate)  
+            ),
             emptyList
         )
 
