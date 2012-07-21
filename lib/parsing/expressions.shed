@@ -106,11 +106,10 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .next(tokenRules.keyword("class"))
             .cut()
-            .next(tokenRules.symbol("("))
-            .next(tokenRules.symbol(")"))
+            .capture(formalArgumentListRule)
             .next(tokenRules.symbol("=>"))
             .capture(objectBodyRule)
-            .map(fun(obj: ObjectNode) => nodes.classDeclaration(emptyList, obj));
+            .map(nodes.classDeclaration);
     
     val objectRule =
         rules.sequence()

@@ -154,6 +154,19 @@ val testCases = listOf[TestCase](
             )
         )
     ),
+                
+    TestCase("can parse class with formal arguments", fun() =>
+        assertSuccessfulParse(
+            "class(first: String, second: Any) => {}",
+            nodes.classDeclaration(
+                listOf(
+                    nodes.formalArgument("first", nodes.ref("String")),
+                    nodes.formalArgument("second", nodes.ref("Any"))
+                ),
+                nodes.obj(emptyList, emptyList)
+            )
+        )
+    ),
     
     TestCase("members can be empty", fun() =>
         assertSuccessfulMembersParse(
