@@ -69,13 +69,21 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .map(nodes.formalArgument)
             (tokens)
 
+    def memberDeclarationRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .capture(tokenRules.identifier())
+            .capture(expressionRule)
+            .map(nodes.memberDeclaration)
+            (tokens)
+
     val membersRule =
         rules.sequence()
             .next(tokenRules.keyword("members"))
             .cut()
             .next(tokenRules.symbol("{"))
+            .capture(rules.zeroOrMoreWithSeparator(memberDeclarationRule, tokenRules.symbol(",")))
             .next(tokenRules.symbol("}"))
-            .map(fun() => emptyList);
+            .head();
 
     val optionalMembersRule =
         rules.map(

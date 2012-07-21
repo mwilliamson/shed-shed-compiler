@@ -133,9 +133,16 @@ val testCases = listOf[TestCase](
     ),
     
     TestCase("members can be empty", fun() =>
-        assertSuccessfulParse(
+        assertSuccessfulMembersParse(
             "members { }",
             emptyList
+        )
+    ),
+    
+    TestCase("members can be declared inline", fun() =>
+        assertSuccessfulMembersParse(
+            "members { x 1 }",
+            listOf(nodes.memberDeclaration("x", nodes.number("1")))
         )
     )
 );
