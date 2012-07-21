@@ -187,6 +187,18 @@ val testCases = listOf[TestCase](
             "members { x }",
             listOf(nodes.memberDeclaration("x", nodes.ref("x")))
         )
+    ),
+                
+    TestCase("can parse do block", fun() =>
+        assertSuccessfulParse(
+            "do { x y }",
+            nodes.doBlock(
+                listOf(
+                    stubStatement("x"),
+                    stubStatement("y")
+                )
+            )
+        )
     )
 );
     

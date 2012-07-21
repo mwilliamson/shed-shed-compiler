@@ -31,6 +31,8 @@ members {
     ClassNode,
     obj ObjectNode,
     ObjectNode,
+    doBlock DoBlockNode,
+    DoBlockNode,
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
@@ -146,6 +148,13 @@ def ObjectNode class(memberDeclarations: List[MemberNode], statements: List[Stat
         memberDeclarations fun() => memberDeclarations,
         statements fun() => statements,
         struct fun() => structs.create(ObjectNode, listOf(memberDeclarations, statements))
+    }
+}
+
+def DoBlockNode class(statements: List[StatementNode]) => {
+    members {
+        statements fun() => statements,
+        struct fun() => structs.create(DoBlockNode, listOf(statements))
     }
 }
 

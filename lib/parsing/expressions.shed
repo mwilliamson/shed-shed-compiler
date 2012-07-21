@@ -118,6 +118,15 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .capture(objectBodyRule)
             .head();
 
+    val doBlockRule =
+        rules.sequence()
+            .next(tokenRules.keyword("do"))
+            .cut()
+            .next(tokenRules.symbol("{"))
+            .capture(rules.zeroOrMore(statementRule))
+            .next(tokenRules.symbol("}"))
+            .map(nodes.doBlock);
+
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(
             literals.literalRule,
@@ -126,7 +135,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             bracketedRule,
             functionRule,
             objectRule,
-            classRule
+            classRule,
+            doBlockRule
         )
     );
         
