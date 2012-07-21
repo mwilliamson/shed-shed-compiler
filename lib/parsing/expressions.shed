@@ -72,6 +72,7 @@ def expressionRule fun(statementRule: Rule[StatementNode]) => do {
     val objectRule =
         rules.sequence()
             .next(tokenRules.keyword("object"))
+            .cut()
             .next(tokenRules.symbol("{"))
             .capture(rules.zeroOrMore(statementRule))
             .next(tokenRules.symbol("}"))
