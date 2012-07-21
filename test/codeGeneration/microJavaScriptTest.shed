@@ -119,7 +119,7 @@ val testCases = listOf(
             generate(shed.classDeclaration(
                 listOf(shed.formalArgument("name", shed.ref("String"))),
                 shed.obj(
-                    listOf(nodes.memberDeclaration("x", nodes.ref("x"))),
+                    listOf(shed.memberDeclaration("x", nodes.ref("x"))),
                     listOf(shedStatement)
                 )
             )),
@@ -137,6 +137,20 @@ val testCases = listOf(
             ))
         )
     ),
+    
+    TestCase("Shed object generates Shed class that's immediately instantiated", fun() => do {
+        val obj = shed.obj(
+            listOf(shed.memberDeclaration("x", nodes.ref("x"))),
+            listOf(shedStatement)
+        );
+        return assertThat(
+            generate(obj),
+            equalTo(js.call(
+                stub(shed.classDeclaration(emptyList, obj)),
+                emptyList
+            ))
+        );
+    }),
     
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(

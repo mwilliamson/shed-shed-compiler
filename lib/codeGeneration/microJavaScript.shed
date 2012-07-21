@@ -32,6 +32,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.MemberAccessNode, memberAccess),
             matchClass(shed.FunctionNode, func),
             matchClass(shed.ClassNode, classDeclaration),
+            matchClass(shed.ObjectNode, obj),
             
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ReturnStatementNode, returnStatement),
@@ -90,6 +91,12 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
                 generateFormalArgs(classDeclaration.formalArgs()),
                 generateObjectBody(classDeclaration.body())
             ))
+        )
+        
+    def obj fun(obj: ObjectNode) =>
+        js.call(
+            generate(shed.classDeclaration(emptyList, obj)),
+            emptyList
         )
 
     def expressionStatement fun(expressionStatement: ExpressionStatementNode) =>
