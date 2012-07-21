@@ -1,7 +1,7 @@
 module shed.compiler.parsing.expressions;
 
 members {
-    expressionRule
+    expressionRules
 }
 
 import lop.rules;
@@ -20,7 +20,7 @@ val variableReferenceRule = rules.map(
     nodes.variableReference
 );
     
-def expressionRule fun(statementRule: Rule[StatementNode]) => do {
+def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     def ifThenElseRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
             .next(tokenRules.keyword("if"))
@@ -133,5 +133,9 @@ def expressionRule fun(statementRule: Rule[StatementNode]) => do {
     );
 
     val expressionRule = expressionParser.rule();
-    return expressionRule;
+    return object {
+        members {
+            expression fun() => expressionRule
+        }
+    };  
 }

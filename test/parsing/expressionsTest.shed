@@ -9,7 +9,7 @@ import lop.rules;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
-import shed.compiler.parsing.expressions.expressionRule;
+import shed.compiler.parsing.expressions.expressionRules;
 import shed.compiler.parsing.testing.createAssertSuccessfulParse;
 
 val testCases = listOf[TestCase](
@@ -142,4 +142,4 @@ val statementRule =
         stubStatement
     );
 
-val assertSuccessfulParse = createAssertSuccessfulParse(expressionRule(statementRule));
+val assertSuccessfulParse = createAssertSuccessfulParse(expressionRules(statementRule).expression());
