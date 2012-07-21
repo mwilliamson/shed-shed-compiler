@@ -68,13 +68,21 @@ def formalArgumentRule fun(tokens: Sequence[Token]) =>
         .map(nodes.formalArgument)
         (tokens)
 
+val objectRule =
+    rules.sequence()
+        .next(tokenRules.keyword("object"))
+        .next(tokenRules.symbol("{"))
+        .next(tokenRules.symbol("}"))
+        .map(fun() => nodes.obj(emptyList, emptyList));
+
 val primaryExpressionRule = rules.firstOf("primary expression",
     listOf(
         literals.literalRule,
         variableReferenceRule,
         ifThenElseRule,
         bracketedRule,
-        functionRule
+        functionRule,
+        objectRule
     )
 );
     

@@ -99,6 +99,16 @@ val testCases = listOf[TestCase](
                 nodes.unit()
             )
         )
+    ),
+    
+    TestCase("can parse empty object", fun() =>
+        assertSuccessfulParse(
+            "object { }",
+            nodes.obj(
+                emptyList,
+                emptyList
+            )
+        )
     )
 );
 

@@ -25,6 +25,8 @@ members {
     MemberAccessNode,
     function FunctionNode,
     FunctionNode,
+    obj ObjectNode,
+    ObjectNode,
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
@@ -116,6 +118,14 @@ def FunctionNode class(formalArgs: List[FormalArgumentNode], body: ExpressionNod
         formalArgs fun() => formalArgs,
         body fun() => body,
         struct fun() => structs.create(FunctionNode, listOf(formalArgs, body))
+    }
+}
+
+def ObjectNode class(memberDeclarations: List[MemberNode], body: List[StatementNode]) => {
+    members {
+        memberDeclarations fun() => memberDeclarations,
+        body fun() => body,
+        struct fun() => structs.create(ObjectNode, listOf(memberDeclarations, body))
     }
 }
 
