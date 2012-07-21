@@ -144,6 +144,13 @@ val testCases = listOf[TestCase](
             "members { x 1 }",
             listOf(nodes.memberDeclaration("x", nodes.number("1")))
         )
+    ),
+    
+    TestCase("members can be declared from outer scope", fun() =>
+        assertSuccessfulMembersParse(
+            "members { x }",
+            listOf(nodes.memberDeclaration("x", nodes.ref("x")))
+        )
     )
 );
     

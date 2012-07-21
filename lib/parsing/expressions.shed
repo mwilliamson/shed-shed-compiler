@@ -72,8 +72,10 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     def memberDeclarationRule fun(tokens: Sequence[Token]) =>
         rules.sequence()
             .capture(tokenRules.identifier())
-            .capture(expressionRule)
-            .map(nodes.memberDeclaration)
+            .capture(rules.optional(expressionRule))
+            .map(fun(name: String, value: Option[ExpressionNode]) =>
+                nodes.memberDeclaration(name, value.valueOrElse(fun() => nodes.ref(name)))
+            )
             (tokens)
 
     val membersRule =
