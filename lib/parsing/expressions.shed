@@ -93,7 +93,18 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             fun(value: Option[List[MemberDeclarationNode]]) =>
                 value.valueOrElse(fun() => emptyList)
         );
-
+    
+    val classRule =
+        rules.sequence()
+            .next(tokenRules.keyword("class"))
+            .cut()
+            .next(tokenRules.symbol("("))
+            .next(tokenRules.symbol(")"))
+            .next(tokenRules.symbol("=>"))
+            .next(tokenRules.symbol("{"))
+            .next(tokenRules.symbol("}"))
+            .map(fun() => nodes.classDeclaration(emptyList, nodes.obj(emptyList, emptyList)));
+    
     val objectRule =
         rules.sequence()
             .next(tokenRules.keyword("object"))
@@ -111,7 +122,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             ifThenElseRule,
             bracketedRule,
             functionRule,
-            objectRule
+            objectRule,
+            classRule
         )
     );
         
