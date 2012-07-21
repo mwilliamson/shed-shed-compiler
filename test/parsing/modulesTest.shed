@@ -10,6 +10,7 @@ import duck.equalTo;
 
 import lop.strings.createStringSource;
 import lop.testing.isSuccess;
+import lop.rules;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
@@ -21,32 +22,31 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse("", nodes.moduleNode(emptyList))
     ),
     
-    TestCase("can parse module with expressionStatements", fun() =>
+    TestCase("can parse module with statements", fun() =>
         assertSuccessfulParse(
-            "print(\"Hello\"); print(\" world\");",
+            "x y",
             nodes.moduleNode(listOf(
-                nodes.expressionStatement(
-                    nodes.call(
-                        nodes.variableReference("print"),
-                        listOf(nodes.string("Hello"))
-                    )
-                ),
-                nodes.expressionStatement(
-                    nodes.call(
-                        nodes.variableReference("print"),
-                        listOf(nodes.string(" world"))
-                    )
-                )
+                stubStatement("x"),
+                stubStatement("y")
             ))
         )
     )
 );
+    
+def stubStatement fun(name: String) =>
+    nodes.expressionStatement(nodes.ref(name))
+
+val statementRule =
+    rules.map(
+        rules.tokenOfType("identifier"),
+        stubStatement
+    );
     
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);
-    val result = Parser().parse(modules.moduleRule, source);
+    val result = Parser().parse(modules.moduleRule(statementRule), source);
     return assertThat(result, isSuccess(equalTo(expected)));
 }

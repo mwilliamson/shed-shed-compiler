@@ -5,6 +5,7 @@ members {
 }
 
 import hat.TestCase;
+import lop.rules;
 
 import shed.compiler.nodes;
 import shed.compiler.nodes.Node;
@@ -109,7 +110,26 @@ val testCases = listOf[TestCase](
                 emptyList
             )
         )
+    ),
+    
+    TestCase("can parse object with body", fun() =>
+        assertSuccessfulParse(
+            "object { x y }",
+            nodes.obj(
+                emptyList,
+                listOf(stubStatement("x"), stubStatement("y"))
+            )
+        )
     )
 );
+    
+def stubStatement fun(name: String) =>
+    nodes.expressionStatement(nodes.ref(name))
 
-val assertSuccessfulParse = createAssertSuccessfulParse(expressionRule);
+val statementRule =
+    rules.map(
+        rules.tokenOfType("identifier"),
+        stubStatement
+    );
+
+val assertSuccessfulParse = createAssertSuccessfulParse(expressionRule(statementRule));

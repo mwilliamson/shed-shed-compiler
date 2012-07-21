@@ -14,103 +14,107 @@ import shed.compiler.nodes.BooleanNode;
 
 import shed.compiler.parsing.tokenRules;
 import shed.compiler.parsing.literals;
-    
+
 val variableReferenceRule = rules.map(
     tokenRules.identifier(),
     nodes.variableReference
 );
+    
+def expressionRule fun(statementRule: Rule[StatementNode]) => do {
+    def ifThenElseRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.keyword("if"))
+            .cut()
+            .capture(expressionRule)
+            .next(tokenRules.keyword("then"))
+            .capture(expressionRule)
+            .next(tokenRules.keyword("else"))
+            .capture(expressionRule)
+            .map(nodes.ifThenElse)
+            (tokens)
 
-def ifThenElseRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.keyword("if"))
-        .cut()
-        .capture(expressionRule)
-        .next(tokenRules.keyword("then"))
-        .capture(expressionRule)
-        .next(tokenRules.keyword("else"))
-        .capture(expressionRule)
-        .map(nodes.ifThenElse)
-        (tokens)
+    def bracketedRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.symbol("("))
+            .capture(expressionRule)
+            .cut()
+            .next(tokenRules.symbol(")"))
+            .head()
+            (tokens)
 
-def bracketedRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.symbol("("))
-        .capture(expressionRule)
-        .cut()
-        .next(tokenRules.symbol(")"))
-        .head()
-        (tokens)
+    def functionRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.keyword("fun"))
+            .cut()
+            .capture(formalArgumentListRule)
+            .next(tokenRules.symbol("=>"))
+            .capture(expressionRule)
+            .map(nodes.function)
+            (tokens)
 
-def functionRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.keyword("fun"))
-        .cut()
-        .capture(formalArgumentListRule)
-        .next(tokenRules.symbol("=>"))
-        .capture(expressionRule)
-        .map(nodes.function)
-        (tokens)
+    def formalArgumentListRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.symbol("("))
+            .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, tokenRules.symbol(",")))
+            .next(tokenRules.symbol(")"))
+            .head()
+            (tokens)
+            
+    def formalArgumentRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .capture(tokenRules.identifier())
+            .cut()
+            .next(tokenRules.symbol(":"))
+            .capture(expressionRule)
+            .map(nodes.formalArgument)
+            (tokens)
 
-def formalArgumentListRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.symbol("("))
-        .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, tokenRules.symbol(",")))
-        .next(tokenRules.symbol(")"))
-        .head()
-        (tokens)
+    val objectRule =
+        rules.sequence()
+            .next(tokenRules.keyword("object"))
+            .next(tokenRules.symbol("{"))
+            .capture(rules.zeroOrMore(statementRule))
+            .next(tokenRules.symbol("}"))
+            .map(fun(body: List[StatementNode]) => nodes.obj(emptyList, body));
+
+    val primaryExpressionRule = rules.firstOf("primary expression",
+        listOf(
+            literals.literalRule,
+            variableReferenceRule,
+            ifThenElseRule,
+            bracketedRule,
+            functionRule,
+            objectRule
+        )
+    );
         
-def formalArgumentRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .capture(tokenRules.identifier())
-        .cut()
-        .next(tokenRules.symbol(":"))
-        .capture(expressionRule)
-        .map(nodes.formalArgument)
-        (tokens)
+    def partialCallRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.symbol("("))
+            .cut()
+            .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
+            .next(tokenRules.symbol(")"))
+            .map(fun(args: List[ExpressionNode]) =>
+                fun(left: ExpressionNode) => nodes.call(left, args))
+            (tokens)
+        
+    def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
+        rules.sequence()
+            .next(tokenRules.symbol("."))
+            .cut()
+            .capture(tokenRules.identifier())
+            .map(fun(memberName: String) =>
+                fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
+            (tokens)
 
-val objectRule =
-    rules.sequence()
-        .next(tokenRules.keyword("object"))
-        .next(tokenRules.symbol("{"))
-        .next(tokenRules.symbol("}"))
-        .map(fun() => nodes.obj(emptyList, emptyList));
+    val expressionParser = pratt.parser("expression",
+        listOf(primaryExpressionRule),
+        listOf(
+            pratt.infix("call", partialCallRule),
+            pratt.infix("memberAccess", partialMemberAccessRule)
+        )
+    );
 
-val primaryExpressionRule = rules.firstOf("primary expression",
-    listOf(
-        literals.literalRule,
-        variableReferenceRule,
-        ifThenElseRule,
-        bracketedRule,
-        functionRule,
-        objectRule
-    )
-);
-    
-def partialCallRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.symbol("("))
-        .cut()
-        .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
-        .next(tokenRules.symbol(")"))
-        .map(fun(args: List[ExpressionNode]) =>
-            fun(left: ExpressionNode) => nodes.call(left, args))
-        (tokens)
-    
-def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
-    rules.sequence()
-        .next(tokenRules.symbol("."))
-        .cut()
-        .capture(tokenRules.identifier())
-        .map(fun(memberName: String) =>
-            fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
-        (tokens)
-
-val expressionParser = pratt.parser("expression",
-    listOf(primaryExpressionRule),
-    listOf(
-        pratt.infix("call", partialCallRule),
-        pratt.infix("memberAccess", partialMemberAccessRule)
-    )
-);
-
-val expressionRule = expressionParser.rule();
+    val expressionRule = expressionParser.rule();
+    return expressionRule;
+}

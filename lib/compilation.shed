@@ -7,6 +7,8 @@ members {
 import lop.strings.createStringSource;
 
 import shed.compiler.parsing.parser.Parser;
+import shed.compiler.parsing.expressions.expressionRule;
+import shed.compiler.parsing.statements.statementRule;
 import shed.compiler.parsing.modules.moduleRule;
 import shed.compiler.codeGeneration.microJavaScript;
 import shed.compiler.javaScript.writing;
@@ -15,9 +17,21 @@ val parser = Parser();
 
 def compileString fun(input: String) => do {
     val source = createStringSource(input, "raw string");
-    val shedNode = parser.parse(moduleRule, source).value();
+    val shedNode = parser.parse(parseRule(), source).value();
     val javaScriptNode = microJavaScript.generate(shedNode);
     return "var $shed = {string: function(value) { return {$value: value}; } };"
         .concat("var print = function(value) { process.stdout.write(value.$value); };")
         .concat(writing.write(javaScriptNode));
 }
+
+def parseRule fun() => do {
+    // HACK TODO FIXME: need a better way of doing indirect mutual recursion
+    def expression fun(tokens: Sequence[Token]) =>
+        expressionRule(statement)(tokens)
+        
+    def statement fun(tokens: Sequence[Token]) =>
+        statementRule(expression)(tokens)
+        
+    return moduleRule(statement);
+}
+    

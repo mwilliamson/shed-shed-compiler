@@ -7,12 +7,9 @@ members {
 import lop.rules;
 
 import shed.compiler.nodes;
-import shed.compiler.parsing.statements;
-import shed.compiler.parsing.expressions.expressionRule;
 
-val moduleBodyRule = rules.zeroOrMore(statements.statementRule(expressionRule));
-
-val moduleRule = rules.sequence()
-    .capture(moduleBodyRule)
-    .next(rules.tokenOfType("end"))
-    .map(nodes.moduleNode);
+def moduleRule fun(statementRule: Rule[StatementNode]) =>
+    rules.sequence()
+        .capture(rules.zeroOrMore(statementRule))
+        .next(rules.tokenOfType("end"))
+        .map(nodes.moduleNode);
