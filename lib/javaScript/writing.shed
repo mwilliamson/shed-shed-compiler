@@ -9,13 +9,18 @@ import strings;
 
 import shed.compiler.javaScript.js;
 
+val lowestPrecedence = 100;
+
 def write fun(javaScriptNode: JavaScriptNode) =>
+    writeWithPrecedence(javaScriptNode, lowestPrecedence)
+
+def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) =>
     match(javaScriptNode,
         matchClass(js.BooleanNode, writeBoolean),
         matchClass(js.NumberNode, writeNumber),
         matchClass(js.StringNode, writeString),
         matchClass(js.VariableReferenceNode, writeVariableReference),
-        matchClass(js.ConditionalOperatorNode, writeConditionalOperator),
+        matchClass(js.ConditionalOperatorNode, writeExpression(conditionalOperator, precedence)),
         matchClass(js.CallNode, writeCall),
         matchClass(js.PropertyAccessNode, writePropertyAccess),
         matchClass(js.FunctionNode, writeFunction),
@@ -26,7 +31,29 @@ def write fun(javaScriptNode: JavaScriptNode) =>
         
         matchClass(js.StatementsNode, writeStatements)
     )
+
+def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Double) =>
+    fun(node: T) =>
+        if precedence.lessThan(expressionType.precedence) then
+            "(".concat(expressionType.write(node)).concat(")")
+        else
+            expressionType.write(node)
+
+val conditionalOperator = object {
+    members {
+        precedence 15,
+        write writeConditionalOperator
+    }
     
+    def writeConditionalOperator fun(conditional: ConditionalOperatorNode) =>
+        write(conditional.condition())
+            .concat(" ? ")
+            .concat(write(conditional.trueValue()))
+            .concat(" : ")
+            .concat(write(conditional.falseValue()))
+};
+
+
 def writeBoolean fun(boolean: BooleanNode) =>
     if boolean.value() then "true" else "false"
     
@@ -39,15 +66,8 @@ def writeString fun(string: StringNode) =>
 def writeVariableReference fun(ref: VariableReferenceNode) =>
     ref.identifier()
     
-def writeConditionalOperator fun(conditional: ConditionalOperatorNode) =>
-    write(conditional.condition())
-        .concat(" ? ")
-        .concat(write(conditional.trueValue()))
-        .concat(" : ")
-        .concat(write(conditional.falseValue()))
-    
 def writeCall fun(call: CallNode) =>
-    write(call.callee())
+    writeWithPrecedence(call.callee(), 2)
         .concat("(")
         .concat(strings.join(", ", call.args().map(write)))
         .concat(")")

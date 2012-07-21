@@ -70,6 +70,20 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("operation is wrapped in brackets when used in higher-precedence operation", fun() =>
+        assertThat(
+            write(js.call(
+                js.conditional(
+                    js.ref("condition"),
+                    js.ref("trueValue"),
+                    js.ref("falseValue")
+                ),
+                emptyList
+            )),
+            equalTo("(condition ? trueValue : falseValue)()")
+        )
+    ),
+    
     TestCase("can write expression statements", fun() =>
         assertThat(
             write(js.expressionStatement(js.call(js.ref("print"), listOf(js.string("Hello world"))))),
