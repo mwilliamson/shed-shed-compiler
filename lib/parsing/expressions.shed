@@ -94,6 +94,14 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
                 value.valueOrElse(fun() => emptyList)
         );
     
+    val objectBodyRule =
+        rules.sequence()
+            .next(tokenRules.symbol("{"))
+            .capture(optionalMembersRule)
+            .capture(rules.zeroOrMore(statementRule))
+            .next(tokenRules.symbol("}"))
+            .map(nodes.obj);
+    
     val classRule =
         rules.sequence()
             .next(tokenRules.keyword("class"))
@@ -101,19 +109,15 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(tokenRules.symbol("("))
             .next(tokenRules.symbol(")"))
             .next(tokenRules.symbol("=>"))
-            .next(tokenRules.symbol("{"))
-            .next(tokenRules.symbol("}"))
-            .map(fun() => nodes.classDeclaration(emptyList, nodes.obj(emptyList, emptyList)));
+            .capture(objectBodyRule)
+            .map(fun(obj: ObjectNode) => nodes.classDeclaration(emptyList, obj));
     
     val objectRule =
         rules.sequence()
             .next(tokenRules.keyword("object"))
             .cut()
-            .next(tokenRules.symbol("{"))
-            .capture(optionalMembersRule)
-            .capture(rules.zeroOrMore(statementRule))
-            .next(tokenRules.symbol("}"))
-            .map(nodes.obj);
+            .capture(objectBodyRule)
+            .head();
 
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(

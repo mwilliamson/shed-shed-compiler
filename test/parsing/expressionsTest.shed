@@ -142,6 +142,19 @@ val testCases = listOf[TestCase](
         )
     ),
     
+    TestCase("can parse class with body", fun() =>
+        assertSuccessfulParse(
+            "class() => { members { x } x y }",
+            nodes.classDeclaration(
+                emptyList,
+                nodes.obj(
+                    listOf(nodes.memberDeclaration("x", nodes.ref("x"))),
+                    listOf(stubStatement("x"), stubStatement("y"))
+                )
+            )
+        )
+    ),
+    
     TestCase("members can be empty", fun() =>
         assertSuccessfulMembersParse(
             "members { }",
