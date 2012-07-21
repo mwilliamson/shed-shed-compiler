@@ -33,11 +33,16 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
     )
 
 def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Double) =>
-    fun(node: T) =>
-        if precedence.lessThan(expressionType.precedence) then
-            "(".concat(expressionType.write(node)).concat(")")
+    fun(node: T) => do {
+        def subWrite fun(node: JavaScriptNode) =>
+            writeWithPrecedence(node, expressionType.precedence)
+            
+        val innerString = expressionType.write(subWrite, node);
+        return if precedence.lessThanOrEqual(expressionType.precedence) then
+            "(".concat(innerString).concat(")")
         else
-            expressionType.write(node)
+            innerString;
+    }
 
 val conditionalOperator = object {
     members {
@@ -45,7 +50,7 @@ val conditionalOperator = object {
         write writeConditionalOperator
     }
     
-    def writeConditionalOperator fun(conditional: ConditionalOperatorNode) =>
+    def writeConditionalOperator fun(write: Function[JavaScriptNode, String], conditional: ConditionalOperatorNode) =>
         write(conditional.condition())
             .concat(" ? ")
             .concat(write(conditional.trueValue()))
