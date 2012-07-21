@@ -24,6 +24,7 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
         matchClass(js.CallNode, writeCall),
         matchClass(js.PropertyAccessNode, writePropertyAccess),
         matchClass(js.FunctionNode, writeFunction),
+        matchClass(js.ObjectNode, writeObject),
         
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
         matchClass(js.ReturnNode, writeReturn),
@@ -88,7 +89,7 @@ def writeFunction fun(func: FunctionNode) =>
         .concat(") {")
         .concat(writeIndentedStatements(func.statements()))
         .concat("\n}")
-        
+
 def writeIndentedStatements fun(statements: List[StatementNode]) =>
     strings.join(
         "",
@@ -96,7 +97,17 @@ def writeIndentedStatements fun(statements: List[StatementNode]) =>
             .map(write)
             .map(fun(statement: String) => "\n    ".concat(statement))
     )
-    
+
+def writeObject fun(obj: ObjectNode) =>
+    "{"
+        .concat(strings.join(",", obj.properties().map(writeProperty)))
+        .concat("\n}")
+
+def writeProperty fun(property: Tuple[String, ExpressionNode]) =>
+    property.map(fun(name: String, value: ExpressionNode) =>
+        "\n    ".concat(name).concat(": ").concat(write(value))
+    )
+
 def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
     write(expressionStatement.expression()).concat(";")
 

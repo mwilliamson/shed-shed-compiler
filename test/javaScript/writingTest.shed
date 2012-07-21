@@ -70,6 +70,23 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("can write empty object literal", fun() =>
+        assertThat(
+            write(js.obj(emptyList)),
+            equalTo("{\n}")
+        )
+    ),
+    
+    TestCase("can write object literal", fun() =>
+        assertThat(
+            write(js.obj(listOf(
+                tuple("one", js.number("1")),
+                tuple("two", js.number("2"))
+            ))),
+            equalTo("{\n    one: 1,\n    two: 2\n}")
+        )
+    ),
+    
     TestCase("operation is wrapped in brackets when used in higher-precedence operation", fun() =>
         assertThat(
             write(js.call(
