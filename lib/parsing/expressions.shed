@@ -69,14 +69,30 @@ def expressionRule fun(statementRule: Rule[StatementNode]) => do {
             .map(nodes.formalArgument)
             (tokens)
 
+    val membersRule =
+        rules.sequence()
+            .next(tokenRules.keyword("members"))
+            .cut()
+            .next(tokenRules.symbol("{"))
+            .next(tokenRules.symbol("}"))
+            .map(fun() => emptyList);
+
+    val optionalMembersRule =
+        rules.map(
+            rules.optional(membersRule),
+            fun(value: Option[List[MemberDeclarationNode]]) =>
+                value.valueOrElse(fun() => emptyList)
+        );
+
     val objectRule =
         rules.sequence()
             .next(tokenRules.keyword("object"))
             .cut()
             .next(tokenRules.symbol("{"))
+            .capture(optionalMembersRule)
             .capture(rules.zeroOrMore(statementRule))
             .next(tokenRules.symbol("}"))
-            .map(fun(body: List[StatementNode]) => nodes.obj(emptyList, body));
+            .map(nodes.obj);
 
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(

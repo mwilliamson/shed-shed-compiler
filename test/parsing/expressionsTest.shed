@@ -120,6 +120,16 @@ val testCases = listOf[TestCase](
                 listOf(stubStatement("x"), stubStatement("y"))
             )
         )
+    ),
+    
+    TestCase("can parse object with empty members", fun() =>
+        assertSuccessfulParse(
+            "object { members { } x y }",
+            nodes.obj(
+                emptyList,
+                listOf(stubStatement("x"), stubStatement("y"))
+            )
+        )
     )
 );
     
