@@ -14,6 +14,8 @@ import shed.compiler.javaScript.js;
 
 val shed = nodes;
 
+val shedStatement = shed.expressionStatement(shed.string("Hello"));
+
 val testCases = listOf(
     TestCase("Shed unit generates reference to $shed.unit", fun() =>
         assertThat(
@@ -90,6 +92,52 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed class without members generates JavaScript function that returns an empty object", fun() =>
+        assertThat(
+            generate(shed.classDeclaration(
+                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.obj(
+                    emptyList,
+                    listOf(shedStatement)
+                )
+            )),
+            equalTo(js.call(
+                js.propertyAccess(js.ref("$shed"), "class"),
+                listOf(js.function(
+                    listOf("name"),
+                    listOf(
+                        stub(shedStatement),
+                        js.ret(js.obj(emptyList))
+                    )
+                ))
+            ))
+        )
+    ),
+    
+    TestCase("Shed class generates JavaScript function that returns an object of members", fun() =>
+        assertThat(
+            generate(shed.classDeclaration(
+                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.obj(
+                    listOf(nodes.memberDeclaration("x", nodes.ref("x"))),
+                    listOf(shedStatement)
+                )
+            )),
+            equalTo(js.call(
+                js.propertyAccess(js.ref("$shed"), "class"),
+                listOf(js.function(
+                    listOf("name"),
+                    listOf(
+                        stub(shedStatement),
+                        js.ret(js.obj(listOf(
+                            tuple("x", stub(nodes.ref("x")))
+                        )))
+                    )
+                ))
+            ))
+        )
+    ),
+    
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(
             generate(shed.expressionStatement(shed.string("Hello"))),
@@ -111,13 +159,12 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed module generates list of JavaScript statements", fun() => do {
-        val shedStatement = shed.expressionStatement(shed.string("Hello"));
-        return assertThat(
+    TestCase("Shed module generates list of JavaScript statements", fun() =>
+        assertThat(
             generate(shed.moduleNode(listOf(shedStatement))),
             equalTo(js.statements(listOf(stub(shedStatement))))
-        );
-    })
+        )
+    )
 );
 
 def subGenerate fun(node: ShedNode) =>

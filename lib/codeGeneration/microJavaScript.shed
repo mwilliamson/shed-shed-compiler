@@ -31,6 +31,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.CallNode, call),
             matchClass(shed.MemberAccessNode, memberAccess),
             matchClass(shed.FunctionNode, func),
+            matchClass(shed.ClassNode, classDeclaration),
             
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ReturnStatementNode, returnStatement),
@@ -77,8 +78,17 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.call(
             js.propertyAccess(shedGlobal, "function"),
             listOf(js.function(
-                func.formalArgs().map(fun(arg: FormalArgumentNode) => arg.name()),
+                generateFormalArgs(func.formalArgs()),
                 listOf(js.ret(generate(func.body())))
+            ))
+        )
+        
+    def classDeclaration fun(classDeclaration: ClassNode) =>
+        js.call(
+            js.propertyAccess(shedGlobal, "class"),
+            listOf(js.function(
+                generateFormalArgs(classDeclaration.formalArgs()),
+                generateObjectBody(classDeclaration.body())
             ))
         )
 
@@ -96,4 +106,16 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     
     def moduleNode fun(moduleNode: ModuleNode) =>
         js.statements(moduleNode.statements().map(generate))
+
+    def generateFormalArgs fun(formalArgs: List[FormalArgumentNode]) =>
+        formalArgs.map(fun(arg: FormalArgumentNode) => arg.name())
+
+    def generateObjectBody fun(body: ObjectNode) =>
+        body.statements().map(generate)
+            .concat(listOf(js.ret(generateMembersObject(body.memberDeclarations()))))
+            
+    def generateMembersObject fun(membersDeclaration: List[MemberDeclarationNode]) =>
+        js.obj(membersDeclaration.map(fun(memberDeclaration: MemberDeclarationNode) =>
+            tuple(memberDeclaration.name(), generate(memberDeclaration.value()))
+        ))
 }

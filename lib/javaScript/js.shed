@@ -20,6 +20,8 @@ members {
     PropertyAccessNode,
     function FunctionNode,
     FunctionNode,
+    obj ObjectNode,
+    ObjectNode,
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
@@ -99,6 +101,13 @@ def FunctionNode class(formalArgs: List[String], statements: List[StatementNode]
         formalArgs fun() => formalArgs,
         statements fun() => statements,
         struct fun() => structs.create(FunctionNode, listOf(formalArgs, statements))
+    }
+}
+
+def ObjectNode class(properties: List[Tuple[String, ExpressionNode]]) => {
+    members {
+        properties fun() => properties,
+        struct fun() => structs.create(ObjectNode, listOf(properties))
     }
 }
 

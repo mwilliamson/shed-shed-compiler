@@ -144,7 +144,7 @@ def ClassNode class(formalArgs: List[FormalArgumentNode], body: ObjectNode) => {
 def ObjectNode class(memberDeclarations: List[MemberNode], statements: List[StatementNode]) => {
     members {
         memberDeclarations fun() => memberDeclarations,
-        statements fun() => body,
+        statements fun() => statements,
         struct fun() => structs.create(ObjectNode, listOf(memberDeclarations, statements))
     }
 }
