@@ -130,6 +130,13 @@ val testCases = listOf[TestCase](
                 listOf(stubStatement("x"), stubStatement("y"))
             )
         )
+    ),
+    
+    TestCase("members can be empty", fun() =>
+        assertSuccessfulParse(
+            "members { }",
+            emptyList
+        )
     )
 );
     
@@ -143,3 +150,7 @@ val statementRule =
     );
 
 val assertSuccessfulParse = createAssertSuccessfulParse(expressionRules(statementRule).expression());
+
+// TODO: members should be in their own module?
+val assertSuccessfulMembersParse =
+    createAssertSuccessfulParse(expressionRules(statementRule).membersRule());

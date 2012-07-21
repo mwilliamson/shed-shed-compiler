@@ -135,7 +135,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     val expressionRule = expressionParser.rule();
     return object {
         members {
-            expression fun() => expressionRule
+            expression fun() => expressionRule,
+            membersRule fun() => membersRule
         }
     };  
 }
