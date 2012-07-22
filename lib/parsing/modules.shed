@@ -18,7 +18,7 @@ def moduleRule fun(statementRule: Rule[StatementNode]) =>
         .capture(rules.zeroOrMore(statementRule))
         .next(rules.tokenOfType("end"))
         .map(fun(name: Option[List[String]], imports: List[ImportNode], statements: List[StatementNode]) =>
-            nodes.moduleNode(name, imports, statements));
+            nodes.moduleNode(name, emptyList, imports.concat(statements)));
 
 val moduleName = rules.zeroOrMoreWithSeparator(
     tokenRules.identifier(),

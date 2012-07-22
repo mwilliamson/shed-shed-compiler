@@ -199,11 +199,11 @@ def ImportNode class(moduleName: List[String]) => {
     }
 }
 
-def ModuleNode class(name: List[String], imports: List[ImportNode], statements: List[StatementNode]) => {
+def ModuleNode class(name: List[String], memberDeclarations: List[MemberNode], statements: List[StatementNode]) => {
     members {
         name fun() => name,
-        imports fun() => imports,
+        memberDeclarations fun() => memberDeclarations,
         statements fun() => statements,
-        struct fun() => structs.create(ModuleNode, listOf(name, imports, statements))
+        struct fun() => structs.create(ModuleNode, listOf(name, memberDeclarations, statements))
     }
 }

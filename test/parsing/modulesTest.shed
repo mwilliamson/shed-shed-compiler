@@ -57,11 +57,11 @@ val testCases = listOf[TestCase](
             "import shed.first; import shed.second;",
             nodes.moduleNode(
                 options.none,
+                emptyList,
                 listOf(
                     nodes.importStatement(listOf("shed", "first")),
                     nodes.importStatement(listOf("shed", "second"))
-                ),
-                emptyList
+                )
             )
         )
     )

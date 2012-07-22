@@ -147,8 +147,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.call(
             js.function(
                 emptyList,
-                moduleNode.imports().map(generate)
-                    .concat(moduleNode.statements().map(generate))
+                moduleNode.statements().map(generate)
             ),
             emptyList
         )
