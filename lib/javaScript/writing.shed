@@ -20,10 +20,10 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
         matchClass(js.NumberNode, writeNumber),
         matchClass(js.StringNode, writeString),
         matchClass(js.VariableReferenceNode, writeVariableReference),
-        matchClass(js.ConditionalOperatorNode, writeExpression(conditionalOperator, precedence)),
+        matchClass(js.ConditionalOperatorNode, writeExpression(conditionalOperatorWriter, precedence)),
         matchClass(js.CallNode, writeCall),
         matchClass(js.PropertyAccessNode, writePropertyAccess),
-        matchClass(js.FunctionNode, writeFunction),
+        matchClass(js.FunctionNode, writeExpression(functionWriter, precedence)),
         matchClass(js.ObjectNode, writeObject),
         
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
@@ -45,7 +45,7 @@ def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Do
             innerString;
     }
 
-val conditionalOperator = object {
+val conditionalOperatorWriter = object {
     members {
         precedence 15,
         write writeConditionalOperator
@@ -58,7 +58,6 @@ val conditionalOperator = object {
             .concat(" : ")
             .concat(write(conditional.falseValue()))
 };
-
 
 def writeBoolean fun(boolean: BooleanNode) =>
     if boolean.value() then "true" else "false"
@@ -82,13 +81,20 @@ def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
     writeWithPrecedence(propertyAccess.left(), 1)
         .concat(".")
         .concat(propertyAccess.propertyName())
+
+val functionWriter = object {
+    members {
+        precedence 20,
+        write writeFunction
+    }
     
-def writeFunction fun(func: FunctionNode) =>
-    "function("
-        .concat(strings.join(", ", func.formalArgs()))
-        .concat(") {")
-        .concat(writeIndentedStatements(func.statements()))
-        .concat("\n}")
+    def writeFunction fun(write: Function[JavaScriptNode, String], func: FunctionNode) =>
+        "function("
+            .concat(strings.join(", ", func.formalArgs()))
+            .concat(") {")
+            .concat(writeIndentedStatements(func.statements()))
+            .concat("\n}")
+};
 
 def writeIndentedStatements fun(statements: List[StatementNode]) =>
     strings.join(

@@ -118,6 +118,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("immediately invoked function is wrapped in brackets", fun() =>
+        assertThat(
+            write(js.call(js.function(emptyList, emptyList), emptyList)),
+            equalTo("(function() {\n})()")
+        )
+    ),
+    
     TestCase("can write expression statements", fun() =>
         assertThat(
             write(js.expressionStatement(js.call(js.ref("print"), listOf(js.string("Hello world"))))),
