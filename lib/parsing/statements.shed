@@ -36,10 +36,19 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             .next(statementTerminator)
             .map(nodes.valDeclaration);
     
+    val defRule =
+        rules.sequence()
+            .next(tokenRules.keyword("def"))
+            .cut()
+            .capture(tokenRules.identifier())
+            .capture(expressionRule)
+            .map(nodes.definition);
+    
     return rules.firstOf("statement",
         listOf(
             returnRule,
             valRule,
+            defRule,
             expressionStatementRule
         )
     );

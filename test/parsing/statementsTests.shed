@@ -29,10 +29,17 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("val statement is val keyword and identifier and initial value", fun() =>
+    TestCase("val statement is val keyword and identifier and value", fun() =>
         assertSuccessfulParse(
             "val loneliestNumber = one;",
             nodes.valDeclaration("loneliestNumber", nodes.ref("one"))
+        )
+    ),
+    
+    TestCase("def statement is def keyword and identifier and value", fun() =>
+        assertSuccessfulParse(
+            "def name bob",
+            nodes.definition("name", nodes.ref("bob"))
         )
     )
 );
