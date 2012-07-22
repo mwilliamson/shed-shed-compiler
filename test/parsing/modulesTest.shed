@@ -4,6 +4,8 @@ members {
     testCases
 }
 
+import options;
+
 import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
@@ -19,16 +21,23 @@ import shed.compiler.parsing.modules;
 
 val testCases = listOf[TestCase](
     TestCase("can parse module with no statements", fun() =>
-        assertSuccessfulParse("", nodes.moduleNode(emptyList))
+        assertSuccessfulParse(
+            "",
+            nodes.moduleNode(options.none, emptyList, emptyList)
+        )
     ),
     
     TestCase("can parse module with statements", fun() =>
         assertSuccessfulParse(
             "x y",
-            nodes.moduleNode(listOf(
-                stubStatement("x"),
-                stubStatement("y")
-            ))
+            nodes.moduleNode(
+                options.none,
+                emptyList,
+                listOf(
+                    stubStatement("x"),
+                    stubStatement("y")
+                )
+            )
         )
     )
 );

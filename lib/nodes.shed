@@ -190,9 +190,11 @@ def DefinitionNode class(name: String, value: ExpressionNode) => {
     }
 }
 
-def ModuleNode class(statements: List[StatementNode]) => {
+def ModuleNode class(name: List[String], imports: List[ImportNode], statements: List[StatementNode]) => {
     members {
+        name fun() => name,
+        imports fun() => imports,
         statements fun() => statements,
-        struct fun() => structs.create(ModuleNode, listOf(statements))
+        struct fun() => structs.create(ModuleNode, listOf(name, imports, statements))
     }
 }

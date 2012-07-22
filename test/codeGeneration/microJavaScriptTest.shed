@@ -4,6 +4,8 @@ members {
     testCases
 }
 
+import options;
+
 import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
@@ -206,7 +208,7 @@ val testCases = listOf(
     
     TestCase("Shed module generates list of JavaScript statements", fun() =>
         assertThat(
-            generate(shed.moduleNode(listOf(shedStatement))),
+            generate(shed.moduleNode(options.none, emptyList, listOf(shedStatement))),
             equalTo(js.statements(listOf(stub(shedStatement))))
         )
     )

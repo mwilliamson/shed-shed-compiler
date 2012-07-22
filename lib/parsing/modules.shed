@@ -4,6 +4,8 @@ members {
     moduleRule
 }
 
+import options;
+
 import lop.rules;
 
 import shed.compiler.nodes;
@@ -12,4 +14,5 @@ def moduleRule fun(statementRule: Rule[StatementNode]) =>
     rules.sequence()
         .capture(rules.zeroOrMore(statementRule))
         .next(rules.tokenOfType("end"))
-        .map(nodes.moduleNode);
+        .map(fun(statements: List[StatementNode]) =>
+            nodes.moduleNode(options.none, emptyList, statements));
