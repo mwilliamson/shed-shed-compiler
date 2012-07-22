@@ -227,6 +227,35 @@ val testCases = listOf(
                 emptyList
             ))
         )
+    ),
+    
+    TestCase("named Shed module exports object of members", fun() =>
+        assertThat(
+            generate(shed.moduleNode(
+                options.some(listOf("shed", "example")),
+                listOf(shed.memberDeclaration("value", shed.ref("value"))),
+                listOf(shedStatement)
+            )),
+            equalTo(
+                js.expressionStatement(
+                    js.call(
+                        js.propertyAccess(js.ref("$shed"), "exportModule"),
+                        listOf(
+                            js.string("shed.example"),
+                            js.function(
+                                emptyList,
+                                listOf(
+                                    stub(shedStatement),
+                                    js.ret(js.obj(listOf(
+                                        tuple("value", stub(shed.ref("value")))
+                                    )))
+                                )
+                            )
+                        )
+                    )
+                )
+            )
+        )
     )
 );
 

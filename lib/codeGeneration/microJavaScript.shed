@@ -144,13 +144,9 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         )
     
     def moduleNode fun(moduleNode: ModuleNode) =>
-        js.call(
-            js.function(
-                emptyList,
-                moduleNode.statements().map(generate)
-            ),
-            emptyList
-        )
+        moduleNode.name()
+            .map(fun(name: List[String]) => generateNamedModule(name, moduleNode))
+            .valueOrElse(fun() => generateUnnamedModule(moduleNode))
 
     def generateFormalArgs fun(formalArgs: List[FormalArgumentNode]) =>
         formalArgs.map(fun(arg: FormalArgumentNode) => arg.name())
@@ -163,4 +159,28 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.obj(membersDeclaration.map(fun(memberDeclaration: MemberDeclarationNode) =>
             tuple(memberDeclaration.name(), generate(memberDeclaration.value()))
         ))
+        
+    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) =>
+        js.expressionStatement(
+            js.call(
+                js.propertyAccess(shedGlobal, "exportModule"),
+                listOf(
+                    js.string(strings.join(".", name)),
+                    js.function(
+                        emptyList,
+                        moduleNode.statements().map(generate)
+                            .concat(listOf(js.ret(generateMembersObject(moduleNode.memberDeclarations()))))
+                    )
+                )
+            )
+        )
+    
+    def generateUnnamedModule fun(moduleNode: ModuleNode) =>
+        js.call(
+            js.function(
+                emptyList,
+                moduleNode.statements().map(generate)
+            ),
+            emptyList
+        )
 }
