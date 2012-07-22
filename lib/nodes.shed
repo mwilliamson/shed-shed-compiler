@@ -44,6 +44,8 @@ members {
     definition DefinitionNode,
     DefinitionNode,
     
+    importStatement ImportNode,
+    ImportNode,
     moduleNode ModuleNode,
     ModuleNode
 }
@@ -187,6 +189,13 @@ def DefinitionNode class(name: String, value: ExpressionNode) => {
         name fun() => name,
         value fun() => value,
         struct fun() => structs.create(DefinitionNode, listOf(name, value))  
+    }
+}
+
+def ImportNode class(moduleName: List[String]) => {
+    members {
+        moduleName fun() => moduleName,
+        struct fun() => structs.create(ImportNode, listOf(moduleName))
     }
 }
 

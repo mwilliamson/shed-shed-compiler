@@ -13,19 +13,30 @@ import shed.compiler.parsing.tokenRules;
 
 def moduleRule fun(statementRule: Rule[StatementNode]) =>
     rules.sequence()
-        .capture(rules.optional(moduleName))
+        .capture(rules.optional(moduleDeclaration))
+        .capture(rules.zeroOrMore(importRule))
         .capture(rules.zeroOrMore(statementRule))
         .next(rules.tokenOfType("end"))
-        .map(fun(name: Option[List[String]], statements: List[StatementNode]) =>
-            nodes.moduleNode(name, emptyList, statements));
+        .map(fun(name: Option[List[String]], imports: List[ImportNode], statements: List[StatementNode]) =>
+            nodes.moduleNode(name, imports, statements));
 
-val moduleName =
+val moduleName = rules.zeroOrMoreWithSeparator(
+    tokenRules.identifier(),
+    tokenRules.symbol(".")
+);
+
+val moduleDeclaration =
     rules.sequence()
         .next(tokenRules.keyword("module"))
         .cut()
-        .capture(rules.zeroOrMoreWithSeparator(
-            tokenRules.identifier(),
-            tokenRules.symbol(".")
-        ))
+        .capture(moduleName)
         .next(tokenRules.symbol(";"))
         .head();
+        
+val importRule =
+    rules.sequence()
+        .next(tokenRules.keyword("import"))
+        .cut()
+        .capture(moduleName)
+        .next(tokenRules.symbol(";"))
+        .map(nodes.importStatement);

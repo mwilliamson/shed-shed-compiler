@@ -50,6 +50,20 @@ val testCases = listOf[TestCase](
                 emptyList
             )
         )
+    ),
+    
+    TestCase("can parse empty module with imports", fun() =>
+        assertSuccessfulParse(
+            "import shed.first; import shed.second;",
+            nodes.moduleNode(
+                options.none,
+                listOf(
+                    nodes.importStatement(listOf("shed", "first")),
+                    nodes.importStatement(listOf("shed", "second"))
+                ),
+                emptyList
+            )
+        )
     )
 );
     
