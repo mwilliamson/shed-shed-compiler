@@ -144,7 +144,10 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         )
     
     def moduleNode fun(moduleNode: ModuleNode) =>
-        js.statements(moduleNode.statements().map(generate))
+        js.statements(
+            moduleNode.imports().map(generate)
+                .concat(moduleNode.statements().map(generate))
+        )
 
     def generateFormalArgs fun(formalArgs: List[FormalArgumentNode]) =>
         formalArgs.map(fun(arg: FormalArgumentNode) => arg.name())

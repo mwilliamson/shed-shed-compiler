@@ -221,7 +221,15 @@ val testCases = listOf(
             generate(shed.moduleNode(options.none, emptyList, listOf(shedStatement))),
             equalTo(js.statements(listOf(stub(shedStatement))))
         )
-    )
+    ),
+    
+    TestCase("imports in Shed module are included before statements", fun() => do {
+        val importStatement = shed.importStatement(listOf("shed", "example"));
+        return assertThat(
+            generate(shed.moduleNode(options.none, listOf(importStatement), listOf(shedStatement))),
+            equalTo(js.statements(listOf(stub(importStatement), stub(shedStatement))))
+        );
+    })
 );
 
 def subGenerate fun(node: ShedNode) =>
