@@ -38,6 +38,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.ExpressionStatementNode, expressionStatement),
             matchClass(shed.ReturnStatementNode, returnStatement),
             matchClass(shed.ValDeclarationNode, valDeclaration),
+            matchClass(shed.DefinitionNode, definition),
             
             matchClass(shed.ModuleNode, moduleNode)
         )
@@ -119,6 +120,15 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.varDeclaration(
             valDeclaration.name(),
             generate(valDeclaration.value())
+        )
+    
+    def definition fun(definition: DefinitionNode) =>
+        js.varDeclaration(
+            definition.name(),
+            js.call(
+                js.propertyAccess(generate(definition.value()), "$define"),
+                listOf(definition.name())
+            )
         )
     
     def moduleNode fun(moduleNode: ModuleNode) =>

@@ -188,6 +188,22 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed def generates JavaScript variable with the result of calling $define on the value", fun() =>
+        assertThat(
+            generate(shed.definition("name", shed.string("Bob"))),
+            equalTo(js.varDeclaration(
+                "name",
+                js.call(
+                    js.propertyAccess(
+                        stub(shed.string("Bob")),
+                        "$define"
+                    ),
+                    listOf("name")
+                )
+            ))
+        )
+    ),
+    
     TestCase("Shed module generates list of JavaScript statements", fun() =>
         assertThat(
             generate(shed.moduleNode(listOf(shedStatement))),
