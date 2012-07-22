@@ -5,6 +5,8 @@ members {
     Generator
 }
 
+import strings;
+
 import shed.compiler.nodes;
 import shed.compiler.javaScript.js;
 
@@ -40,6 +42,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.ValDeclarationNode, valDeclaration),
             matchClass(shed.DefinitionNode, definition),
             
+            matchClass(shed.ImportNode, importNode),
             matchClass(shed.ModuleNode, moduleNode)
         )
 
@@ -128,6 +131,15 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             js.call(
                 js.propertyAccess(generate(definition.value()), "$define"),
                 listOf(definition.name())
+            )
+        )
+    
+    def importNode fun(importNode: ImportNode) =>
+        js.varDeclaration(
+            importNode.moduleName().last(),
+            js.call(
+                js.ref("$import"),
+                listOf(js.string(strings.join(".", importNode.moduleName())))
             )
         )
     

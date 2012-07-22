@@ -206,7 +206,17 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed module generates list of JavaScript statements", fun() =>
+    TestCase("Shed imports are converted to calls to $import", fun() =>
+        assertThat(
+            generate(shed.importStatement(listOf("shed", "example"))),
+            equalTo(js.varDeclaration(
+                "example",
+                js.call(js.ref("$import"), listOf(js.string("shed.example")))
+            ))
+        )
+    ),
+    
+    TestCase("Shed module without name nor imports generates list of JavaScript statements", fun() =>
         assertThat(
             generate(shed.moduleNode(options.none, emptyList, listOf(shedStatement))),
             equalTo(js.statements(listOf(stub(shedStatement))))
