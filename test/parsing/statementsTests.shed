@@ -41,6 +41,13 @@ val testCases = listOf(
             "def name bob",
             nodes.definition("name", nodes.ref("bob"))
         )
+    ),
+    
+    TestCase("def statement can optionally have terminating semi-colon", fun() =>
+        assertSuccessfulParse(
+            "def name bob;",
+            nodes.definition("name", nodes.ref("bob"))
+        )
     )
 );
 

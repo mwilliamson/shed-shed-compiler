@@ -42,6 +42,7 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             .cut()
             .capture(tokenRules.identifier())
             .capture(expressionRule)
+            .next(rules.optional(tokenRules.symbol(";")))
             .map(nodes.definition);
     
     return rules.firstOf("statement",
