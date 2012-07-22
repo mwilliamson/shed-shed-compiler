@@ -11,14 +11,21 @@ import lop.rules;
 import shed.compiler.nodes;
 import shed.compiler.parsing.tokenRules;
 
-def moduleRule fun(statementRule: Rule[StatementNode]) =>
-    rules.sequence()
+def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do {
+    val moduleBody =
+        rules.sequence()
+            .capture(rules.zeroOrMore(importRule))
+            .capture(rules.zeroOrMore(statementRule))
+            .map(fun(imports: List[ImportNode], statements: List[StatementNode]) =>
+                imports.concat(statements));
+                
+    return rules.sequence()
         .capture(rules.optional(moduleDeclaration))
-        .capture(rules.zeroOrMore(importRule))
-        .capture(rules.zeroOrMore(statementRule))
+        .capture(optionalMembersRule)
+        .capture(moduleBody)
         .next(rules.tokenOfType("end"))
-        .map(fun(name: Option[List[String]], imports: List[ImportNode], statements: List[StatementNode]) =>
-            nodes.moduleNode(name, emptyList, imports.concat(statements)));
+        .map(nodes.moduleNode);
+}
 
 val moduleName = rules.zeroOrMoreWithSeparator(
     tokenRules.identifier(),

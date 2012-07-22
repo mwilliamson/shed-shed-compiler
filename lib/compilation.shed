@@ -26,12 +26,17 @@ def compileString fun(input: String) => do {
 
 def parseRule fun() => do {
     // HACK TODO FIXME: need a better way of doing indirect mutual recursion
+    val expressions = expressionRules(statement);
+    
+    def optionalMembers fun(tokens: Sequence[Token]) =>
+        expressions.optionalMembers()(tokens)
+    
     def expression fun(tokens: Sequence[Token]) =>
-        expressionRules(statement).expression()(tokens)
-        
+        expressions.expression()(tokens)
+    
     def statement fun(tokens: Sequence[Token]) =>
         statementRule(expression)(tokens)
         
-    return moduleRule(statement);
+    return moduleRule(statement, optionalMembers);
 }
     

@@ -171,7 +171,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     return object {
         members {
             expression fun() => expressionRule,
-            membersRule fun() => membersRule
+            membersRule fun() => membersRule,
+            optionalMembers fun() => optionalMembersRule
         }
     };  
 }

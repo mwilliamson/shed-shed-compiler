@@ -64,6 +64,20 @@ val testCases = listOf[TestCase](
                 )
             )
         )
+    ),
+    
+    TestCase("can parse module with members", fun() =>
+        assertSuccessfulParse(
+            "module shed.example; members import shed.first; import shed.second;",
+            nodes.moduleNode(
+                options.some(listOf("shed", "example")),
+                stubMembers,
+                listOf(
+                    nodes.importStatement(listOf("shed", "first")),
+                    nodes.importStatement(listOf("shed", "second"))
+                )
+            )
+        )
     )
 );
     
@@ -76,11 +90,18 @@ val statementRule =
         stubStatement
     );
     
+val stubMembers = listOf("stub", "members");
+    
+val membersRule = rules.map(
+    rules.optional(rules.token("keyword", "members")),
+    fun(value: Option[Any]) => value.map(fun() => stubMembers).valueOrElse(fun() => emptyList)
+);
+    
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
 
 def assertSuccessfulParse fun(input: String, expected: Node) => do {
     val source = stringSource(input);
-    val result = Parser().parse(modules.moduleRule(statementRule), source);
+    val result = Parser().parse(modules.moduleRule(statementRule, membersRule), source);
     return assertThat(result, isSuccess(equalTo(expected)));
 }
