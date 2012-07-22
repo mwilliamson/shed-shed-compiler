@@ -130,7 +130,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             definition.name(),
             js.call(
                 js.propertyAccess(generate(definition.value()), "$define"),
-                listOf(definition.name())
+                listOf(js.string(definition.name()))
             )
         )
     

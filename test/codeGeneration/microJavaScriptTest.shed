@@ -200,7 +200,7 @@ val testCases = listOf(
                         stub(shed.string("Bob")),
                         "$define"
                     ),
-                    listOf("name")
+                    listOf(js.string("name"))
                 )
             ))
         )
