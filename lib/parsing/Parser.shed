@@ -17,13 +17,21 @@ def Parser class() => {
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
         fun(rule: Rule, input: StringSource) =>
             rule(lazySequences.filter(predicate, tokenise(input)))
-            
+        
+    // TODO: combine filtering
     public val parse = 
-        filteredParse(fun(token: Token) => not(token.name().equals("whitespace")));
+        filteredParse(fun(token: Token) => not(or(
+            token.name().equals("whitespace"),
+            token.name().equals("comment")
+        )));
     
     public val parseWithoutEndToken =
         filteredParse(fun(token: Token) =>
-            not(or(token.name().equals("whitespace"), token.name().equals("end"))));
+            not(or(
+                token.name().equals("whitespace"),
+                token.name().equals("end"),
+                token.name().equals("comment")
+            )));
     
     def tokenise fun(input: StringSource) =>
         tokeniser.tokenise(input).toSequence();
