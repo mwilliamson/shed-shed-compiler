@@ -79,7 +79,7 @@ def writeCall fun(call: CallNode) =>
         .concat(")")
         
 def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
-    write(propertyAccess.left())
+    writeWithPrecedence(propertyAccess.left(), 1)
         .concat(".")
         .concat(propertyAccess.propertyName())
     
