@@ -39,6 +39,17 @@ val testCases = listOf[TestCase](
                 )
             )
         )
+    ),
+    
+    TestCase("can parse empty module with name", fun() =>
+        assertSuccessfulParse(
+            "module shed.example;",
+            nodes.moduleNode(
+                options.some(listOf("shed", "example")),
+                emptyList,
+                emptyList
+            )
+        )
     )
 );
     

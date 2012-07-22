@@ -9,10 +9,23 @@ import options;
 import lop.rules;
 
 import shed.compiler.nodes;
+import shed.compiler.parsing.tokenRules;
 
 def moduleRule fun(statementRule: Rule[StatementNode]) =>
     rules.sequence()
+        .capture(rules.optional(moduleName))
         .capture(rules.zeroOrMore(statementRule))
         .next(rules.tokenOfType("end"))
-        .map(fun(statements: List[StatementNode]) =>
-            nodes.moduleNode(options.none, emptyList, statements));
+        .map(fun(name: Option[List[String]], statements: List[StatementNode]) =>
+            nodes.moduleNode(name, emptyList, statements));
+
+val moduleName =
+    rules.sequence()
+        .next(tokenRules.keyword("module"))
+        .cut()
+        .capture(rules.zeroOrMoreWithSeparator(
+            tokenRules.identifier(),
+            tokenRules.symbol(".")
+        ))
+        .next(tokenRules.symbol(";"))
+        .head();
