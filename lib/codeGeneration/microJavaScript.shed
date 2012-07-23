@@ -25,7 +25,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     def generatorGenerate fun(node: ShedNode) =>
         match(node,
             matchClass(shed.UnitNode, unit),
-            matchClass(shed.BooleanNode, boolean),
+            matchClass(shed.BooleanNode, bool),
             matchClass(shed.NumberNode, number),
             matchClass(shed.StringNode, string),
             matchClass(shed.VariableReferenceNode, variableReference),
@@ -49,8 +49,8 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     def unit fun(unit: UnitNode) =>
         js.propertyAccess(shedGlobal, "unit")
 
-    def boolean fun(boolean: BooleanNode) =>
-        js.boolean(boolean.value())
+    def bool fun(bool: BooleanNode) =>
+        js.bool(bool.value())
 
     def number fun(number: NumberNode) =>
         js.call(
@@ -83,7 +83,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     def func fun(func: FunctionNode) =>
         js.call(
             js.propertyAccess(shedGlobal, "function"),
-            listOf(js.function(
+            listOf(js.func(
                 generateFormalArgs(func.formalArgs()),
                 listOf(js.ret(generate(func.body())))
             ))
@@ -92,7 +92,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     def classDeclaration fun(classDeclaration: ClassNode) =>
         js.call(
             js.propertyAccess(shedGlobal, "class"),
-            listOf(js.function(
+            listOf(js.func(
                 generateFormalArgs(classDeclaration.formalArgs()),
                 generateObjectBody(classDeclaration.body())
             ))
@@ -106,7 +106,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
 
     def doBlock fun(doBlock: DoBlockNode) =>
         js.call(
-            js.function(
+            js.func(
                 emptyList,
                 doBlock.statements().map(generate)  
             ),
@@ -166,7 +166,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
                 js.propertyAccess(shedGlobal, "exportModule"),
                 listOf(
                     js.string(strings.join(".", name)),
-                    js.function(
+                    js.func(
                         emptyList,
                         moduleNode.statements().map(generate)
                             .concat(listOf(js.ret(generateMembersObject(moduleNode.memberDeclarations()))))
@@ -177,7 +177,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
     
     def generateUnnamedModule fun(moduleNode: ModuleNode) =>
         js.call(
-            js.function(
+            js.func(
                 emptyList,
                 moduleNode.statements().map(generate)
             ),

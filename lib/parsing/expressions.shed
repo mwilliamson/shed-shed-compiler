@@ -49,7 +49,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .capture(formalArgumentListRule)
             .next(tokenRules.symbol("=>"))
             .capture(expressionRule)
-            .map(nodes.function)
+            .map(nodes.func)
     );
 
     val formalArgumentListRule = lazyFunction(fun() =>

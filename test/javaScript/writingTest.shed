@@ -13,11 +13,11 @@ import shed.compiler.javaScript.js;
 
 val testCases = listOf(
     TestCase("can write boolean true", fun() =>
-        assertThat(write(js.boolean(true)), equalTo("true"))
+        assertThat(write(js.bool(true)), equalTo("true"))
     ),
     
     TestCase("can write boolean false", fun() =>
-        assertThat(write(js.boolean(false)), equalTo("false"))
+        assertThat(write(js.bool(false)), equalTo("false"))
     ),
     
     TestCase("can write numbers", fun() =>
@@ -62,7 +62,7 @@ val testCases = listOf(
     
     TestCase("can write functions", fun() =>
         assertThat(
-            write(js.function(
+            write(js.func(
                 listOf("name", "age"),
                 listOf(js.ret(js.ref("name")))
             )),
@@ -120,7 +120,7 @@ val testCases = listOf(
     
     TestCase("immediately invoked function is wrapped in brackets", fun() =>
         assertThat(
-            write(js.call(js.function(emptyList, emptyList), emptyList)),
+            write(js.call(js.func(emptyList, emptyList), emptyList)),
             equalTo("(function() {\n})()")
         )
     ),

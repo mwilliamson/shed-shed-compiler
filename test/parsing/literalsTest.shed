@@ -21,11 +21,11 @@ val testCases = listOf[TestCase](
     ),
     
     TestCase("can parse true literal", fun() =>
-        assertSuccessfulParse("true", nodes.boolean(true))
+        assertSuccessfulParse("true", nodes.bool(true))
     ),
     
     TestCase("can parse false literal", fun() =>
-        assertSuccessfulParse("false", nodes.boolean(false))
+        assertSuccessfulParse("false", nodes.bool(false))
     ),
     
     TestCase("can parse string literal", fun() =>

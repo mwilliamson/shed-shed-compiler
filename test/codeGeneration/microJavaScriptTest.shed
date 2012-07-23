@@ -28,8 +28,8 @@ val testCases = listOf(
     
     TestCase("Shed boolean generates JavaScript boolean", fun() =>
         assertThat(
-            generate(shed.boolean(true)),
-            equalTo(js.boolean(true))
+            generate(shed.bool(true)),
+            equalTo(js.bool(true))
         )
     ),
     
@@ -80,13 +80,13 @@ val testCases = listOf(
     
     TestCase("Shed function generates JavaScript function wrapped in $shed.function", fun() =>
         assertThat(
-            generate(shed.function(
+            generate(shed.func(
                 listOf(shed.formalArgument("name", shed.ref("String"))),
                 shed.unit()
             )),
             equalTo(js.call(
                 js.propertyAccess(js.ref("$shed"), "function"),
-                listOf(js.function(
+                listOf(js.func(
                     listOf("name"),
                     listOf(js.ret(stub(shed.unit())))
                 ))
@@ -105,7 +105,7 @@ val testCases = listOf(
             )),
             equalTo(js.call(
                 js.propertyAccess(js.ref("$shed"), "class"),
-                listOf(js.function(
+                listOf(js.func(
                     listOf("name"),
                     listOf(
                         stub(shedStatement),
@@ -127,7 +127,7 @@ val testCases = listOf(
             )),
             equalTo(js.call(
                 js.propertyAccess(js.ref("$shed"), "class"),
-                listOf(js.function(
+                listOf(js.func(
                     listOf("name"),
                     listOf(
                         stub(shedStatement),
@@ -160,7 +160,7 @@ val testCases = listOf(
         return assertThat(
             generate(shed.doBlock(listOf(firstStatement, secondStatement))),
             equalTo(js.call(
-                js.function(
+                js.func(
                     emptyList,
                     listOf(stub(firstStatement), stub(secondStatement))
                 ),
@@ -220,7 +220,7 @@ val testCases = listOf(
         assertThat(
             generate(shed.moduleNode(options.none, emptyList, listOf(shedStatement))),
             equalTo(js.call(
-                js.function(
+                js.func(
                     emptyList,
                     listOf(stub(shedStatement))
                 ),
@@ -242,7 +242,7 @@ val testCases = listOf(
                         js.propertyAccess(js.ref("$shed"), "exportModule"),
                         listOf(
                             js.string("shed.example"),
-                            js.function(
+                            js.func(
                                 emptyList,
                                 listOf(
                                     stub(shedStatement),

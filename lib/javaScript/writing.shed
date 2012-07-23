@@ -59,8 +59,8 @@ val conditionalOperatorWriter = object {
             .concat(write(conditional.falseValue()))
 };
 
-def writeBoolean fun(boolean: BooleanNode) =>
-    if boolean.value() then "true" else "false"
+def writeBoolean fun(bool: BooleanNode) =>
+    if bool.value() then "true" else "false"
     
 def writeNumber fun(number: NumberNode) =>
     number.value()

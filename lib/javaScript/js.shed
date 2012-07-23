@@ -3,7 +3,7 @@ module shed.compiler.javaScript.js;
 members {
     unit UnitNode,
     UnitNode,
-    boolean BooleanNode,
+    bool BooleanNode,
     BooleanNode,
     number NumberNode,
     NumberNode,
@@ -18,7 +18,7 @@ members {
     CallNode,
     propertyAccess PropertyAccessNode,
     PropertyAccessNode,
-    function FunctionNode,
+    func FunctionNode,
     FunctionNode,
     obj ObjectNode,
     ObjectNode,

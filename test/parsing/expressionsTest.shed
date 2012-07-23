@@ -21,7 +21,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "if true then 1 else 0",
             nodes.ifThenElse(
-                nodes.boolean(true),
+                nodes.bool(true),
                 nodes.number("1"),
                 nodes.number("0")
             )
@@ -32,10 +32,10 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "if true then 1 else if false then 0 else 2",
             nodes.ifThenElse(
-                nodes.boolean(true),
+                nodes.bool(true),
                 nodes.number("1"),
                 nodes.ifThenElse(
-                    nodes.boolean(false),
+                    nodes.bool(false),
                     nodes.number("0"),
                     nodes.number("2")
                 )
@@ -44,7 +44,7 @@ val testCases = listOf[TestCase](
     ),
     
     TestCase("can parse bracketed expression", fun() =>
-        assertSuccessfulParse("(false)", nodes.boolean(false))
+        assertSuccessfulParse("(false)", nodes.bool(false))
     ),
     
     TestCase("can parse function call with no arguments", fun() =>
@@ -82,7 +82,7 @@ val testCases = listOf[TestCase](
     TestCase("can parse function with no arguments", fun() =>
         assertSuccessfulParse(
             "fun() => ()",
-            nodes.function(
+            nodes.func(
                 emptyList,
                 nodes.unit()
             )
@@ -92,7 +92,7 @@ val testCases = listOf[TestCase](
     TestCase("can parse function with formal arguments", fun() =>
         assertSuccessfulParse(
             "fun(first: String, second: Any) => ()",
-            nodes.function(
+            nodes.func(
                 listOf(
                     nodes.formalArgument("first", nodes.ref("String")),
                     nodes.formalArgument("second", nodes.ref("Any"))

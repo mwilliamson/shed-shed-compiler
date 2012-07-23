@@ -22,12 +22,12 @@ val unitRule =
 
 val trueRule = rules.map[Unit, BooleanNode](
     tokenRules.keyword("true"),
-    fun() => nodes.boolean(true)
+    fun() => nodes.bool(true)
 );
 
 val falseRule = rules.map[Unit, BooleanNode](
     tokenRules.keyword("false"),
-    fun() => nodes.boolean(false)
+    fun() => nodes.bool(false)
 );
 
 val booleanRule = rules.firstOf("Boolean", listOf(trueRule, falseRule));
