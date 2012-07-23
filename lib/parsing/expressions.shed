@@ -21,7 +21,7 @@ val variableReferenceRule = rules.map(
 );
     
 def expressionRules fun(statementRule: Rule[StatementNode]) => do {
-    def ifThenElseRule fun(tokens: Sequence[Token]) =>
+    val ifThenElseRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.keyword("if"))
             .cut()
@@ -31,18 +31,18 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(tokenRules.keyword("else"))
             .capture(expressionRule)
             .map(nodes.ifThenElse)
-            (tokens)
+    );
 
-    def bracketedRule fun(tokens: Sequence[Token]) =>
+    val bracketedRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("("))
             .capture(expressionRule)
             .cut()
             .next(tokenRules.symbol(")"))
             .head()
-            (tokens)
+    );
 
-    def functionRule fun(tokens: Sequence[Token]) =>
+    val functionRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.keyword("fun"))
             .cut()
@@ -50,33 +50,33 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(tokenRules.symbol("=>"))
             .capture(expressionRule)
             .map(nodes.function)
-            (tokens)
+    );
 
-    def formalArgumentListRule fun(tokens: Sequence[Token]) =>
+    val formalArgumentListRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("("))
             .capture(rules.zeroOrMoreWithSeparator(formalArgumentRule, tokenRules.symbol(",")))
             .next(tokenRules.symbol(")"))
             .head()
-            (tokens)
+    );
             
-    def formalArgumentRule fun(tokens: Sequence[Token]) =>
+    val formalArgumentRule = lazyFunction(fun() =>
         rules.sequence()
             .capture(tokenRules.identifier())
             .cut()
             .next(tokenRules.symbol(":"))
             .capture(expressionRule)
             .map(nodes.formalArgument)
-            (tokens)
+    );
 
-    def memberDeclarationRule fun(tokens: Sequence[Token]) =>
+    val memberDeclarationRule = lazyFunction(fun() =>
         rules.sequence()
             .capture(tokenRules.identifier())
             .capture(rules.optional(expressionRule))
             .map(fun(name: String, value: Option[ExpressionNode]) =>
                 nodes.memberDeclaration(name, value.valueOrElse(fun() => nodes.ref(name)))
             )
-            (tokens)
+    );
 
     val membersRule =
         rules.sequence()
@@ -140,7 +140,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         )
     );
         
-    def partialCallRule fun(tokens: Sequence[Token]) =>
+    val partialCallRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("("))
             .cut()
@@ -148,16 +148,16 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(tokenRules.symbol(")"))
             .map(fun(args: List[ExpressionNode]) =>
                 fun(left: ExpressionNode) => nodes.call(left, args))
-            (tokens)
+    );
         
-    def partialMemberAccessRule fun(tokens: Sequence[Token]) =>
+    val partialMemberAccessRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("."))
             .cut()
             .capture(tokenRules.identifier())
             .map(fun(memberName: String) =>
                 fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
-            (tokens)
+    );
 
     val expressionParser = pratt.parser("expression",
         listOf(primaryExpressionRule),

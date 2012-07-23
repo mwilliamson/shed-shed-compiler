@@ -42,14 +42,17 @@ def compileFile fun(argv: List[String]) => do {
 
 def parseRule fun() => do {
     // HACK TODO FIXME: need a better way of doing indirect mutual recursion
-    def optionalMembers fun(tokens: Sequence[Token]) =>
-        expressionRules(statement).optionalMembers()(tokens)
+    val optionalMembers = lazyFunction(fun() =>
+        expressionRules(statement).optionalMembers()
+    );
     
-    def expression fun(tokens: Sequence[Token]) =>
-        expressionRules(statement).expression()(tokens)
+    val expression = lazyFunction(fun() =>
+        expressionRules(statement).expression()
+    );
     
-    def statement fun(tokens: Sequence[Token]) =>
-        statementRule(expression)(tokens)
+    val statement = lazyFunction(fun() =>
+        statementRule(expression)
+    );
         
     return moduleRule(statement, optionalMembers);
 }
