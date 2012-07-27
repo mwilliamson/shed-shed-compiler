@@ -12,6 +12,11 @@ import lop.results.Success;
 import shed.compiler.nodes;
 
 def Parser class() => {
+    members {
+        parse,
+        parseWithoutEndToken
+    }
+    
     val tokeniser = Tokeniser();
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
@@ -19,13 +24,13 @@ def Parser class() => {
             rule(lazySequences.filter(predicate, tokenise(input)))
         
     // TODO: combine filtering
-    public val parse = 
+    val parse = 
         filteredParse(fun(token: Token) => not(or(
             token.name().equals("whitespace"),
             token.name().equals("comment")
         )));
     
-    public val parseWithoutEndToken =
+    val parseWithoutEndToken =
         filteredParse(fun(token: Token) =>
             not(or(
                 token.name().equals("whitespace"),

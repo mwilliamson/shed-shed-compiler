@@ -19,6 +19,10 @@ import lop.token.Token;
 import lop.sources.StringSource;
 
 def Tokeniser class() => {
+    members {
+        tokenise
+    }
+    
     val keywords = sets.fromList[String](listOf(
         "true", "false", "return", "package", "import", "val", "var", "public",
         "object", "class", "interface", "if", "else", "while", "fun", "for",
@@ -31,7 +35,7 @@ def Tokeniser class() => {
         ">", ",", ".", "/", "?", "\\", "|"
     ));
     
-    public def tokenise fun(input: StringSource) =>
+    def tokenise fun(input: StringSource) =>
         sequenceToList[Token](tokeniseString(input));
     
     def tokeniseString fun(input: StringSource) => do {
@@ -93,8 +97,10 @@ def Tokeniser class() => {
     
     val readString = regexReader(capture("\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""), createStringToken);
     
-    def NextToken class(myToken: Token, myRest: StringSource) => {
-        public def token fun() => myToken;
-        public def rest fun() => myRest;
+    def NextToken class(token: Token, rest: StringSource) => {
+        members {
+            token fun() => token,
+            rest fun() => rest
+        }
     }
 };
