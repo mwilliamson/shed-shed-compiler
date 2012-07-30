@@ -4,8 +4,6 @@ members {
     Parser
 }
 
-import lazySequences;
-
 import lop.token.Token;
 import shed.compiler.tokenising.tokeniser.Tokeniser;
 import lop.results.Success;
@@ -21,7 +19,7 @@ def Parser class() => {
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
         fun(rule: Rule, input: StringSource) =>
-            rule(lazySequences.filter(predicate, tokenise(input)))
+            rule(tokenise(input).filter(predicate).toSequence())
         
     // TODO: combine filtering
     val parse = 
@@ -39,5 +37,5 @@ def Parser class() => {
             )));
     
     def tokenise fun(input: StringSource) =>
-        tokeniser.tokenise(input).toSequence();
+        tokeniser.tokenise(input);
 }
