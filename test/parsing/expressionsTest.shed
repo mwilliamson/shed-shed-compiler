@@ -188,6 +188,16 @@ val testCases = listOf[TestCase](
         )
     ),
     
+    TestCase("can parse class with formal type parameters", fun() =>
+        assertSuccessfulParse(
+            "class[T] => () => { }",
+            nodes.classDeclaration(
+                emptyList,
+                nodes.obj(emptyList, emptyList)
+            )
+        )
+    ),
+    
     TestCase("members can be empty", fun() =>
         assertSuccessfulMembersParse(
             "members { }",

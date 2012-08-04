@@ -121,6 +121,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .next(tokenRules.keyword("class"))
             .cut()
+            .next(rules.optional(formalTypeParametersRule))
             .capture(formalArgumentListRule)
             .next(tokenRules.symbol("=>"))
             .capture(objectBodyRule)
