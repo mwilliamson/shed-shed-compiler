@@ -115,7 +115,7 @@ def writeObject fun(obj: ObjectNode) =>
 
 def writeProperty fun(property: Tuple[String, ExpressionNode]) =>
     property.map(fun(name: String, value: ExpressionNode) =>
-        "\n    ".concat(name).concat(": ").concat(write(value))
+        "\n    ".concat(name).concat(": ").concat(indent(write(value)))
     )
 
 def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>

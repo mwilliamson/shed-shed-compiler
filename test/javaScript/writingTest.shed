@@ -87,7 +87,7 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("can nest indentation with functions and objects", fun() =>
+    TestCase("bodies of functions can have nested indentation", fun() =>
         assertThat(
             write(js.func(
                 emptyList,
@@ -98,6 +98,17 @@ val testCases = listOf(
                 )
             )),
             equalTo("function() {\n    return {\n        one: 1\n    };\n}")
+        )
+    ),
+    
+    TestCase("bodies of object literals can have nested indentation", fun() =>
+        assertThat(
+            write(js.obj(listOf(
+                tuple("outer", js.obj(listOf(
+                    tuple("one", js.number("1"))
+                )))
+            ))),
+            equalTo("{\n    outer: {\n        one: 1\n    }\n}")
         )
     ),
     
