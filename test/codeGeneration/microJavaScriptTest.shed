@@ -78,6 +78,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed method generates JavaScript method call", fun() =>
+        assertThat(
+            generate(shed.call(shed.memberAccess(shed.ref("bob"), "name"), emptyList)),
+            equalTo(js.call(js.propertyAccess(stub(shed.ref("bob")), "name"), emptyList))
+        )
+    ),
+    
     TestCase("Shed function generates JavaScript function wrapped in $shed.function", fun() =>
         assertThat(
             generate(shed.func(
@@ -263,7 +270,7 @@ def subGenerate fun(node: ShedNode) =>
     stub(node)
     
 def stub fun(node: ShedNode) =>
-    js.ref("$".concat(represent(node)))
+    js.ref("$stub$".concat(represent(node)))
 
 val generator = Generator(subGenerate);
 val generate = generator.generate;

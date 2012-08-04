@@ -75,7 +75,15 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         )
     
     def call fun(call: CallNode) =>
-        js.call(generate(call.callee()), call.args().map(generate))
+        js.call(
+            if classOf(call.callee()).equals(nodes.MemberAccessNode) then
+                js.propertyAccess(generate(call.callee().left()), call.callee().memberName())
+            else
+                generate(call.callee()),
+            call.args().map(generate)
+        )
+        
+            
     
     def memberAccess fun(memberAccess: MemberAccessNode) =>
         js.propertyAccess(generate(memberAccess.left()), memberAccess.memberName())
