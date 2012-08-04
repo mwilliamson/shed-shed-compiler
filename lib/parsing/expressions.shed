@@ -46,10 +46,25 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .next(tokenRules.keyword("fun"))
             .cut()
+            .next(rules.optional(formalTypeParametersRule))
             .capture(formalArgumentListRule)
             .next(tokenRules.symbol("=>"))
             .capture(expressionRule)
             .map(nodes.func)
+    );
+
+    val formalTypeParametersRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.symbol("["))
+            .cut()
+            .next(rules.zeroOrMoreWithSeparator(formalParameterRule, tokenRules.symbol(",")))
+            .next(tokenRules.symbol("]"))
+            .next(tokenRules.symbol("=>"))
+            .tuple()
+    );
+    
+    val formalParameterRule = lazyFunction(fun() =>
+        expressionRule
     );
 
     val formalArgumentListRule = lazyFunction(fun() =>

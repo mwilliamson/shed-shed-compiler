@@ -112,6 +112,16 @@ val testCases = listOf[TestCase](
         )
     ),
     
+    TestCase("can parse function with formal type parameters", fun() =>
+        assertSuccessfulParse(
+            "fun[T] => () => ()",
+            nodes.func(
+                emptyList,
+                nodes.unit()
+            )
+        )
+    ),
+    
     TestCase("can parse empty object", fun() =>
         assertSuccessfulParse(
             "object { }",
