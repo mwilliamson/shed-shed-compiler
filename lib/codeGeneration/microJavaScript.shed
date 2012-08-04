@@ -86,7 +86,14 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             
     
     def memberAccess fun(memberAccess: MemberAccessNode) =>
-        js.propertyAccess(generate(memberAccess.left()), memberAccess.memberName())
+        js.call(
+            js.propertyAccess(js.ref("$shed"), "memberAccess"),
+            listOf(
+                generate(memberAccess.left()),
+                js.propertyAccess(generate(memberAccess.left()), memberAccess.memberName())
+            )
+        )
+        
 
     def func fun(func: FunctionNode) =>
         js.call(

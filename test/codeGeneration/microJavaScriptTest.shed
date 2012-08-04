@@ -71,10 +71,16 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed member access generates JavaScript property access", fun() =>
+    TestCase("Shed member access generates JavaScript property access through memberAccess", fun() =>
         assertThat(
             generate(shed.memberAccess(shed.ref("bob"), "name")),
-            equalTo(js.propertyAccess(stub(shed.ref("bob")), "name"))
+            equalTo(js.call(
+                js.propertyAccess(js.ref("$shed"), "memberAccess"),
+                listOf(
+                    stub(shed.ref("bob")),
+                    js.propertyAccess(stub(shed.ref("bob")), "name")
+                )
+            ))
         )
     ),
     
