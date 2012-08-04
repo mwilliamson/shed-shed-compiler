@@ -71,6 +71,13 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("Shed type application generates JavaScript for callee", fun() =>
+        assertThat(
+            generate(shed.typeApplication(shed.ref("filter"), listOf(shed.ref("String")))),
+            equalTo(stub(shed.ref("filter")))
+        )
+    ),
+    
     TestCase("Shed member access generates JavaScript property access through memberAccess", fun() =>
         assertThat(
             generate(shed.memberAccess(shed.ref("bob"), "name")),
