@@ -87,6 +87,20 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("can nest indentation with functions and objects", fun() =>
+        assertThat(
+            write(js.func(
+                emptyList,
+                listOf(
+                    js.ret(js.obj(listOf(
+                        tuple("one", js.number("1"))
+                    )))
+                )
+            )),
+            equalTo("function() {\n    return {\n        one: 1\n    };\n}")
+        )
+    ),
+    
     TestCase("operation is wrapped in brackets when used in higher-precedence operation", fun() =>
         assertThat(
             write(js.call(

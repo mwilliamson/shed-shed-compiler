@@ -6,6 +6,7 @@ members {
 
 import json;
 import strings;
+import regex;
 
 import shed.compiler.javaScript.js;
 
@@ -101,8 +102,11 @@ def writeIndentedStatements fun(statements: List[StatementNode]) =>
         "",
         statements
             .map(write)
-            .map(fun(statement: String) => "\n    ".concat(statement))
+            .map(fun(statement: String) => "\n    ".concat(indent(statement)))
     )
+    
+def indent fun(string: String) =>
+    string.replace("\n", "\n    ")
 
 def writeObject fun(obj: ObjectNode) =>
     "{"
