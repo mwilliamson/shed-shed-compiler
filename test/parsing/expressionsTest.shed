@@ -72,6 +72,16 @@ val testCases = listOf[TestCase](
         )
     ),
     
+    TestCase("can parse type application", fun() =>
+        assertSuccessfulParse(
+            "Dictionary[String, Number]",
+            nodes.typeApplication(
+                nodes.ref("Dictionary"),
+                listOf(nodes.ref("String"), nodes.ref("Number"))
+            )
+        )
+    ),
+    
     TestCase("can parse member access", fun() =>
         assertSuccessfulParse(
             "bob.name",

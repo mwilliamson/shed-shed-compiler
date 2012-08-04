@@ -149,6 +149,16 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .map(fun(args: List[ExpressionNode]) =>
                 fun(left: ExpressionNode) => nodes.call(left, args))
     );
+    
+    val partialTypeApplicationRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.symbol("["))
+            .cut()
+            .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
+            .next(tokenRules.symbol("]"))
+            .map(fun(args: List[ExpressionNode]) =>
+                fun(left: ExpressionNode) => nodes.typeApplication(left, args))
+    );
         
     val partialMemberAccessRule = lazyFunction(fun() =>
         rules.sequence()
@@ -163,6 +173,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         listOf(primaryExpressionRule),
         listOf(
             pratt.infix("call", partialCallRule),
+            pratt.infix("typeApplication", partialTypeApplicationRule),
             pratt.infix("memberAccess", partialMemberAccessRule)
         )
     );

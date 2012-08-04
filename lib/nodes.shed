@@ -1,5 +1,8 @@
 module shed.compiler.nodes;
 
+// TODO: to just expose the class as a function, need to wrap in an
+// identity function that's typed as Function[...] -> Function[...]
+
 members {
     Node,
     
@@ -23,6 +26,8 @@ members {
     IfThenElseNode,
     call CallNode,
     CallNode,
+    typeApplication TypeApplicationNode,
+    TypeApplicationNode,
     memberAccess MemberAccessNode,
     MemberAccessNode,
     func FunctionNode,
@@ -120,6 +125,14 @@ def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
         callee fun() => callee,
         args fun() => args,
         struct fun() => structs.create(CallNode, listOf(callee, args))
+    }
+}
+
+def TypeApplicationNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
+    members {
+        callee fun() => callee,
+        args fun() => args,
+        struct fun() => structs.create(TypeApplicationNode, listOf(callee, args))
     }
 }
 
