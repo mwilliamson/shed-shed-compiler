@@ -107,7 +107,7 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed class without members generates JavaScript function that returns an empty object", fun() =>
+    TestCase("Shed class without members generates JavaScript function that returns an object with $class property", fun() =>
         assertThat(
             generate(shed.classDeclaration(
                 listOf(shed.formalArgument("name", shed.ref("String"))),
@@ -117,19 +117,30 @@ val testCases = listOf(
                 )
             )),
             equalTo(js.call(
-                js.propertyAccess(js.ref("$shed"), "class"),
-                listOf(js.func(
-                    listOf("name"),
+                js.func(
+                    emptyList,
                     listOf(
-                        stub(shedStatement),
-                        js.ret(js.obj(emptyList))
+                        js.varDeclaration("$class", js.call(
+                            js.propertyAccess(js.ref("$shed"), "class"),
+                            listOf(js.func(
+                                listOf("name"),
+                                listOf(
+                                    stub(shedStatement),
+                                    js.ret(js.obj(listOf(
+                                        tuple("$class", js.ref("$class"))
+                                    )))
+                                )
+                            ))
+                        )),
+                        js.ret(js.ref("$class"))
                     )
-                ))
+                ),
+                emptyList
             ))
         )
     ),
     
-    TestCase("Shed class generates JavaScript function that returns an object of members", fun() =>
+    TestCase("Shed class generates JavaScript function that returns an object of members and $class", fun() =>
         assertThat(
             generate(shed.classDeclaration(
                 listOf(shed.formalArgument("name", shed.ref("String"))),
@@ -139,16 +150,26 @@ val testCases = listOf(
                 )
             )),
             equalTo(js.call(
-                js.propertyAccess(js.ref("$shed"), "class"),
-                listOf(js.func(
-                    listOf("name"),
+                js.func(
+                    emptyList,
                     listOf(
-                        stub(shedStatement),
-                        js.ret(js.obj(listOf(
-                            tuple("x", stub(nodes.ref("x")))
-                        )))
+                        js.varDeclaration("$class", js.call(
+                            js.propertyAccess(js.ref("$shed"), "class"),
+                            listOf(js.func(
+                                listOf("name"),
+                                listOf(
+                                    stub(shedStatement),
+                                    js.ret(js.obj(listOf(
+                                        tuple("$class", js.ref("$class")),
+                                        tuple("x", stub(nodes.ref("x")))
+                                    )))
+                                )
+                            ))
+                        )),
+                        js.ret(js.ref("$class"))
                     )
-                ))
+                ),
+                emptyList
             ))
         )
     ),

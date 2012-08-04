@@ -6,6 +6,9 @@ members {
 }
 
 import strings;
+import lists;
+import sequences;
+import lazySequences;
 
 import shed.compiler.nodes;
 import shed.compiler.javaScript.js;
@@ -106,12 +109,23 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         
     def classDeclaration fun(classDeclaration: ClassNode) =>
         js.call(
-            js.propertyAccess(shedGlobal, "class"),
-            listOf(js.func(
-                generateFormalArgs(classDeclaration.formalArgs()),
-                generateObjectBody(classDeclaration.body())
-            ))
+            js.func(
+                emptyList,
+                listOf(
+                    js.varDeclaration("$class", js.call(
+                        js.propertyAccess(shedGlobal, "class"),
+                        listOf(js.func(
+                            generateFormalArgs(classDeclaration.formalArgs()),
+                            generateObjectBody(classDeclaration.body())
+                        ))
+                    )),
+                    js.ret(js.ref("$class"))
+                )
+            ),
+            emptyList
         )
+        
+        
         
     def obj fun(obj: ObjectNode) =>
         js.call(
@@ -171,12 +185,23 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             .concat(listOf(js.ret(generateMembersObject(body.memberDeclarations()))))
             
     def generateMembersObject fun(membersDeclaration: List[MemberDeclarationNode]) =>
-        js.obj(membersDeclaration.map(fun(memberDeclaration: MemberDeclarationNode) =>
-            tuple(memberDeclaration.name(), generate(memberDeclaration.value()))
-        ))
+        js.obj(lists.sequenceToList(sequences.cons(
+            tuple("$class", js.ref("$class")),
+            generateMembers(membersDeclaration)
+        )))
         
-    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) =>
-        js.expressionStatement(
+    def generateMembers fun(membersDeclaration: List[MemberDeclarationNode]) =>
+        lazySequences.map(
+            fun(memberDeclaration: MemberDeclarationNode) =>
+                tuple(memberDeclaration.name(), generate(memberDeclaration.value())),
+            membersDeclaration.toSequence()
+        )
+        
+    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) => do {
+        val membersObject = js.obj(lists.sequenceToList(
+            generateMembers(moduleNode.memberDeclarations())
+        ));
+        return js.expressionStatement(
             js.call(
                 js.propertyAccess(shedGlobal, "exportModule"),
                 listOf(
@@ -184,11 +209,12 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
                     js.func(
                         emptyList,
                         moduleNode.statements().map(generate)
-                            .concat(listOf(js.ret(generateMembersObject(moduleNode.memberDeclarations()))))
+                            .concat(listOf(js.ret(membersObject)))
                     )
                 )
             )
-        )
+        );
+    }
     
     def generateUnnamedModule fun(moduleNode: ModuleNode) =>
         js.call(
