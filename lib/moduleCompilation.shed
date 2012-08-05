@@ -1,8 +1,10 @@
 module shed.compiler.moduleCompilation;
 
 members {
-    compileString
+    compileToString
 }
+
+import strings;
 
 import lop.strings.createStringSource;
 
@@ -15,8 +17,10 @@ import shed.compiler.javaScript.writing;
 
 val parser = Parser();
 
-def compileString fun(input: String) => do {
-    val source = createStringSource(input, "raw string");
+def compileToString fun(sources: List[StringSource]) =>
+    strings.join(";\n\n", sources.map(compileSourceToString))
+
+def compileSourceToString fun(source: StringSource) => do {
     val parseResult = parser.parse(parseRule(), source);
     return if parseResult.isSuccess() then do {
         val shedNode = parseResult.value();

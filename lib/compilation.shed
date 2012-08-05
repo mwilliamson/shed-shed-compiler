@@ -11,10 +11,12 @@ import lop.strings.createStringSource;
 
 import shed.compiler.moduleCompilation;
 
-def compileString fun(input: String) =>
-    "var $shed = {string: function(value) { return {$value: value}; } };"
+def compileString fun(input: String) => do {
+    val source = createStringSource(input, "raw string");
+    return "var $shed = {string: function(value) { return {$value: value}; } };"
         .concat("var print = function(value) { process.stdout.write(value.$value); };")
-        .concat(moduleCompilation.compileString(input));
+        .concat(moduleCompilation.compileToString(listOf(source)));
+    }
 
 def compileFile fun(argv: List[String]) => do {
     val filePath = argv.head();
