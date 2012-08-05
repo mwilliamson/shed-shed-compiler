@@ -9,29 +9,12 @@ import files;
 
 import lop.strings.createStringSource;
 
-import shed.compiler.parsing.parser.Parser;
-import shed.compiler.parsing.expressions.expressionRules;
-import shed.compiler.parsing.statements.statementRule;
-import shed.compiler.parsing.modules.moduleRule;
-import shed.compiler.codeGeneration.microJavaScript;
-import shed.compiler.javaScript.writing;
+import shed.compiler.moduleCompilation;
 
-val parser = Parser();
-
-def compileString fun(input: String) => do {
-    val source = createStringSource(input, "raw string");
-    val parseResult = parser.parse(parseRule(), source);
-    return if parseResult.isSuccess() then do {
-        val shedNode = parseResult.value();
-        val javaScriptNode = microJavaScript.generate(shedNode);
-        return "var $shed = {string: function(value) { return {$value: value}; } };"
-            .concat("var print = function(value) { process.stdout.write(value.$value); };")
-            .concat(writing.write(javaScriptNode));
-    } else do {
-        print("Parse failed:\n");
-        print(represent(parseResult));
-    };
-}
+def compileString fun(input: String) =>
+    "var $shed = {string: function(value) { return {$value: value}; } };"
+        .concat("var print = function(value) { process.stdout.write(value.$value); };")
+        .concat(moduleCompilation.compileString(input));
 
 def compileFile fun(argv: List[String]) => do {
     val filePath = argv.head();
@@ -39,21 +22,3 @@ def compileFile fun(argv: List[String]) => do {
         print(compileString(source))
     );
 }
-
-def parseRule fun() => do {
-    // HACK TODO FIXME: need a better way of doing indirect mutual recursion
-    val optionalMembers = lazyFunction(fun() =>
-        expressionRules(statement).optionalMembers()
-    );
-    
-    val expression = lazyFunction(fun() =>
-        expressionRules(statement).expression()
-    );
-    
-    val statement = lazyFunction(fun() =>
-        statementRule(expression)
-    );
-        
-    return moduleRule(statement, optionalMembers);
-}
-    
