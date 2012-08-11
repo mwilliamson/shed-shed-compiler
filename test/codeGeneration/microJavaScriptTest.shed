@@ -254,12 +254,21 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed imports are converted to calls to $import", fun() =>
+    TestCase("Shed imports are converted to calls to $shed.js.import", fun() =>
         assertThat(
             generate(shed.importStatement(listOf("shed", "example"))),
             equalTo(js.varDeclaration(
                 "example",
-                js.call(js.ref("$import"), listOf(js.string("shed.example")))
+                js.call(
+                    js.propertyAccess(
+                        js.propertyAccess(
+                            js.ref("$shed"),
+                            "js"
+                        ),
+                        "import"
+                    ),
+                    listOf(js.string("shed.example"))
+                )
             ))
         )
     ),

@@ -175,7 +175,13 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         js.varDeclaration(
             importNode.moduleName().last(),
             js.call(
-                js.ref("$import"),
+                js.propertyAccess(
+                    js.propertyAccess(
+                        js.ref("$shed"),
+                        "js"
+                    ),
+                    "import"
+                ),
                 listOf(js.string(strings.join(".", importNode.moduleName())))
             )
         )
