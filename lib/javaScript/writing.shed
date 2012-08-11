@@ -26,6 +26,7 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
         matchClass(js.PropertyAccessNode, writePropertyAccess),
         matchClass(js.FunctionNode, writeExpression(functionWriter, precedence)),
         matchClass(js.ObjectNode, writeObject),
+        matchClass(js.AndNode, writeExpression(andWriter, precedence)),
         
         matchClass(js.ExpressionStatementNode, writeExpressionStatement),
         matchClass(js.ReturnNode, writeReturn),
@@ -112,6 +113,17 @@ def writeObject fun(obj: ObjectNode) =>
     "{"
         .concat(strings.join(",", obj.properties().map(writeProperty)))
         .concat("\n}")
+
+
+val andWriter = object {
+    members {
+        precedence 20,
+        write writeAnd
+    }
+    
+    def writeAnd fun(write: Function[JavaScriptNode, String], andNode: AndNode) =>
+        write(andNode.left()).concat(" && ").concat(write(andNode.right()))
+};
 
 def writeProperty fun(property: Tuple[String, ExpressionNode]) =>
     property.map(fun(name: String, value: ExpressionNode) =>
