@@ -38,6 +38,8 @@ members {
     ObjectNode,
     doBlock DoBlockNode,
     DoBlockNode,
+    and AndNode,
+    AndNode,
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
@@ -172,6 +174,14 @@ def DoBlockNode class(statements: List[StatementNode]) => {
     members {
         statements fun() => statements,
         struct fun() => structs.create(DoBlockNode, listOf(statements))
+    }
+}
+
+def AndNode class(left: ExpressionNode, right: ExpressionNode) => {
+    members {
+        left fun() => left,
+        right fun() => right,
+        struct fun() => structs.create(AndNode, listOf(left, right))
     }
 }
 

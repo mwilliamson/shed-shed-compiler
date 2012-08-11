@@ -239,6 +239,16 @@ val testCases = listOf[TestCase](
                 )
             )
         )
+    ),
+                
+    TestCase("can parse and expression", fun() =>
+        assertSuccessfulParse(
+            "first && second",
+            nodes.and(
+                nodes.ref("first"),
+                nodes.ref("second")
+            )
+        )
     )
 );
     

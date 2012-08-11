@@ -192,13 +192,23 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .map(fun(memberName: String) =>
                 fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
     );
+    
+    val partialAndRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.symbol("&&"))
+            .capture(expressionParser.leftAssociative("and"))
+            .map(fun(right: ExpressionNode) => fun(left: ExpressionNode) =>
+                nodes.and(left, right)
+            )
+    );
 
     val expressionParser = pratt.parser("expression",
         listOf(primaryExpressionRule),
         listOf(
             pratt.infix("call", partialCallRule),
             pratt.infix("typeApplication", partialTypeApplicationRule),
-            pratt.infix("memberAccess", partialMemberAccessRule)
+            pratt.infix("memberAccess", partialMemberAccessRule),
+            pratt.infix("and", partialAndRule)
         )
     );
 
