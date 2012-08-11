@@ -9,15 +9,18 @@ import files;
 import promises;
 import strings;
 import lists;
+import sequenceables;
 
 import lop.strings.createStringSource;
 
 import shed.compiler.moduleCompilation;
 
 def main fun(argv: List[String]) => do {
+    val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")));
+    
     val shedFilePaths = files.finder()
         .filesOnly()
-        .roots(argv)
+        .roots(pathRoots)
         .filterFiles().hasExtension("shed")
         .find();
     
@@ -25,7 +28,18 @@ def main fun(argv: List[String]) => do {
     val runtime = compileRuntime();
     val programParts = promises.combineList(listOf(runtime, shedParts));
     
-    programParts.map(joinJavaScriptUnits).map(print);
+    val mainFunction = sequenceables.head(
+        argv.filter(fun(arg: String) => arg.substring(0, 7).equals("--main="))
+            .map(fun(arg: String) => arg.sliceFrom(7))
+    );
+    
+    programParts.map(joinJavaScriptUnits).map(fun(program: String) => do {
+        print(program);
+        mainFunction.map(fun(mainFunction: String) => do {
+            print("\n\n$shed.js.import(\"".concat(mainFunction).concat("\")"));
+            print("($shed.lists.createFromArray(process.argv.slice(2).map($shed.string)));");
+        });
+    });
 }
 
 def compileString fun(input: String) => do {
