@@ -1,7 +1,7 @@
 module shed.compiler.moduleCompilation;
 
 members {
-    compileToString
+    compileSourceToString
 }
 
 import strings;
@@ -17,9 +17,6 @@ import shed.compiler.javaScript.writing;
 
 val parser = Parser();
 
-def compileToString fun(sources: List[StringSource]) =>
-    strings.join(";\n\n", sources.map(compileSourceToString))
-
 def compileSourceToString fun(source: StringSource) => do {
     val parseResult = parser.parse(parseRule(), source);
     return if parseResult.isSuccess() then do {
@@ -28,7 +25,11 @@ def compileSourceToString fun(source: StringSource) => do {
         return writing.write(javaScriptNode);
     } else do {
         print("Parse failed:\n");
+        print("source:");
+        print(source.description());
+        print("\n");
         print(represent(parseResult));
+        print("\n");
     };
 }
 

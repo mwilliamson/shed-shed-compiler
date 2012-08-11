@@ -22,10 +22,12 @@ def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) =>
 val testCases = listOf(
     TestCase("can execute program containing print statement", fun() => do {
         val shedProgram = "print(\"Hello world\");";
-        val jsProgram = compilation.compileString(shedProgram);
+        val jsProgramPromise = compilation.compileString(shedProgram);
         
-        return nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
-            assertThat(result, isSuccessWithOutput("Hello world"))
+        return jsProgramPromise.bind(fun(jsProgram: String) =>
+            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+                assertThat(result, isSuccessWithOutput("Hello world"))
+            )
         );
     })
 );
@@ -40,9 +42,20 @@ def isSuccessWithOutput fun(expectedOutput: String) => object {
         
     public def matchesWithDescription fun(result: ExecutionResult) =>
         if not(result.isSuccess()) then
-            MatchResult(false, "exit code was ".concat(result.exitCode().toString()))
+            MatchResult(
+                false,
+                "exit code was ".concat(result.exitCode().toString())
+                    .concat(describeOutput(result))
+                    .concat(describeError(result))
+            )
         else if not(equal(result.stdout(), expectedOutput)) then
-            MatchResult(false, "output was: ".concat(result.stdout()))
+            MatchResult(false, describeOutput(result))
         else
             MatchResult(true, "");
+            
+    def describeOutput fun(result: ExecutionResult) =>
+        "stdout was: ".concat(result.stdout())
+        
+    def describeError fun(result: ExecutionResult) =>
+        "stderr was: ".concat(result.stderr())
 }

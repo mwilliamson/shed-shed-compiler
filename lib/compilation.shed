@@ -6,21 +6,70 @@ members {
 }
 
 import files;
+import promises;
+import strings;
+import lists;
 
 import lop.strings.createStringSource;
 
 import shed.compiler.moduleCompilation;
 
-def compileString fun(input: String) => do {
-    val source = createStringSource(input, "raw string");
-    return "var $shed = {string: function(value) { return {$value: value}; } };"
-        .concat("var print = function(value) { process.stdout.write(value.$value); };")
-        .concat(moduleCompilation.compileToString(listOf(source)));
-    }
-
 def compileFile fun(argv: List[String]) => do {
     val filePath = argv.head();
     files.readFile(filePath, "utf8").map(fun(source: String) =>
-        print(compileString(source))
+        compileString(source).map(print)
     );
 }
+
+def compileString fun(input: String) => do {
+    val source = createStringSource(input, "raw string");
+    return compileRuntime().map(fun(runtime: String) =>
+        runtime.concat(";\n\n").concat(moduleCompilation.compileSourceToString(source))
+    );
+}
+
+// TODO:
+//val runtimePath = path.join(__dirname, "../runtime/");
+
+def compileRuntime fun() => do {
+    val jsFilePaths = files.finder()
+        .filesOnly()
+        .directory("runtime/js")
+        .filterFiles().hasExtension("js")
+        .find();
+    
+    val shedFilePaths = files.finder()
+        .filesOnly()
+        .directory("runtime/stdlib")
+        .filterFiles().hasExtension("shed")
+        .find();
+    
+    val bootstrapPart = readUtf8File("runtime/bootstrap.js");
+    val jsParts = jsFilePaths.bind(readFiles);
+    val shedParts = shedFilePaths.bind(compileShedFiles);
+    val preludePart = readUtf8File("runtime/prelude.js");
+    
+    val allParts = promises.combineList(listOf(
+        bootstrapPart.map(listOf),
+        jsParts,
+        shedParts,
+        preludePart.map(listOf)
+    )).map(lists.concat);
+    
+    return allParts.map(fun(parts: List[String]) => strings.join(";\n\n", parts));
+}
+
+def readFiles fun(paths: List[String]) : Promise[List[String]] =>
+    promises.combineList(paths.map(readUtf8File))
+    
+def compileShedFiles fun(paths: List[String]) : Promise[List[String]] =>
+    promises.combineList(paths.map(compileShedFile))
+    
+def compileShedFile fun(path: String) : Promise[String] =>
+    readUtf8File(path).map(fun(contents: String) => do {
+        val source = createStringSource(contents, "File: ".concat(path));
+        return moduleCompilation.compileSourceToString(source);
+    })
+
+def readUtf8File fun(path: String) =>
+    files.readFile(path, "utf8");
