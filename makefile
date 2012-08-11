@@ -5,7 +5,7 @@ build-tests:
 	node_modules/.bin/shed-compile node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib test --main=hat.run > _build/tests.js
 
 build:
-	node_modules/.bin/shed-compile node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib --main=shed.compiler.compilation.compileFile > _build/compileFile.js
+	node_modules/.bin/shed-compile node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib --main=shed.compiler.compilation.main > _build/compile.js
 
 test: build-tests
 	node _build/tests.js \

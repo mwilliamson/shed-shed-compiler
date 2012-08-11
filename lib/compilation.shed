@@ -2,7 +2,7 @@ module shed.compiler.compilation;
 
 members {
     compileString,
-    compileFile
+    main
 }
 
 import files;
@@ -14,11 +14,18 @@ import lop.strings.createStringSource;
 
 import shed.compiler.moduleCompilation;
 
-def compileFile fun(argv: List[String]) => do {
-    val filePath = argv.head();
-    files.readFile(filePath, "utf8").map(fun(source: String) =>
-        compileString(source).map(print)
-    );
+def main fun(argv: List[String]) => do {
+    val shedFilePaths = files.finder()
+        .filesOnly()
+        .roots(argv)
+        .filterFiles().hasExtension("shed")
+        .find();
+    
+    val shedParts = shedFilePaths.bind(compileShedFiles).map(joinJavaScriptUnits);
+    val runtime = compileRuntime();
+    val programParts = promises.combineList(listOf(runtime, shedParts));
+    
+    programParts.map(joinJavaScriptUnits).map(print);
 }
 
 def compileString fun(input: String) => do {
@@ -34,13 +41,13 @@ def compileString fun(input: String) => do {
 def compileRuntime fun() => do {
     val jsFilePaths = files.finder()
         .filesOnly()
-        .directory("runtime/js")
+        .root("runtime/js")
         .filterFiles().hasExtension("js")
         .find();
     
     val shedFilePaths = files.finder()
         .filesOnly()
-        .directory("runtime/stdlib")
+        .root("runtime/stdlib")
         .filterFiles().hasExtension("shed")
         .find();
     
@@ -56,7 +63,7 @@ def compileRuntime fun() => do {
         preludePart.map(listOf)
     )).map(lists.concat);
     
-    return allParts.map(fun(parts: List[String]) => strings.join(";\n\n", parts));
+    return allParts.map(joinJavaScriptUnits);
 }
 
 def readFiles fun(paths: List[String]) : Promise[List[String]] =>
@@ -73,3 +80,6 @@ def compileShedFile fun(path: String) : Promise[String] =>
 
 def readUtf8File fun(path: String) =>
     files.readFile(path, "utf8");
+
+def joinJavaScriptUnits fun(units: List[String]) =>
+    strings.join(";\n\n", units)
