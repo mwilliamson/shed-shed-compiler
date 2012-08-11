@@ -22,6 +22,8 @@ members {
     FunctionNode,
     obj ObjectNode,
     ObjectNode,
+    and AndNode,
+    AndNode,
     
     expressionStatement ExpressionStatementNode,
     ExpressionStatementNode,
@@ -108,6 +110,14 @@ def ObjectNode class(properties: List[Tuple[String, ExpressionNode]]) => {
     members {
         properties fun() => properties,
         struct fun() => structs.create(ObjectNode, listOf(properties))
+    }
+}
+
+def AndNode class(left: ExpressionNode, right: ExpressionNode) => {
+    members {
+        left fun() => left,
+        right fun() => right,
+        struct fun() => structs.create(AndNode, listOf(left, right))
     }
 }
 

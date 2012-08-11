@@ -210,6 +210,13 @@ val testCases = listOf(
         );
     }),
     
+    TestCase("Shed and expression generates JavaScript and expression", fun() =>
+        assertThat(
+            generate(shed.and(shed.ref("left"), shed.ref("right"))),
+            equalTo(js.and(stub(shed.ref("left")), stub(shed.ref("right"))))
+        )
+    ),
+    
     TestCase("Shed expression statement generates JavaScript expression statement", fun() =>
         assertThat(
             generate(shed.expressionStatement(shed.string("Hello"))),
