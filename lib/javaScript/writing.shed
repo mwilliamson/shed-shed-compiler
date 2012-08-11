@@ -117,7 +117,7 @@ def writeObject fun(obj: ObjectNode) =>
 
 val andWriter = object {
     members {
-        precedence 20,
+        precedence 13,
         write writeAnd
     }
     
