@@ -48,6 +48,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .cut()
             .next(rules.optional(formalTypeParametersRule))
             .capture(formalArgumentListRule)
+            .next(rules.optional(typeSpecifierRule))
             .next(tokenRules.symbol("=>"))
             .capture(expressionRule)
             .map(nodes.func)
@@ -79,9 +80,16 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .capture(tokenRules.identifier())
             .cut()
-            .next(tokenRules.symbol(":"))
-            .capture(expressionRule)
+            .capture(typeSpecifierRule)
             .map(nodes.formalArgument)
+    );
+    
+    val typeSpecifierRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.symbol(":"))
+            .cut()
+            .capture(expressionRule)
+            .head()
     );
 
     val memberDeclarationRule = lazyFunction(fun() =>
