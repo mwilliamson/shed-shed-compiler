@@ -178,10 +178,9 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .next(tokenRules.symbol("["))
             .cut()
-            .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
+            .next(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
             .next(tokenRules.symbol("]"))
-            .map(fun(args: List[ExpressionNode]) =>
-                fun(left: ExpressionNode) => nodes.typeApplication(left, args))
+            .map(fun() => fun(left: ExpressionNode) => left)
     );
         
     val partialMemberAccessRule = lazyFunction(fun() =>
