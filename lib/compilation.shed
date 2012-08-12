@@ -18,11 +18,7 @@ import shed.compiler.moduleCompilation;
 def main fun(argv: List[String]) => do {
     val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")));
     
-    val shedFilePaths = files.finder()
-        .filesOnly()
-        .roots(pathRoots)
-        .filterFiles().hasExtension("shed")
-        .find();
+    val shedFilePaths = findShedFiles(pathRoots);
     
     val shedParts = shedFilePaths.bind(compileShedFiles).map(joinJavaScriptUnits);
     val runtime = compileRuntime();
@@ -59,11 +55,7 @@ def compileRuntime fun() => do {
         .filterFiles().hasExtension("js")
         .find();
     
-    val shedFilePaths = files.finder()
-        .filesOnly()
-        .root("runtime/stdlib")
-        .filterFiles().hasExtension("shed")
-        .find();
+    val shedFilePaths = findShedFiles(listOf("runtime/stdlib"));
     
     val bootstrapPart = readUtf8File("runtime/bootstrap.js");
     val jsParts = jsFilePaths.bind(readFiles);
@@ -79,6 +71,13 @@ def compileRuntime fun() => do {
     
     return allParts.map(joinJavaScriptUnits);
 }
+
+def findShedFiles fun(roots: List[String]) =>
+    files.finder()
+        .filesOnly()
+        .roots(roots)
+        .filterFiles().hasExtension("shed")
+        .find()
 
 def readFiles fun(paths: List[String]) : Promise[List[String]] =>
     promises.combineList(paths.map(readUtf8File))

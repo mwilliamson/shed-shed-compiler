@@ -33,14 +33,21 @@ val testCases = listOf(
 );
     
 def isSuccessWithOutput fun(expectedOutput: String) => object {
-    public def describeSelf fun() => "successful exit with output: ".concat(expectedOutput);
-    public def matches fun(result: ParseResult) =>
+    members {
+        describeSelf,
+        matches,
+        describeMismatch,
+        matchesWithDescription
+    }
+    
+    def describeSelf fun() => "successful exit with output: ".concat(expectedOutput);
+    def matches fun(result: ParseResult) =>
         matchesWithDescription(result).matches();
     
-    public def describeMismatch fun(result: ParseResult) =>
+    def describeMismatch fun(result: ParseResult) =>
         matchesWithDescription(result).mismatchDescription();
         
-    public def matchesWithDescription fun(result: ExecutionResult) =>
+    def matchesWithDescription fun(result: ExecutionResult) =>
         if not(result.isSuccess()) then
             MatchResult(
                 false,
