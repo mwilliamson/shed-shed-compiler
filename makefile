@@ -2,13 +2,15 @@
 
 SOURCE_FILES = node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib
 COMPILER_SCRIPT = _build/compile.js
+COMPILE_COMPILER_ARGS = $(SOURCE_FILES) --main=shed.compiler.compilation.main
+COMPILE_TESTS_ARGS = $(SOURCE_FILES) test --main=hat.run
 	
 build-tests:
 	mkdir -p _build
-	node_modules/.bin/shed-compile $(SOURCE_FILES) test --main=hat.run > _build/tests.js
+	node_modules/.bin/shed-compile $(COMPILE_TESTS_ARGS) > _build/tests.js
 
 build:
-	node_modules/.bin/shed-compile $(SOURCE_FILES) --main=shed.compiler.compilation.main > $(COMPILER_SCRIPT)
+	node_modules/.bin/shed-compile $(COMPILE_COMPILER_ARGS) > $(COMPILER_SCRIPT)
 
 test: build-tests
 	node _build/tests.js \
@@ -22,8 +24,8 @@ test: build-tests
 		shed.compiler.compilationTest.testCases
 
 self-hosted-test: build
-	node $(COMPILER_SCRIPT) $(SOURCE_FILES) --main=shed.compiler.compilation.main > _build/compile-self-hosted.js
-	node $(COMPILER_SCRIPT) $(SOURCE_FILES) test --main=hat.run > _build/tests-self-hosted.js
+	node $(COMPILER_SCRIPT) $(COMPILE_COMPILER_ARGS) > _build/compile-self-hosted.js
+	node $(COMPILER_SCRIPT) $(COMPILE_TESTS_ARGS) > _build/tests-self-hosted.js
 	node _build/tests-self-hosted.js \
 		shed.compiler.tokenising.tokeniserTests.testCases \
 		shed.compiler.parsing.literalsTest.testCases \
