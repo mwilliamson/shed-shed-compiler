@@ -49,7 +49,7 @@ def Parser class() => {
         else
             results.failure(listOf(
                 "Parse failed:\n"
-                    .concat("source:").concat(source.description()).concat("\n")
+                    .concat("source:").concat(input.description()).concat("\n")
                     .concat(represent(parseResult)).concat("\n")
             ));
     }
