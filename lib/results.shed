@@ -1,0 +1,42 @@
+module shed.compiler.results;
+
+// TODO: is there a suitable generalisation? This is similar to lop.results
+
+members {
+    success,
+    failure
+}
+
+import structs;
+
+// TODO: should be an interface
+def Result class() => {}
+
+def success fun[T] => (value: T) =>
+    Success(value)
+
+def failure fun(messages: List[String]) =>
+    Failure(messages)
+
+def Failure class(messages: List[String]) => {
+    members {
+        map fun[R] => () => Failure(messages),
+        bind fun[R] => () => Failure(messages),
+        valueOrElse fun[T] => (func: Function[Failure, T]) => func(Failure(messages)),
+        
+        messages fun() => messages,
+        isSuccess fun() => false,
+        struct fun() => structs.create(Failure, listOf(messages))
+    }
+}
+
+def Success class[T] => (value: T) => {
+    members {
+        map fun[R] => (func: value[T, R]) => Success[R](func(value)),
+        bind fun[R] => (func: Function[T, R]) => func(value),
+        valueOrElse fun[R] => () => value,
+        
+        isSuccess fun() => true,
+        struct fun() => structs.create(Success, listOf(value))
+    }
+}

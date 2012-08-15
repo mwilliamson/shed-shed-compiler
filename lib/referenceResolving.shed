@@ -1,0 +1,11 @@
+module shed.compiler.referenceResolving;
+
+members {
+    resolveReferences
+}
+
+import shed.compiler.results;
+
+def resolveReferences fun(node: ShedNode) =>
+    results.success(())
+

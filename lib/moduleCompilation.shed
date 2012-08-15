@@ -9,24 +9,23 @@ import strings;
 import lop.strings.createStringSource;
 
 import shed.compiler.parsing.parser.Parser;
+import shed.compiler.referenceResolving.resolveReferences;
 import shed.compiler.codeGeneration.microJavaScript;
 import shed.compiler.javaScript.writing;
+import shed.compiler.results;
 
 val parser = Parser();
 
 def compileSourceToString fun(source: StringSource) => do {
-    val parseResult = parser.parseModule(source);
-    return if parseResult.isSuccess() then do {
-        val shedNode = parseResult.value();
-        val javaScriptNode = microJavaScript.generate(shedNode);
-        return writing.write(javaScriptNode);
-    } else do {
-        print("Parse failed:\n");
-        print("source:");
-        print(source.description());
-        print("\n");
-        print(represent(parseResult));
-        print("\n");
-    };
+    val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) =>
+        resolveReferences(shedNode).bind(fun() => do {
+            val javaScriptNode = microJavaScript.generate(shedNode);
+            return results.success(writing.write(javaScriptNode));
+        })
+    );
+    
+    return result.valueOrElse(fun(failure: Failure) =>
+        failure.messages().forEach(print)
+    );
 }
     
