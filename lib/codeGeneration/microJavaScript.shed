@@ -145,13 +145,13 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             emptyList
         )
     
-    def letIn fun(letIn: LetInNode) =>
-        js.call(
+    def letIn fun(letIn: LetInNode) => let
+        val jsDeclarations = letIn.declarations().map(generate)
+        val jsExpression = generate(letIn.expression())
+        in js.call(
             js.func(
                 emptyList,
-                letIn.declarations().map(generate).concat(listOf(
-                    js.ret(generate(letIn.expression()))
-                ))
+                jsDeclarations.concat(listOf(js.ret(jsExpression)))
             ),
             emptyList
         )
@@ -223,11 +223,11 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             membersDeclaration.toSequence()
         )
         
-    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) => do {
+    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) => let
         val membersObject = js.obj(lists.sequenceToList(
             generateMembers(moduleNode.memberDeclarations())
-        ));
-        return js.expressionStatement(
+        ))
+        in js.expressionStatement(
             js.call(
                 js.propertyAccess(shedGlobal, "exportModule"),
                 listOf(
@@ -240,7 +240,6 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
                 )
             )
         );
-    }
     
     def generateUnnamedModule fun(moduleNode: ModuleNode) =>
         js.call(
