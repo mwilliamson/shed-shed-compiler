@@ -151,6 +151,26 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(tokenRules.symbol("}"))
             .map(nodes.doBlock);
 
+    val letDeclarationRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.keyword("val"))
+            .cut()
+            .capture(tokenRules.identifier())
+            .next(tokenRules.symbol("="))
+            .capture(expressionRule)
+            .map(nodes.valDeclaration)
+    );
+
+    val letInRule = lazyFunction(fun() =>
+        rules.sequence()
+            .next(tokenRules.keyword("let"))
+            .cut()
+            .capture(rules.zeroOrMore(letDeclarationRule))
+            .next(tokenRules.keyword("in"))
+            .capture(expressionRule)
+            .map(nodes.letIn)
+    );
+
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(
             literals.literalRule,
@@ -160,7 +180,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             functionRule,
             objectRule,
             classRule,
-            doBlockRule
+            doBlockRule,
+            letInRule
         )
     );
         

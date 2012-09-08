@@ -26,7 +26,7 @@ def Tokeniser class() => {
     val keywords = sets.fromList[String](listOf(
         "true", "false", "return", "package", "import", "val", "var", "public",
         "object", "class", "interface", "if", "else", "while", "fun", "for",
-        "def", "then", "do", "members", "module"
+        "def", "then", "do", "members", "module", "let", "in"
     ));
     
     val symbols = sets.fromList[String](listOf(

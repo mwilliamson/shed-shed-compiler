@@ -38,6 +38,8 @@ members {
     ObjectNode,
     doBlock DoBlockNode,
     DoBlockNode,
+    letIn LetInNode,
+    LetInNode,
     and AndNode,
     AndNode,
     
@@ -174,6 +176,14 @@ def DoBlockNode class(statements: List[StatementNode]) => {
     members {
         statements fun() => statements,
         struct fun() => structs.create(DoBlockNode, listOf(statements))
+    }
+}
+
+def LetInNode class(declarations: List[ValDeclarationNode], expression: ExpressionNode) => {
+    members {
+        declarations fun() => declarations,
+        expression fun() => expression,
+        struct fun() => structs.create(LetInNode, listOf(declarations, expression))
     }
 }
 

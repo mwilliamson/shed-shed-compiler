@@ -248,6 +248,19 @@ val testCases = listOf[TestCase](
         )
     ),
                 
+    TestCase("can parse let-in expression", fun() =>
+        assertSuccessfulParse(
+            "let val x = 1 val y = 2 in z",
+            nodes.letIn(
+                listOf(
+                    nodes.valDeclaration("x", nodes.number("1")),
+                    nodes.valDeclaration("y", nodes.number("2"))
+                ),
+                nodes.ref("z")
+            )
+        )
+    ),
+                
     TestCase("can parse and expression", fun() =>
         assertSuccessfulParse(
             "first && second",
