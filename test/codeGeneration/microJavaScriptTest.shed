@@ -210,6 +210,24 @@ val testCases = listOf(
         );
     }),
     
+    TestCase("Shed let-in expression generates JavaScript function that's immediately called", fun() => do {
+        val declaration = shed.valDeclaration("x", shed.ref("y"));
+        val expression = shed.string("world");
+        return assertThat(
+            generate(shed.letIn(listOf(declaration), expression)),
+            equalTo(js.call(
+                js.func(
+                    emptyList,
+                    listOf(
+                        stub(declaration),
+                        js.ret(stub(expression))
+                    )
+                ),
+                emptyList
+            ))
+        );
+    }),
+    
     TestCase("Shed and expression generates JavaScript and expression", fun() =>
         assertThat(
             generate(shed.and(shed.ref("left"), shed.ref("right"))),

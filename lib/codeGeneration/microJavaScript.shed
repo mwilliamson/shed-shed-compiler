@@ -40,6 +40,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             matchClass(shed.ClassNode, classDeclaration),
             matchClass(shed.ObjectNode, obj),
             matchClass(shed.DoBlockNode, doBlock),
+            matchClass(shed.LetInNode, letIn),
             matchClass(shed.AndNode, and),
             
             matchClass(shed.ExpressionStatementNode, expressionStatement),
@@ -143,7 +144,18 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             ),
             emptyList
         )
-        
+    
+    def letIn fun(letIn: LetInNode) =>
+        js.call(
+            js.func(
+                emptyList,
+                letIn.declarations().map(generate).concat(listOf(
+                    js.ret(generate(letIn.expression()))
+                ))
+            ),
+            emptyList
+        )
+    
     def and fun(andNode: AndNode) =>
         js.and(
             generate(andNode.left()),
