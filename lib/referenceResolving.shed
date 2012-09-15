@@ -1,11 +1,52 @@
 module shed.compiler.referenceResolving;
 
 members {
-    resolveReferences
+    resolveReferences,
+    emptyContext
 }
 
+import sequences;
+
 import shed.compiler.results;
+import shed.compiler.nodes;
 
-def resolveReferences fun(node: ShedNode) =>
-    results.success(())
+def resolveReferences fun(node: ShedNode, context: Context) => do {
+    def resolveRef fun(ref: VariableReferenceNode) => let
+        val name = ref.identifier()
+        in if context.contains(name) then
+            results.success(())
+        else
+            results.failure(listOf(variableNotInScope(name)))
+    
+    def resolveFunction fun(func: FunctionNode) => let
+        val bodyContext = func.formalArgs().foldLeft(
+            context,
+            fun(currentContext: Context, arg: FormalArgument) =>
+                currentContext.add(arg.name())
+        )
+        in resolveReferences(func.body(), bodyContext)
+    
+    return match(node,
+        matchClass(nodes.VariableReferenceNode, resolveRef),
+        matchClass(nodes.FunctionNode, resolveFunction),
+        matchDefault(fun() => results.success(()))
+    );
+}
 
+def variableNotInScope fun(name: String) =>
+    "variable not in scope: ".concat(name)
+
+def Context class(names: Sequence[String]) => {
+    members {
+        contains,
+        add
+    }
+    
+    def contains fun(name: String) =>
+        sequences.any(fun(n: String) => n.equals(name), names)
+        
+    def add fun(name: String) =>
+        Context(sequences.cons(name, names))
+}
+
+val emptyContext = Context(sequences.nil);
