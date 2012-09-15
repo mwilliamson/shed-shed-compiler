@@ -2,7 +2,8 @@ module shed.compiler.referenceResolving;
 
 members {
     resolveReferences,
-    emptyContext
+    emptyContext,
+    variableNotInScope
 }
 
 import sequences;
@@ -50,3 +51,4 @@ def Context class(names: Sequence[String]) => {
 }
 
 val emptyContext = Context(sequences.nil);
+

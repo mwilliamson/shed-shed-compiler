@@ -12,6 +12,7 @@ import duck.anything;
 import shed.compiler.nodes;
 import shed.compiler.referenceResolving.resolveReferences;
 import shed.compiler.referenceResolving.emptyContext;
+import shed.compiler.referenceResolving.variableNotInScope;
 import shed.compiler.resultMatchers.isSuccess;
 import shed.compiler.results.failure;
 
@@ -29,7 +30,7 @@ val testCases = listOf(
     TestCase("variable reference fails if context is empty", fun() =>
         assertThat(
             resolveReferences(nodes.ref("song"), emptyContext),
-            equalTo(failure(listOf("variable not in scope: song")))
+            equalTo(failure(listOf(variableNotInScope("song"))))
         )
     ),
     
@@ -37,7 +38,7 @@ val testCases = listOf(
         val context = emptyContext.add("song", dummyNode)
         in assertThat(
             resolveReferences(nodes.ref("artist"), context),
-            equalTo(failure(listOf("variable not in scope: artist")))
+            equalTo(failure(listOf(variableNotInScope("artist"))))
         )
     ),
     
@@ -45,6 +46,26 @@ val testCases = listOf(
         val context = emptyContext.add("song", dummyNode)
         in assertThat(
             resolveReferences(nodes.ref("song"), context),
+            isSuccess(anything)
+        )
+    ),
+    
+    TestCase("function fails if body fails", fun() => let
+        val func = nodes.func(emptyList, nodes.ref("song"))
+        in assertThat(
+            resolveReferences(func, emptyContext),
+            equalTo(failure(listOf(variableNotInScope("song"))))
+        )
+    ),
+    
+    TestCase("function node adds variable to scope", fun() => let
+        val context = emptyContext.add("String", dummyNode)
+        val func = nodes.func(
+            listOf(nodes.formalArgument("song", nodes.ref("String"))),
+            nodes.ref("song")
+        )
+        in assertThat(
+            resolveReferences(func, context),
             isSuccess(anything)
         )
     )
