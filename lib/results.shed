@@ -35,6 +35,7 @@ def Success class[T] => (value: T) => {
         map fun[R] => (func: value[T, R]) => Success[R](func(value)),
         bind fun[R] => (func: Function[T, R]) => func(value),
         valueOrElse fun[R] => () => value,
+        value fun() => value,
         
         isSuccess fun() => true,
         struct fun() => structs.create(Success, listOf(value))

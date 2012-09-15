@@ -11,6 +11,7 @@ TEST_CASES = shed.compiler.tokenising.tokeniserTests.testCases \
 	shed.compiler.parsing.modulesTest.testCases \
 	shed.compiler.codeGeneration.microJavaScriptTest.testCases \
 	shed.compiler.javaScript.writingTest.testCases \
+	shed.compiler.referenceResolvingTest.testCases \
 	shed.compiler.compilationTest.testCases
 	
 build-tests:
