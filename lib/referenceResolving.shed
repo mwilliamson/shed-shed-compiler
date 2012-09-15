@@ -27,32 +27,18 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
         )
         in resolveReferences(func.body(), bodyContext)
     
-    def resolveChildren fun(node: ShedNode) =>
-        if isList(node) then
-            resolveAll(node)
-        else if node.struct then
-            resolveAll(node.struct().fields())
-        else
-            results.success(())
+    def resolveLiteral fun(literal: LiteralNode) =>
+        results.success(())
     
-    def resolveAll fun(objects: List[Any]) =>
-        objects.foldLeft(results.success(()), fun(result: Result, child: Any) =>
-            if result.isSuccess() then
-                resolveReferences(child, context)
-            else
-                result
-        )
+    return match(node,
+        matchClass(nodes.UnitNode, resolveLiteral),
+        matchClass(nodes.NumberNode, resolveLiteral),
+        matchClass(nodes.StringNode, resolveLiteral),
+        matchClass(nodes.BooleanNode, resolveLiteral),
         
-    def isList fun(obj: Any) => equal(classOf(obj), classOf(listOf()))
-    
-    return if classOf(node) && classOf(node).equals then
-        match(node,
-            matchClass(nodes.VariableReferenceNode, resolveRef),
-            matchClass(nodes.FunctionNode, resolveFunction),
-            matchDefault(resolveChildren)
-        )
-    else
-        results.success(());
+        matchClass(nodes.VariableReferenceNode, resolveRef),
+        matchClass(nodes.FunctionNode, resolveFunction)
+    );
 }
 
 def variableNotInScope fun(name: String) =>
