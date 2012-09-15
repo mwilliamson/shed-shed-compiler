@@ -68,5 +68,41 @@ val testCases = listOf(
             resolveReferences(func, context),
             isSuccess(anything)
         )
+    ),
+    
+    TestCase("condition of if has references resolved", fun() => let
+        val ifElse = nodes.ifThenElse(
+            nodes.ref("isValid"),
+            nodes.number("4"),
+            nodes.number("1")
+        )
+        in assertThat(
+            resolveReferences(ifElse, emptyContext),
+            equalTo(failure(listOf(variableNotInScope("isValid"))))
+        )
+    ),
+    
+    TestCase("true branch of if has references resolved", fun() => let
+        val ifElse = nodes.ifThenElse(
+            nodes.bool(true),
+            nodes.ref("result"),
+            nodes.number("1")
+        )
+        in assertThat(
+            resolveReferences(ifElse, emptyContext),
+            equalTo(failure(listOf(variableNotInScope("result"))))
+        )
+    ),
+    
+    TestCase("false branch of if has references resolved", fun() => let
+        val ifElse = nodes.ifThenElse(
+            nodes.bool(true),
+            nodes.number("1"),
+            nodes.ref("result")
+        )
+        in assertThat(
+            resolveReferences(ifElse, emptyContext),
+            equalTo(failure(listOf(variableNotInScope("result"))))
+        )
     )
 );

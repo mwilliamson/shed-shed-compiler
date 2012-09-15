@@ -30,16 +30,31 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
     def resolveLiteral fun(literal: LiteralNode) =>
         results.success(())
     
+    def resolveChildren fun[T] => (childrenFinder: Function[T, List[ShedNode]]) =>
+        fun(node: T) => let
+            val children = childrenFinder(node)
+            in children.foldLeft(results.success(()), fun(result: Result, child: ShedNode) =>
+                if result.isSuccess() then
+                    resolveReferences(child, context)
+                else
+                    result
+            )
+    
     return match(node,
         matchClass(nodes.UnitNode, resolveLiteral),
         matchClass(nodes.NumberNode, resolveLiteral),
         matchClass(nodes.StringNode, resolveLiteral),
         matchClass(nodes.BooleanNode, resolveLiteral),
         
+        matchClass(nodes.IfThenElseNode, resolveChildren(ifChildren)),
+        
         matchClass(nodes.VariableReferenceNode, resolveRef),
         matchClass(nodes.FunctionNode, resolveFunction)
     );
 }
+
+def ifChildren fun(node: IfThenElseNode) =>
+    listOf(node.condition(), node.trueValue(), node.falseValue())
 
 def variableNotInScope fun(name: String) =>
     "variable not in scope: ".concat(name)
