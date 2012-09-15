@@ -16,16 +16,15 @@ import shed.compiler.results;
 
 val parser = Parser();
 
-def compileSourceToString fun(source: StringSource) => do {
+def compileSourceToString fun(source: StringSource) => let
     val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) =>
-        resolveReferences(shedNode).bind(fun() => do {
-            val javaScriptNode = microJavaScript.generate(shedNode);
-            return results.success(writing.write(javaScriptNode));
-        })
-    );
+        resolveReferences(shedNode).bind(fun() => let
+            val javaScriptNode = microJavaScript.generate(shedNode)
+            in results.success(writing.write(javaScriptNode))
+        )
+    )
     
-    return result.valueOrElse(fun(failure: Failure) =>
+    in result.valueOrElse(fun(failure: Failure) =>
         failure.messages().forEach(print)
-    );
-}
+    )
     
