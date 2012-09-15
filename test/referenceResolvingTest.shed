@@ -19,6 +19,15 @@ import shed.compiler.results.failure;
 def requiresNoContext fun(node: ShedNode) => fun() =>
     assertThat(resolveReferences(node, emptyContext), isSuccess(anything))
 
+def badRefDetected fun(node: ShedNode) => fun() =>
+    assertThat(
+        resolveReferences(node, emptyContext),
+        equalTo(failure(listOf(variableNotInScope("badRef"))))
+    )
+    
+val badRef = nodes.ref("badRef");
+val noRef = nodes.unit();
+
 val dummyNode = object { };
 
 val testCases = listOf(
@@ -70,39 +79,12 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("condition of if has references resolved", fun() => let
-        val ifElse = nodes.ifThenElse(
-            nodes.ref("isValid"),
-            nodes.number("4"),
-            nodes.number("1")
-        )
-        in assertThat(
-            resolveReferences(ifElse, emptyContext),
-            equalTo(failure(listOf(variableNotInScope("isValid"))))
-        )
-    ),
+    TestCase("condition of if has references resolved", 
+        badRefDetected(nodes.ifThenElse(badRef, noRef, noRef))),
     
-    TestCase("true branch of if has references resolved", fun() => let
-        val ifElse = nodes.ifThenElse(
-            nodes.bool(true),
-            nodes.ref("result"),
-            nodes.number("1")
-        )
-        in assertThat(
-            resolveReferences(ifElse, emptyContext),
-            equalTo(failure(listOf(variableNotInScope("result"))))
-        )
-    ),
+    TestCase("true branch of if has references resolved",
+        badRefDetected(nodes.ifThenElse(noRef, badRef, noRef))),
     
-    TestCase("false branch of if has references resolved", fun() => let
-        val ifElse = nodes.ifThenElse(
-            nodes.bool(true),
-            nodes.number("1"),
-            nodes.ref("result")
-        )
-        in assertThat(
-            resolveReferences(ifElse, emptyContext),
-            equalTo(failure(listOf(variableNotInScope("result"))))
-        )
-    )
+    TestCase("false branch of if has references resolved", 
+        badRefDetected(nodes.ifThenElse(noRef, noRef, badRef)))
 );
