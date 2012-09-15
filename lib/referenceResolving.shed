@@ -47,6 +47,7 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
         matchClass(nodes.BooleanNode, resolveLiteral),
         
         matchClass(nodes.IfThenElseNode, resolveChildren(ifChildren)),
+        matchClass(nodes.CallNode, resolveChildren(callChildren)),
         
         matchClass(nodes.VariableReferenceNode, resolveRef),
         matchClass(nodes.FunctionNode, resolveFunction)
@@ -56,6 +57,9 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
 def ifChildren fun(node: IfThenElseNode) =>
     listOf(node.condition(), node.trueValue(), node.falseValue())
 
+def callChildren fun(node: CallNode) =>
+    listOf(node.callee()).concat(node.args())
+    
 def variableNotInScope fun(name: String) =>
     "variable not in scope: ".concat(name)
 

@@ -86,5 +86,11 @@ val testCases = listOf(
         badRefDetected(nodes.ifThenElse(noRef, badRef, noRef))),
     
     TestCase("false branch of if has references resolved", 
-        badRefDetected(nodes.ifThenElse(noRef, noRef, badRef)))
+        badRefDetected(nodes.ifThenElse(noRef, noRef, badRef))),
+        
+    TestCase("function of call expression has references resolved", 
+        badRefDetected(nodes.call(badRef, emptyList))),
+        
+    TestCase("arguments of call expression has references resolved", 
+        badRefDetected(nodes.call(noRef, listOf(badRef))))
 );
