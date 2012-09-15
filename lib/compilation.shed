@@ -15,62 +15,59 @@ import lop.strings.createStringSource;
 
 import shed.compiler.moduleCompilation;
 
-def main fun(argv: List[String]) => do {
-    val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")));
+def main fun(argv: List[String]) => let
+    val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")))
     
-    val shedFilePaths = findShedFiles(pathRoots);
+    val shedFilePaths = findShedFiles(pathRoots)
     
-    val shedParts = shedFilePaths.bind(compileShedFiles).map(joinJavaScriptUnits);
-    val runtime = compileRuntime();
-    val programParts = promises.combineList(listOf(runtime, shedParts));
+    val shedParts = shedFilePaths.bind(compileShedFiles).map(joinJavaScriptUnits)
+    val runtime = compileRuntime()
+    val programParts = promises.combineList(listOf(runtime, shedParts))
     
     val mainFunction = sequenceables.head(
         argv.filter(fun(arg: String) => arg.substring(0, 7).equals("--main="))
             .map(fun(arg: String) => arg.sliceFrom(7))
-    );
+    )
     
-    programParts.map(joinJavaScriptUnits).map(fun(program: String) => do {
+    in programParts.map(joinJavaScriptUnits).map(fun(program: String) => do {
         print(program);
         mainFunction.map(fun(mainFunction: String) => do {
             print("\n\n$shed.js.import(\"".concat(mainFunction).concat("\")"));
             print("($shed.lists.createFromArray(process.argv.slice(2).map($shed.string)));");
         });
     });
-}
 
-def compileString fun(input: String) => do {
-    val source = createStringSource(input, "raw string");
-    return compileRuntime().map(fun(runtime: String) =>
+def compileString fun(input: String) => let
+    val source = createStringSource(input, "raw string")
+    in compileRuntime().map(fun(runtime: String) =>
         runtime.concat(";\n\n").concat(moduleCompilation.compileSourceToString(source))
-    );
-}
+    )
 
 // TODO:
 //val runtimePath = path.join(__dirname, "../runtime/");
 
-def compileRuntime fun() => do {
+def compileRuntime fun() => let
     val jsFilePaths = files.finder()
         .filesOnly()
         .root("runtime/js")
         .filterFiles().hasExtension("js")
-        .find();
+        .find()
     
-    val shedFilePaths = findShedFiles(listOf("runtime/stdlib"));
+    val shedFilePaths = findShedFiles(listOf("runtime/stdlib"))
     
-    val bootstrapPart = readUtf8File("runtime/bootstrap.js");
-    val jsParts = jsFilePaths.bind(readFiles);
-    val shedParts = shedFilePaths.bind(compileShedFiles);
-    val preludePart = readUtf8File("runtime/prelude.js");
+    val bootstrapPart = readUtf8File("runtime/bootstrap.js")
+    val jsParts = jsFilePaths.bind(readFiles)
+    val shedParts = shedFilePaths.bind(compileShedFiles)
+    val preludePart = readUtf8File("runtime/prelude.js")
     
     val allParts = promises.combineList(listOf(
         bootstrapPart.map(listOf),
         jsParts,
         shedParts,
         preludePart.map(listOf)
-    )).map(lists.concat);
+    )).map(lists.concat)
     
-    return allParts.map(joinJavaScriptUnits);
-}
+    in allParts.map(joinJavaScriptUnits)
 
 def findShedFiles fun(roots: List[String]) =>
     files.finder()
