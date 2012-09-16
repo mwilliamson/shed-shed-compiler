@@ -12,47 +12,40 @@ import shed.compiler.results;
 import shed.compiler.nodes;
 import shed.compiler.scoping;
 
-def resolveReferences fun(node: ShedNode, context: Context) => do {
-    def resolveRef fun(ref: VariableReferenceNode) => let
-        val name = ref.identifier()
-        in if context.contains(name) then
-            results.success(context)
-        else
-            results.failure(listOf(variableNotInScope(name)))
+def resolveReferences fun(node: ShedNode, context: Context) => let
+    val scope = scoping.scopeOf(node)
+    val result = if classOf(node).equals(nodes.VariableReferenceNode) then
+        resolveRef(node, context)
+    else
+        results.success(context)
     
-    def resolveFunction fun(func: FunctionNode) => let
-        val bodyContext = func.formalArgs().foldLeft(
-            context,
-            fun(currentContext: Context, arg: FormalArgument) =>
-                currentContext.add(arg.name())
-        )
-        in resolveAll(func.formalArgs().concat(listOf(func.body())), bodyContext)
+    val resultUpdatedContext = if isVariableBinder(node) then
+        result.map(fun(context: Context) => context.add(node.name()))
+    else
+        result
     
-    def resolveNode fun(node: ShedNode) => let
-        val scope = scoping.scopeOf(node)
-        val result = if classOf(node).equals(nodes.VariableReferenceNode) then
-            resolveRef(node)
-        else
-            results.success(context)
-            
-        in result.bind(fun(context: Context) => resolveScope(scope, context))
-    
-    return match(node,
-        matchClass(nodes.FunctionNode, resolveFunction),
-        
-        matchDefault(resolveNode)
-    );
-}
-        
+    in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context))
+
+def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
+    val name = ref.identifier()
+    in if context.contains(name) then
+        results.success(context)
+    else
+        results.failure(listOf(variableNotInScope(name)))
+
+def isVariableBinder fun(node: ShedNode) =>
+    // TODO: introduce a VariableBinderNode interface to remove this logic
+    match(node,
+        matchClass(nodes.FormalArgumentNode, fun() => true),
+        matchDefault(fun() => false)
+    )
+
 def resolveScope fun(scope: SameScope, context: Context) =>
     resolveAll(scope.nodes(), context)
 
 def resolveAll fun(nodes: List[ShedNode], context: Context) =>
     nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>
-        if result.isSuccess() then
-            resolveReferences(child, context)
-        else
-            result
+        result.bind(fun(context: Context) => resolveReferences(child, context))
     )
 
 def variableNotInScope fun(name: String) =>

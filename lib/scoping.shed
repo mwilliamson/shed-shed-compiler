@@ -34,12 +34,19 @@ def formalArgScope fun(node: FormalArgumentNode) =>
     sameScope(listOf(node.type()))
 
 def functionScope fun(node: FunctionNode) =>
-    subScope(func.formalArgs().concat(listOf(func.body())))
+    subScope(node.formalArgs().concat(listOf(node.body())))
 
 def SameScope class(nodes: List[ShedNode]) => {
     members {
         nodes fun() => nodes
     }
 }
+
+def SubScope class(nodes: List[ShedNode]) => {
+    members {
+        nodes fun() => nodes
+    }
+}
     
 val sameScope = SameScope;
+val subScope = SubScope;
