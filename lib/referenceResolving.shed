@@ -16,7 +16,7 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
     def resolveRef fun(ref: VariableReferenceNode) => let
         val name = ref.identifier()
         in if context.contains(name) then
-            results.success(())
+            results.success(context)
         else
             results.failure(listOf(variableNotInScope(name)))
     
@@ -28,30 +28,27 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
         )
         in resolveAll(func.formalArgs().concat(listOf(func.body())), bodyContext)
     
-    def resolveFormalArgument fun(formalArg: FormalArgumentNode) =>
-        resolveReferences(formalArg.type(), context)
-    
-    def resolveScope fun(node: ShedNode) => let
+    def resolveNode fun(node: ShedNode) => let
         val scope = scoping.scopeOf(node)
-        in match(scope,
-            matchClass(scoping.SameScope, resolveSameScope)
-        )
-        
-    def resolveSameScope fun(scope: SameScope) =>
-        resolveAll(scope.nodes(), context)
+        val result = if classOf(node).equals(nodes.VariableReferenceNode) then
+            resolveRef(node)
+        else
+            results.success(context)
+            
+        in result.bind(fun(context: Context) => resolveScope(scope, context))
     
     return match(node,
-        matchClass(nodes.FormalArgumentNode, resolveFormalArgument),
-        
-        matchClass(nodes.VariableReferenceNode, resolveRef),
         matchClass(nodes.FunctionNode, resolveFunction),
         
-        matchDefault(resolveScope)
+        matchDefault(resolveNode)
     );
 }
+        
+def resolveScope fun(scope: SameScope, context: Context) =>
+    resolveAll(scope.nodes(), context)
 
 def resolveAll fun(nodes: List[ShedNode], context: Context) =>
-    nodes.foldLeft(results.success(()), fun(result: Result, child: ShedNode) =>
+    nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>
         if result.isSuccess() then
             resolveReferences(child, context)
         else
