@@ -40,8 +40,15 @@ def isVariableBinder fun(node: ShedNode) =>
         matchDefault(fun() => false)
     )
 
-def resolveScope fun(scope: SameScope, context: Context) =>
-    resolveAll(scope.nodes(), context)
+def resolveScope fun(scope: Scope, context: Context) => let
+    val result = resolveAll(scope.nodes(), context)
+    in match(scope,
+        matchClass(scoping.SameScope, fun(scope: SameScope) => result),
+        matchClass(scoping.SubScope, fun(scope: SubScope) =>
+            result.map(fun(subContext: Context) => context)
+        )
+    )
+    
 
 def resolveAll fun(nodes: List[ShedNode], context: Context) =>
     nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>

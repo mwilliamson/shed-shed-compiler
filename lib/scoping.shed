@@ -2,7 +2,8 @@ module shed.compiler.scoping;
 
 members {
     scopeOf,
-    SameScope
+    SameScope,
+    SubScope
 }
 
 import shed.compiler.nodes;

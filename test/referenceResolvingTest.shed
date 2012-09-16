@@ -79,6 +79,19 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("function creates new scope for formal args and body", fun() => let
+        val context = emptyContext.add("String", dummyNode)
+        val func = nodes.func(
+            listOf(nodes.formalArgument("song", nodes.ref("String"))),
+            noRef
+        )
+        val call = nodes.call(noRef, listOf(func, nodes.ref("song")))
+        in assertThat(
+            resolveReferences(call, context),
+            equalTo(failure(listOf(variableNotInScope("song"))))
+        )
+    ),
+    
     TestCase("formal arguments of function have references resolved", 
         badRefDetected(nodes.func(
             listOf(nodes.formalArgument("song", badRef)),
