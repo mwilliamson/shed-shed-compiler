@@ -1,0 +1,45 @@
+module shed.compiler.scoping;
+
+members {
+    scopeOf,
+    SameScope
+}
+
+import shed.compiler.nodes;
+
+def scopeOf fun(node: ShedNode) =>
+    match(node, 
+        matchClass(nodes.UnitNode, noScope),
+        matchClass(nodes.NumberNode, noScope),
+        matchClass(nodes.StringNode, noScope),
+        matchClass(nodes.BooleanNode, noScope),
+        
+        matchClass(nodes.IfThenElseNode, ifScope),
+        matchClass(nodes.CallNode, callScope),
+        matchClass(nodes.FormalArgumentNode, formalArgScope),
+        
+        matchClass(nodes.VariableReferenceNode, noScope),
+        matchClass(nodes.FunctionNode, functionScope)
+    )
+
+def noScope fun(node: ShedNode) => sameScope(emptyList)
+
+def ifScope fun(node: IfThenElseNode) =>
+    sameScope(listOf(node.condition(), node.trueValue(), node.falseValue()))
+    
+def callScope fun(node: CallNode) =>
+    sameScope(listOf(node.callee()).concat(node.args()))
+
+def formalArgScope fun(node: FormalArgumentNode) =>
+    scopes(listOf(addToScope(node), sameScope(node.type())))
+
+def functionScope fun(node: FunctionNode) =>
+    subScope(func.formalArgs().concat(listOf(func.body())))
+
+def SameScope class(nodes: List[ShedNode]) => {
+    members {
+        nodes fun() => nodes
+    }
+}
+    
+val sameScope = SameScope;

@@ -10,6 +10,7 @@ import sequences;
 
 import shed.compiler.results;
 import shed.compiler.nodes;
+import shed.compiler.scoping;
 
 def resolveReferences fun(node: ShedNode, context: Context) => do {
     def resolveRef fun(ref: VariableReferenceNode) => let
@@ -30,26 +31,22 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
     def resolveFormalArgument fun(formalArg: FormalArgumentNode) =>
         resolveReferences(formalArg.type(), context)
     
-    def resolveLiteral fun(literal: LiteralNode) =>
-        results.success(())
-    
-    def resolveChildren fun[T] => (childrenFinder: Function[T, List[ShedNode]]) =>
-        fun(node: T) => let
-            val children = childrenFinder(node)
-            in resolveAll(children, context)
+    def resolveScope fun(node: ShedNode) => let
+        val scope = scoping.scopeOf(node)
+        in match(scope,
+            matchClass(scoping.SameScope, resolveSameScope)
+        )
+        
+    def resolveSameScope fun(scope: SameScope) =>
+        resolveAll(scope.nodes(), context)
     
     return match(node,
-        matchClass(nodes.UnitNode, resolveLiteral),
-        matchClass(nodes.NumberNode, resolveLiteral),
-        matchClass(nodes.StringNode, resolveLiteral),
-        matchClass(nodes.BooleanNode, resolveLiteral),
-        
-        matchClass(nodes.IfThenElseNode, resolveChildren(ifChildren)),
-        matchClass(nodes.CallNode, resolveChildren(callChildren)),
         matchClass(nodes.FormalArgumentNode, resolveFormalArgument),
         
         matchClass(nodes.VariableReferenceNode, resolveRef),
-        matchClass(nodes.FunctionNode, resolveFunction)
+        matchClass(nodes.FunctionNode, resolveFunction),
+        
+        matchDefault(resolveScope)
     );
 }
 
@@ -61,12 +58,6 @@ def resolveAll fun(nodes: List[ShedNode], context: Context) =>
             result
     )
 
-def ifChildren fun(node: IfThenElseNode) =>
-    listOf(node.condition(), node.trueValue(), node.falseValue())
-
-def callChildren fun(node: CallNode) =>
-    listOf(node.callee()).concat(node.args())
-    
 def variableNotInScope fun(name: String) =>
     "variable not in scope: ".concat(name)
 
