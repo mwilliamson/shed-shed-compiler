@@ -79,6 +79,16 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("formal arguments of function have references resolved", 
+        badRefDetected(nodes.func(
+            listOf(nodes.formalArgument("song", badRef)),
+            noRef
+        ))
+    ),
+    
+    TestCase("type of formal argument has references resolved", 
+        badRefDetected(nodes.formalArgument("song", badRef))),
+    
     TestCase("condition of if has references resolved", 
         badRefDetected(nodes.ifThenElse(badRef, noRef, noRef))),
     

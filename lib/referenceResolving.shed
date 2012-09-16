@@ -25,7 +25,10 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
             fun(currentContext: Context, arg: FormalArgument) =>
                 currentContext.add(arg.name())
         )
-        in resolveReferences(func.body(), bodyContext)
+        in resolveAll(func.formalArgs().concat(listOf(func.body())), bodyContext)
+    
+    def resolveFormalArgument fun(formalArg: FormalArgumentNode) =>
+        resolveReferences(formalArg.type(), context)
     
     def resolveLiteral fun(literal: LiteralNode) =>
         results.success(())
@@ -33,12 +36,7 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
     def resolveChildren fun[T] => (childrenFinder: Function[T, List[ShedNode]]) =>
         fun(node: T) => let
             val children = childrenFinder(node)
-            in children.foldLeft(results.success(()), fun(result: Result, child: ShedNode) =>
-                if result.isSuccess() then
-                    resolveReferences(child, context)
-                else
-                    result
-            )
+            in resolveAll(children, context)
     
     return match(node,
         matchClass(nodes.UnitNode, resolveLiteral),
@@ -48,11 +46,20 @@ def resolveReferences fun(node: ShedNode, context: Context) => do {
         
         matchClass(nodes.IfThenElseNode, resolveChildren(ifChildren)),
         matchClass(nodes.CallNode, resolveChildren(callChildren)),
+        matchClass(nodes.FormalArgumentNode, resolveFormalArgument),
         
         matchClass(nodes.VariableReferenceNode, resolveRef),
         matchClass(nodes.FunctionNode, resolveFunction)
     );
 }
+
+def resolveAll fun(nodes: List[ShedNode], context: Context) =>
+    nodes.foldLeft(results.success(()), fun(result: Result, child: ShedNode) =>
+        if result.isSuccess() then
+            resolveReferences(child, context)
+        else
+            result
+    )
 
 def ifChildren fun(node: IfThenElseNode) =>
     listOf(node.condition(), node.trueValue(), node.falseValue())
