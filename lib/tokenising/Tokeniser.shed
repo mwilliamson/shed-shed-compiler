@@ -38,17 +38,16 @@ def Tokeniser class() => {
     def tokenise fun(input: StringSource) =>
         sequenceToList[Token](tokeniseString(input));
     
-    def tokeniseString fun(input: StringSource) => do {
-        val length = input.asString().length();
-        return if length.greaterThan(0) then do {
-            val nextToken = readNextToken(input);
-            return sequences.lazyCons[Token](
+    def tokeniseString fun(input: StringSource) => let
+        val length = input.asString().length()
+        in if length.greaterThan(0) then let
+            val nextToken = readNextToken(input)
+            in sequences.lazyCons[Token](
                 nextToken.token(),
                 fun() => tokeniseString(nextToken.rest())
-            );
-        } else
+            )
+        else
             sequences.singleton[Token](tokens.end(input.range(0, 0)));
-    };
         
     def readNextToken fun(input: StringSource) =>
         listOf(readLineComment, readWhitespace, readString, readSymbol, readNumber, readIdentifier)
