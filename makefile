@@ -18,7 +18,7 @@ TEST_CASES = shed.compiler.tokenising.tokeniserTests.testCases \
 	
 build-tests:
 	mkdir -p _build
-	$(DEFAULT_COMPILER) $(COMPILE_TESTS_ARGS) > _build/tests.js
+	$(DEFAULT_COMPILER) $(COMPILE_TESTS_ARGS) > _build/tests.js || (cat _build/tests.js && false)
 
 build:
 	$(DEFAULT_COMPILER) $(COMPILE_COMPILER_ARGS) > $(COMPILER_SCRIPT)
