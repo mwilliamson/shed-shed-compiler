@@ -6,7 +6,6 @@ members {
 
 import lop.rules;
 import lop.results;
-import lop.error.Error;
 
 import shed.compiler.nodes;
 import shed.compiler.parsing.tokenRules;
