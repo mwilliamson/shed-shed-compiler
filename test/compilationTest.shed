@@ -6,7 +6,7 @@ members {
 
 import nodejs;
 
-import hat.TestCase;
+import hat.TestCase
 import duck.assertThat;
 import duck.MatchResult;
 

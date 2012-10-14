@@ -5,6 +5,7 @@ members {
 }
 
 import strings;
+import console;
 
 import lop.strings.createStringSource;
 
@@ -17,6 +18,7 @@ import shed.compiler.results;
 val parser = Parser();
 
 def compileSourceToString fun(source: StringSource) => let
+    // TODO: should return a result
     val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => let
         //resolveReferences(shedNode).bind(fun() => let
             val javaScriptNode = microJavaScript.generate(shedNode)
@@ -25,6 +27,6 @@ def compileSourceToString fun(source: StringSource) => let
     )
     
     in result.valueOrElse(fun(failure: Failure) =>
-        failure.messages().forEach(print)
+        failure.messages().forEach(console.stderr.write)
     )
     
