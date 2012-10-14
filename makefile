@@ -1,6 +1,7 @@
 .PHONY: test 
 
-BOOTSTRAP_COMPILER_SCRIPT = _build/shed-compiler-0.1.js
+BOOTSTRAP_VERSION = 0.1
+BOOTSTRAP_COMPILER_SCRIPT = _build/shed-compiler-$(BOOTSTRAP_VERSION).js
 DEFAULT_COMPILER = node $(BOOTSTRAP_COMPILER_SCRIPT)
 SOURCE_FILES = node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib
 COMPILER_SCRIPT = _build/compile.js
@@ -20,8 +21,8 @@ build-tests:
 	mkdir -p _build
 	$(DEFAULT_COMPILER) $(COMPILE_TESTS_ARGS) > _build/tests.js || (cat _build/tests.js && false)
 
-build:
-	$(DEFAULT_COMPILER) $(COMPILE_COMPILER_ARGS) > $(COMPILER_SCRIPT)
+build: bootstrap
+	$(DEFAULT_COMPILER) $(COMPILE_COMPILER_ARGS) > $(COMPILER_SCRIPT) || (cat $(COMPILER_SCRIPT) && false)
 
 test: build-tests
 	node _build/tests.js $(TEST_CASES)
@@ -31,7 +32,8 @@ self-hosted-test: build
 	node $(COMPILER_SCRIPT) $(COMPILE_TESTS_ARGS) > _build/tests-self-hosted.js
 	node _build/tests-self-hosted.js $(TEST_CASES)
 
-bootstrap:
+bootstrap: $(BOOTSTRAP_COMPILER_SCRIPT)
+
+$(BOOTSTRAP_COMPILER_SCRIPT):
 	mkdir -p `dirname $(BOOTSTRAP_COMPILER_SCRIPT)`
-	curl -L https://github.com/downloads/mwilliamson/shed-shed-compiler/shed-compiler-0.1.js > $(BOOTSTRAP_COMPILER_SCRIPT)
-	node $(BOOTSTRAP_COMPILER_SCRIPT) $(COMPILE_COMPILER_ARGS) > $(COMPILER_SCRIPT)
+	curl -L https://github.com/downloads/mwilliamson/shed-shed-compiler/shed-compiler-$(BOOTSTRAP_VERSION).js > $(BOOTSTRAP_COMPILER_SCRIPT)
