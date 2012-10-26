@@ -25,7 +25,7 @@ def Parser class() => {
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
         fun(rule: Rule, input: StringSource) =>
-            rule(tokenise(input).filter(predicate).toSequence())
+            rule(tokenise(input).filter(predicate))
         
     // TODO: combine filtering
     val parse = 

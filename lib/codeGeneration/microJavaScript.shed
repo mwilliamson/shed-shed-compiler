@@ -220,7 +220,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
         lazySequences.map(
             fun(memberDeclaration: MemberDeclarationNode) =>
                 tuple(memberDeclaration.name(), generate(memberDeclaration.value())),
-            membersDeclaration.toSequence()
+            membersDeclaration
         )
         
     def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) => let

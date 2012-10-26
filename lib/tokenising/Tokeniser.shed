@@ -9,7 +9,7 @@ import regex;
 import options.none;
 import options.some;
 import sequences;
-import lazySequenceables.map;
+import lazySequences.map;
 import lists.sequenceToList;
 import sets;
 import strings;
@@ -38,16 +38,25 @@ def Tokeniser class() => {
     def tokenise fun(input: StringSource) =>
         sequenceToList[Token](tokeniseString(input));
     
-    def tokeniseString fun(input: StringSource) => let
-        val length = input.asString().length()
-        in if length.greaterThan(0) then let
-            val nextToken = readNextToken(input)
-            in sequences.lazyCons[Token](
-                nextToken.token(),
-                fun() => tokeniseString(nextToken.rest())
-            )
-        else
-            sequences.singleton[Token](tokens.end(input.range(0, 0)));
+    def TokenSequence class(input: StringSource) => {
+        members {
+            currentItem
+        }
+        
+        def currentItem fun() => let
+            val length = input.asString().length()
+            in if length.greaterThan(0) then let
+                val nextToken = readNextToken(input)
+                in sequences.cons(
+                    nextToken.token(),
+                    TokenSequence(nextToken.rest())
+                )
+            else
+                sequences.singleton[Token](tokens.end(input.range(0, 0))).currentItem()
+    }
+    
+    def tokeniseString fun(input: StringSource) =>
+        TokenSequence(input)
         
     def readNextToken fun(input: StringSource) =>
         listOf(readLineComment, readWhitespace, readString, readSymbol, readNumber, readIdentifier)

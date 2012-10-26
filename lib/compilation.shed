@@ -9,7 +9,7 @@ import files;
 import promises;
 import strings;
 import lists;
-import sequenceables;
+import sequences;
 
 import lop.strings.createStringSource;
 
@@ -24,7 +24,7 @@ def main fun(argv: List[String]) => let
     val runtime = compileRuntime()
     val programParts = promises.combineList(listOf(runtime, shedParts))
     
-    val mainFunction = sequenceables.head(
+    val mainFunction = sequences.head(
         argv.filter(fun(arg: String) => arg.substring(0, 7).equals("--main="))
             .map(fun(arg: String) => arg.sliceFrom(7))
     )
