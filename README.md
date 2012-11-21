@@ -33,7 +33,7 @@ compiled to other targets.
     * use a different separate separator (e.g. `import foo/bar.baz`)
     * disallow direct imports of values within modules
     * convert imports to expressions (so `import foo.bar.baz` becomes something
-      like `val baz = (import foo.bar).baz`
+      like `val baz = (import foo.bar).baz`)
 * Reference resolution
 * Adjust tokeniser/grammar to allow new lines instead of semi-colons. Requires
   some careful treatment of indentation to tell whether a new line is a
