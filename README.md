@@ -40,8 +40,8 @@ compiled to other targets.
   continuation of the previous line, or a new statement.
 * Add a pipeline operator or similar (see `|>` in F#, or thrush/thread in Clojure)
 * Add simple syntax for partial application, such as using # as an operator. For
-  instance, instead of `partial(map, partial(strings.startsWith, "bob"))`, we could
-  have `map#(strings.startsWith#("bob"))`. This removes the noise of using
+  instance, instead of `partial(filter, partial(strings.startsWith, "bob"))`, we could
+  have `filter#(strings.startsWith#("bob"))`. This removes the noise of using
   `partial` all over the place, which isn't actually relevant to the problem
   at hand, but is the rewritten code actually easy to read?
 * Interface declarations
