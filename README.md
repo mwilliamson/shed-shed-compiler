@@ -38,6 +38,12 @@ compiled to other targets.
 * Adjust tokeniser/grammar to allow new lines instead of semi-colons. Requires
   some careful treatment of indentation to tell whether a new line is a
   continuation of the previous line, or a new statement.
+* Add a pipeline operator or similar (see `|>` in F#, or thrush/thread in Clojure)
+* Add simple syntax for partial application, such as using # as an operator. For
+  instance, instead of `partial(map, partial(strings.startsWith, "bob"))`, we could
+  have `map#(strings.startsWith#("bob"))`. This removes the noise of using
+  `partial` all over the place, which isn't actually relevant to the problem
+  at hand, but is the rewritten code actually easy to read?
 * Interface declarations
 * Sum type declarations
 * Contravariance/covariance
