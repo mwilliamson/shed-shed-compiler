@@ -36,4 +36,4 @@ bootstrap: $(BOOTSTRAP_COMPILER_SCRIPT)
 
 $(BOOTSTRAP_COMPILER_SCRIPT):
 	mkdir -p `dirname $(BOOTSTRAP_COMPILER_SCRIPT)`
-	curl -L https://github.com/downloads/mwilliamson/shed-shed-compiler/shed-compiler-$(BOOTSTRAP_VERSION).js > $(BOOTSTRAP_COMPILER_SCRIPT)
+	curl -L https://raw.github.com/mwilliamson/shed-shed-compiler-releases/master/$(BOOTSTRAP_VERSION)/shed-compiler-$(BOOTSTRAP_VERSION).js > $(BOOTSTRAP_COMPILER_SCRIPT)
