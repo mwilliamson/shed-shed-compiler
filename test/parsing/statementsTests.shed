@@ -1,4 +1,4 @@
-module shed.compiler.parsing.statementsTest;
+module shed/compiler/parsing/statementsTest;
 
 members {
     testCases
@@ -6,13 +6,13 @@ members {
 
 import hat.TestCase;
 
-import lop.rules;
+import lop/rules;
 
-import shed.compiler.nodes;
-import shed.compiler.nodes.Node;
-import shed.compiler.parsing.statements.statementRule;
-import shed.compiler.parsing.testing.createAssertSuccessfulParse;
-import shed.compiler.parsing.tokenRules;
+import shed/compiler/nodes;
+import shed/compiler/nodes.Node;
+import shed/compiler/parsing/statements.statementRule;
+import shed/compiler/parsing/testing.createAssertSuccessfulParse;
+import shed/compiler/parsing/tokenRules;
 
 val testCases = listOf(
     TestCase("can parse expression statement", fun() =>

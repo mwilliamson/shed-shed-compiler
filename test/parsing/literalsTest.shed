@@ -1,4 +1,4 @@
-module shed.compiler.parsing.literalsTest;
+module shed/compiler/parsing/literalsTest;
 
 members {
     testCases
@@ -6,10 +6,10 @@ members {
 
 import hat.TestCase;
 
-import shed.compiler.nodes;
-import shed.compiler.nodes.Node;
-import shed.compiler.parsing.literals.literalRule;
-import shed.compiler.parsing.testing.createAssertSuccessfulParse;
+import shed/compiler/nodes;
+import shed/compiler/nodes.Node;
+import shed/compiler/parsing/literals.literalRule;
+import shed/compiler/parsing/testing.createAssertSuccessfulParse;
 
 val testCases = listOf[TestCase](
     TestCase("can parse unit", fun() =>

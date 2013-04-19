@@ -1,4 +1,4 @@
-module shed.compiler.tokenising.tokeniser;
+module shed/compiler/tokenising/tokeniser;
 
 members {
     Tokeniser
@@ -14,9 +14,9 @@ import lists.sequenceToList;
 import sets;
 import strings;
 
-import shed.compiler.tokenising.tokens;
-import lop.token.Token;
-import lop.sources.StringSource;
+import shed/compiler/tokenising/tokens;
+import lop/token.Token;
+import lop/sources.StringSource;
 
 def Tokeniser class() => {
     members {

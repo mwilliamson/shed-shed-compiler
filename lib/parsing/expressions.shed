@@ -1,19 +1,19 @@
-module shed.compiler.parsing.expressions;
+module shed/compiler/parsing/expressions;
 
 members {
     expressionRules
 }
 
-import lop.rules;
-import lop.pratt;
+import lop/rules;
+import lop/pratt;
 
-import shed.compiler.nodes;
-import shed.compiler.nodes.NumberNode;
-import shed.compiler.nodes.UnitNode;
-import shed.compiler.nodes.BooleanNode;
+import shed/compiler/nodes;
+import shed/compiler/nodes.NumberNode;
+import shed/compiler/nodes.UnitNode;
+import shed/compiler/nodes.BooleanNode;
 
-import shed.compiler.parsing.tokenRules;
-import shed.compiler.parsing.literals;
+import shed/compiler/parsing/tokenRules;
+import shed/compiler/parsing/literals;
 
 val variableReferenceRule = rules.map(
     tokenRules.identifier(),

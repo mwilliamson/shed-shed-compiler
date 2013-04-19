@@ -1,4 +1,4 @@
-module shed.compiler.parsing.modules;
+module shed/compiler/parsing/modules;
 
 members {
     moduleRule
@@ -6,10 +6,10 @@ members {
 
 import options;
 
-import lop.rules;
+import lop/rules;
 
-import shed.compiler.nodes;
-import shed.compiler.parsing.tokenRules;
+import shed/compiler/nodes;
+import shed/compiler/parsing/tokenRules;
 
 def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do {
     val moduleBody =

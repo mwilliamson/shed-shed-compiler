@@ -1,4 +1,4 @@
-module shed.compiler.javaScript.writingTest;
+module shed/compiler/javaScript/writingTest;
 
 members {
     testCases
@@ -8,8 +8,8 @@ import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
 
-import shed.compiler.javaScript.writing.write;
-import shed.compiler.javaScript.js;
+import shed/compiler/javaScript/writing.write;
+import shed/compiler/javaScript/js;
 
 val testCases = listOf(
     TestCase("can write boolean true", fun() =>

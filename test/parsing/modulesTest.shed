@@ -1,4 +1,4 @@
-module shed.compiler.parsing.modulesTest;
+module shed/compiler/parsing/modulesTest;
 
 members {
     testCases
@@ -10,14 +10,14 @@ import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
 
-import lop.strings.createStringSource;
-import lop.testing.isSuccess;
-import lop.rules;
+import lop/strings.createStringSource;
+import lop/testing.isSuccess;
+import lop/rules;
 
-import shed.compiler.nodes;
-import shed.compiler.nodes.Node;
-import shed.compiler.parsing.parser.Parser;
-import shed.compiler.parsing.modules;
+import shed/compiler/nodes;
+import shed/compiler/nodes.Node;
+import shed/compiler/parsing/parser.Parser;
+import shed/compiler/parsing/modules;
 
 val testCases = listOf[TestCase](
     TestCase("can parse module with no statements", fun() =>

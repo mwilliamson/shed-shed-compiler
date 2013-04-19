@@ -1,4 +1,4 @@
-module shed.compiler.nodes;
+module shed/compiler/nodes;
 
 // TODO: to just expose the class as a function, need to wrap in an
 // identity function that's typed as Function[...] -> Function[...]

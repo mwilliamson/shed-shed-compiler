@@ -1,4 +1,4 @@
-module shed.compiler.referenceResolvingTest;
+module shed/compiler/referenceResolvingTest;
 
 members {
     testCases
@@ -9,12 +9,12 @@ import duck.assertThat;
 import duck.equalTo;
 import duck.anything;
 
-import shed.compiler.nodes;
-import shed.compiler.referenceResolving.resolveReferences;
-import shed.compiler.referenceResolving.emptyContext;
-import shed.compiler.referenceResolving.variableNotInScope;
-import shed.compiler.resultMatchers.isSuccess;
-import shed.compiler.results.failure;
+import shed/compiler/nodes;
+import shed/compiler/referenceResolving.resolveReferences;
+import shed/compiler/referenceResolving.emptyContext;
+import shed/compiler/referenceResolving.variableNotInScope;
+import shed/compiler/resultMatchers.isSuccess;
+import shed/compiler/results.failure;
 
 def requiresNoContext fun(node: ShedNode) => fun() =>
     assertThat(resolveReferences(node, emptyContext), isSuccess(anything))

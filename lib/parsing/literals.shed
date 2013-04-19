@@ -1,13 +1,13 @@
-module shed.compiler.parsing.literals;
+module shed/compiler/parsing/literals;
 
 members {
     literalRule
 }
 
-import lop.rules;
+import lop/rules;
 
-import shed.compiler.nodes;
-import shed.compiler.parsing.tokenRules;
+import shed/compiler/nodes;
+import shed/compiler/parsing/tokenRules;
 
 val numberRule = rules.map[String, NumberNode](
     rules.tokenOfType("number"),

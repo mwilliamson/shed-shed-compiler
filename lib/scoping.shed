@@ -1,4 +1,4 @@
-module shed.compiler.scoping;
+module shed/compiler/scoping;
 
 members {
     scopeOf,
@@ -6,7 +6,7 @@ members {
     SubScope
 }
 
-import shed.compiler.nodes;
+import shed/compiler/nodes;
 
 def scopeOf fun(node: ShedNode) =>
     match(node, 

@@ -1,4 +1,4 @@
-module shed.compiler.codeGeneration.microJavaScriptTest;
+module shed/compiler/codeGeneration/microJavaScriptTest;
 
 members {
     testCases
@@ -10,9 +10,9 @@ import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
 
-import shed.compiler.codeGeneration.microJavaScript.Generator;
-import shed.compiler.nodes;
-import shed.compiler.javaScript.js;
+import shed/compiler/codeGeneration/microJavaScript.Generator;
+import shed/compiler/nodes;
+import shed/compiler/javaScript/js;
 
 val shed = nodes;
 

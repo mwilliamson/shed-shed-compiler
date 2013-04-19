@@ -1,4 +1,4 @@
-module shed.compiler.codeGeneration.microJavaScript;
+module shed/compiler/codeGeneration/microJavaScript;
 
 members {
     generate,
@@ -10,8 +10,8 @@ import lists;
 import sequences;
 import lazySequences;
 
-import shed.compiler.nodes;
-import shed.compiler.javaScript.js;
+import shed/compiler/nodes;
+import shed/compiler/javaScript/js;
 
 val shed = nodes;
     

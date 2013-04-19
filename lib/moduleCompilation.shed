@@ -1,4 +1,4 @@
-module shed.compiler.moduleCompilation;
+module shed/compiler/moduleCompilation;
 
 members {
     compileSourceToString
@@ -7,13 +7,13 @@ members {
 import strings;
 import console;
 
-import lop.strings.createStringSource;
+import lop/strings.createStringSource;
 
-import shed.compiler.parsing.parser.Parser;
-import shed.compiler.referenceResolving.resolveReferences;
-import shed.compiler.codeGeneration.microJavaScript;
-import shed.compiler.javaScript.writing;
-import shed.compiler.results;
+import shed/compiler/parsing/parser.Parser;
+import shed/compiler/referenceResolving.resolveReferences;
+import shed/compiler/codeGeneration/microJavaScript;
+import shed/compiler/javaScript/writing;
+import shed/compiler/results;
 
 val parser = Parser();
 

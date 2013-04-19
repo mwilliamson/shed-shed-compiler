@@ -1,4 +1,4 @@
-module shed.compiler.compilation;
+module shed/compiler/compilation;
 
 members {
     compileString,
@@ -11,9 +11,9 @@ import strings;
 import lists;
 import sequences;
 
-import lop.strings.createStringSource;
+import lop/strings.createStringSource;
 
-import shed.compiler.moduleCompilation;
+import shed/compiler/moduleCompilation;
 
 def main fun(argv: List[String]) => let
     val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")))

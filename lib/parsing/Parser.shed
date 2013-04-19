@@ -1,18 +1,18 @@
-module shed.compiler.parsing.parser;
+module shed/compiler/parsing/parser;
 
 members {
     Parser
 }
 
-import lop.token.Token;
-import lop.results.Success;
+import lop/token.Token;
+import lop/results.Success;
 
-import shed.compiler.tokenising.tokeniser.Tokeniser;
-import shed.compiler.nodes;
-import shed.compiler.results;
-import shed.compiler.parsing.expressions.expressionRules;
-import shed.compiler.parsing.statements.statementRule;
-import shed.compiler.parsing.modules.moduleRule;
+import shed/compiler/tokenising/tokeniser.Tokeniser;
+import shed/compiler/nodes;
+import shed/compiler/results;
+import shed/compiler/parsing/expressions.expressionRules;
+import shed/compiler/parsing/statements.statementRule;
+import shed/compiler/parsing/modules.moduleRule;
 
 def Parser class() => {
     members {

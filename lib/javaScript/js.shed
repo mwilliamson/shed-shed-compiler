@@ -1,4 +1,4 @@
-module shed.compiler.javaScript.js;
+module shed/compiler/javaScript/js;
 
 members {
     unit UnitNode,

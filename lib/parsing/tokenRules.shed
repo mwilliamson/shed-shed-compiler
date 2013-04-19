@@ -1,10 +1,10 @@
-module shed.compiler.parsing.tokenRules;
+module shed/compiler/parsing/tokenRules;
 
 members {
     symbol, keyword, identifier
 }
 
-import lop.rules;
+import lop/rules;
 
 def symbol fun(value: String) =>
     rules.token("symbol", value);

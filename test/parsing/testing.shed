@@ -1,4 +1,4 @@
-module shed.compiler.parsing.testing;
+module shed/compiler/parsing/testing;
 
 members {
     createAssertSuccessfulParse
@@ -7,10 +7,10 @@ members {
 import duck.assertThat;
 import duck.equalTo;
 
-import lop.strings.createStringSource;
-import lop.testing.isSuccess;
+import lop/strings.createStringSource;
+import lop/testing.isSuccess;
 
-import shed.compiler.parsing.parser.Parser;
+import shed/compiler/parsing/parser.Parser;
     
 def rawStringSource fun(string: String) =>
     createStringSource(string, "raw string");

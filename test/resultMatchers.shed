@@ -1,4 +1,4 @@
-module shed.compiler.resultMatchers;
+module shed/compiler/resultMatchers;
 
 members {
     isSuccess

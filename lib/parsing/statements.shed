@@ -1,14 +1,14 @@
-module shed.compiler.parsing.statements;
+module shed/compiler/parsing/statements;
 
 members {
     statementRule
 }
 
-import lop.rules;
-import lop.results;
+import lop/rules;
+import lop/results;
 
-import shed.compiler.nodes;
-import shed.compiler.parsing.tokenRules;
+import shed/compiler/nodes;
+import shed/compiler/parsing/tokenRules;
 
 def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
     val statementTerminator = tokenRules.symbol(";");

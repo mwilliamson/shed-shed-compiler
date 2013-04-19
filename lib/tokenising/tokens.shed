@@ -1,4 +1,4 @@
-module shed.compiler.tokenising.tokens;
+module shed/compiler/tokenising/tokens;
 
 members {
     end,
@@ -11,7 +11,7 @@ members {
     comment
 }
 
-import lop.token.Token;
+import lop/token.Token;
 
 def end fun(source: StringSource) =>
     Token("end", "", source);

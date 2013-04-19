@@ -1,4 +1,4 @@
-module shed.compiler.tokenising.tokeniserTests;
+module shed/compiler/tokenising/tokeniserTests;
 
 members {
     testCases
@@ -9,11 +9,11 @@ import duck.assertThat;
 import duck.isList;
 import duck.equalTo;
 
-import lop.sources.StringSource;
-import lop.strings;
-import lop.token.Token;
-import shed.compiler.tokenising.tokens;
-import shed.compiler.tokenising.tokeniser.Tokeniser;
+import lop/sources.StringSource;
+import lop/strings;
+import lop/token.Token;
+import shed/compiler/tokenising/tokens;
+import shed/compiler/tokenising/tokeniser.Tokeniser;
 
 def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
     val tokeniser = Tokeniser();

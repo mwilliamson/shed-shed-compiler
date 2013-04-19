@@ -1,4 +1,4 @@
-module shed.compiler.compilationTest;
+module shed/compiler/compilationTest;
 
 members {
     testCases
@@ -10,7 +10,7 @@ import hat.TestCase;
 import duck.assertThat;
 import duck.MatchResult;
 
-import shed.compiler.compilation;
+import shed/compiler/compilation;
 
 def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
     val tokeniser = Tokeniser();

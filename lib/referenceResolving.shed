@@ -1,4 +1,4 @@
-module shed.compiler.referenceResolving;
+module shed/compiler/referenceResolving;
 
 members {
     resolveReferences,
@@ -8,9 +8,9 @@ members {
 
 import sequences;
 
-import shed.compiler.results;
-import shed.compiler.nodes;
-import shed.compiler.scoping;
+import shed/compiler/results;
+import shed/compiler/nodes;
+import shed/compiler/scoping;
 
 def resolveReferences fun(node: ShedNode, context: Context) => let
     val scope = scoping.scopeOf(node)

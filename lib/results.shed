@@ -1,4 +1,4 @@
-module shed.compiler.results;
+module shed/compiler/results;
 
 // TODO: is there a suitable generalisation? This is similar to lop.results
 
