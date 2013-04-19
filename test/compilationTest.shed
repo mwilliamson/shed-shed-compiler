@@ -31,6 +31,32 @@ val testCases = listOf(
         );
     })
 );
+
+val testCases = listOf(
+    TestCase("can import module", fun() => do {
+        val shedProgram = "import options;\nprint(options.none.orElse(fun() => \"Hello world\"));";
+        val jsProgramPromise = compilation.compileString(shedProgram);
+        
+        return jsProgramPromise.bind(fun(jsProgram: String) =>
+            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+                assertThat(result, isSuccessWithOutput("Hello world"))
+            )
+        );
+    })
+);
+
+val testCases = listOf(
+    TestCase("can import value from module", fun() => do {
+        val shedProgram = "import options.none;\nprint(none.orElse(fun() => \"Hello world\"));";
+        val jsProgramPromise = compilation.compileString(shedProgram);
+        
+        return jsProgramPromise.bind(fun(jsProgram: String) =>
+            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+                assertThat(result, isSuccessWithOutput("Hello world"))
+            )
+        );
+    })
+);
     
 def isSuccessWithOutput fun(expectedOutput: String) => object {
     members {

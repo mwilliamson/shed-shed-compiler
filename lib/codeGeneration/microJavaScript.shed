@@ -183,19 +183,26 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             )
         )
     
-    def importNode fun(importNode: ImportNode) =>
-        js.varDeclaration(
-            importNode.moduleName().last(),
-            js.call(
+    def importNode fun(importNode: ImportNode) => let
+        val importName = if sequences.isEmpty(importNode.valuePath()) then
+            importNode.moduleName().last()
+        else
+            importNode.valuePath().last()
+        
+        val moduleExpression = js.call(
+            js.propertyAccess(
                 js.propertyAccess(
-                    js.propertyAccess(
-                        js.ref("$shed"),
-                        "js"
-                    ),
-                    "import"
+                    js.ref("$shed"),
+                    "js"
                 ),
-                listOf(js.string(strings.join(".", importNode.moduleName())))
-            )
+                "import"
+            ),
+            listOf(js.string(strings.join(".", importNode.moduleName())))
+        )
+        
+        in js.varDeclaration(
+            importName,
+            importNode.valuePath().foldLeft(moduleExpression, js.propertyAccess)
         )
     
     def moduleNode fun(moduleNode: ModuleNode) =>

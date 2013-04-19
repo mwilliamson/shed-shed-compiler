@@ -43,7 +43,7 @@ val testCases = listOf[TestCase](
     
     TestCase("can parse empty module with name", fun() =>
         assertSuccessfulParse(
-            "module shed.example;",
+            "module shed/example;",
             nodes.moduleNode(
                 options.some(listOf("shed", "example")),
                 emptyList,
@@ -54,13 +54,13 @@ val testCases = listOf[TestCase](
     
     TestCase("can parse empty module with imports", fun() =>
         assertSuccessfulParse(
-            "import shed.first; import shed.second;",
+            "import shed/first; import shed/second.value;",
             nodes.moduleNode(
                 options.none,
                 emptyList,
                 listOf(
-                    nodes.importStatement(listOf("shed", "first")),
-                    nodes.importStatement(listOf("shed", "second"))
+                    nodes.importStatement(listOf("shed", "first"), emptyList),
+                    nodes.importStatement(listOf("shed", "second"), listOf("value"))
                 )
             )
         )
@@ -68,13 +68,12 @@ val testCases = listOf[TestCase](
     
     TestCase("can parse module with members", fun() =>
         assertSuccessfulParse(
-            "module shed.example; members import shed.first; import shed.second;",
+            "module shed/example; members import shed/first;",
             nodes.moduleNode(
                 options.some(listOf("shed", "example")),
                 stubMembers,
                 listOf(
-                    nodes.importStatement(listOf("shed", "first")),
-                    nodes.importStatement(listOf("shed", "second"))
+                    nodes.importStatement(listOf("shed", "first"), emptyList)
                 )
             )
         )

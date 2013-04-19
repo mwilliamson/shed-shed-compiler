@@ -225,10 +225,11 @@ def DefinitionNode class(name: String, value: ExpressionNode) => {
     }
 }
 
-def ImportNode class(moduleName: List[String]) => {
+def ImportNode class(moduleName: List[String], valuePath: List[String]) => {
     members {
         moduleName fun() => moduleName,
-        struct fun() => structs.create(ImportNode, listOf(moduleName))
+        valuePath fun() => valuePath,
+        struct fun() => structs.create(ImportNode, listOf(moduleName, valuePath))
     }
 }
 

@@ -29,7 +29,14 @@ def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule
 
 val moduleName = rules.zeroOrMoreWithSeparator(
     tokenRules.identifier(),
-    tokenRules.symbol(".")
+    tokenRules.symbol("/")
+);
+
+val valuePath = rules.zeroOrMore(
+    rules.sequence()
+        .next(tokenRules.symbol("."))
+        .capture(tokenRules.identifier())
+        .head()
 );
 
 val moduleDeclaration =
@@ -45,5 +52,6 @@ val importRule =
         .next(tokenRules.keyword("import"))
         .cut()
         .capture(moduleName)
+        .capture(valuePath)
         .next(tokenRules.symbol(";"))
         .map(nodes.importStatement);
