@@ -26,14 +26,7 @@ compiled to other targets.
 
 ## TODO
 
-* Update import syntax to improve clarity. Currently, to import the value `baz`
-  from the module `foo.bar`, you can write `import foo.bar.baz`. However,
-  importing the module `foo.bar.baz` requires the exact same syntax. Possible
-  solutions:
-    * use a different separate separator (e.g. `import foo/bar.baz`)
-    * disallow direct imports of values within modules
-    * convert imports to expressions (so `import foo.bar.baz` becomes something
-      like `val baz = (import foo.bar).baz`)
+* Modify syntax to remove semicolons and braces
 * Reference resolution
 * Adjust tokeniser/grammar to allow new lines instead of semi-colons. Requires
   some careful treatment of indentation to tell whether a new line is a
