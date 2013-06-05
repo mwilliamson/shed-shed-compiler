@@ -8,6 +8,7 @@ import lop/token.Token;
 import lop/results.Success;
 
 import shed/compiler/tokenising/tokeniser.Tokeniser;
+import shed/compiler/tokenising/tokenFilter.filterTokens;
 import shed/compiler/nodes;
 import shed/compiler/results;
 import shed/compiler/parsing/expressions.expressionRules;
@@ -22,25 +23,18 @@ def Parser class() => {
     }
     
     val tokeniser = Tokeniser();
+        
+    def parse fun(rule: Rule, input: StringSource) =>
+        rule(tokenise(input))
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
         fun(rule: Rule, input: StringSource) =>
             rule(tokenise(input).filter(predicate))
-        
-    // TODO: combine filtering
-    val parse = 
-        filteredParse(fun(token: Token) => not(or(
-            token.name().equals("whitespace"),
-            token.name().equals("comment")
-        )));
     
     val parseWithoutEndToken =
         filteredParse(fun(token: Token) =>
-            not(or(
-                token.name().equals("whitespace"),
-                token.name().equals("end"),
-                token.name().equals("comment")
-            )));
+            not(token.name().equals("end"))
+        );
     
     def parseModule fun(input: StringSource) => do {
         val parseResult = parse(parseRule(), input);
@@ -71,5 +65,5 @@ def Parser class() => {
     }
     
     def tokenise fun(input: StringSource) =>
-        tokeniser.tokenise(input);
+        filterTokens(tokeniser.tokenise(input));
 }
