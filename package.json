@@ -1,5 +1,5 @@
 {
-    "name": "shed-shed-compiler",
+    "name": "shed-compiler",
     "version": "0.2.0",
     "dependencies": {
         "shed-lop": "git://github.com/mwilliamson/shed-lop.git"
