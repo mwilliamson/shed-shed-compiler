@@ -1,0 +1,15 @@
+module shed/compiler/tokenising/tokenFilter;
+
+members {
+    filterTokens
+}
+
+def filterTokens fun(input: List[Token]) =>
+    input.filter(isSignificantToken)
+
+
+def isSignificantToken fun(token: Token) =>
+    not(or(
+        token.name().equals("whitespace"),
+        token.name().equals("comment")
+    ))

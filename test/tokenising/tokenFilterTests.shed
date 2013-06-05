@@ -1,0 +1,53 @@
+module shed/compiler/tokenising/tokenFilterTests;
+
+members {
+    testCases
+}
+
+import hat.TestCase;
+import duck.assertThat;
+import duck.isList;
+import duck.equalTo;
+
+import shed/compiler/tokenising/tokens;
+import shed/compiler/tokenising/tokenFilter.filterTokens;
+import lop/strings;
+    
+
+val testCases = listOf[TestCase](
+    TestCase("whitespace tokens are filtered out", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                identifier("x"),
+                whitespace(" \t"),
+                identifier("y")
+            )),
+            equalTo(listOf(
+                identifier("x"),
+                identifier("y")
+            ))
+        );
+    }),
+
+    TestCase("comment tokens are filtered out", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                comment("// saf")
+            )),
+            equalTo(emptyList)
+        );
+    })
+);
+
+def identifier fun(value: String) =>
+    tokens.identifier(value, stringSource())
+
+def whitespace fun(value: String) =>
+    tokens.whitespace(value, stringSource())
+
+def comment fun(value: String) =>
+    tokens.comment(value, stringSource())
+
+    
+def stringSource fun() =>
+    strings.createStringSource("", "raw string");

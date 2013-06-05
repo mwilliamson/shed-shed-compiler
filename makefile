@@ -8,6 +8,7 @@ COMPILER_SCRIPT = _build/compile.js
 COMPILE_COMPILER_ARGS = $(SOURCE_FILES) --main=shed.compiler.compilation.main
 COMPILE_TESTS_ARGS = $(SOURCE_FILES) test --main=hat.run
 TEST_CASES = shed.compiler.tokenising.tokeniserTests.testCases \
+	shed.compiler.tokenising.tokenFilterTests.testCases \
 	shed.compiler.parsing.literalsTest.testCases \
 	shed.compiler.parsing.expressionsTest.testCases \
 	shed.compiler.parsing.statementsTest.testCases \
