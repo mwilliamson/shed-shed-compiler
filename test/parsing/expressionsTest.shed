@@ -28,6 +28,17 @@ val testCases = listOf[TestCase](
         )
     ),
     
+    TestCase("newline can precede else", fun() =>
+        assertSuccessfulParse(
+            "if true then 1\nelse 0",
+            nodes.ifThenElse(
+                nodes.bool(true),
+                nodes.number("1"),
+                nodes.number("0")
+            )
+        )
+    ),
+    
     TestCase("can parse nested if-then-else expressions", fun() =>
         assertSuccessfulParse(
             "if true then 1 else if false then 0 else 2",

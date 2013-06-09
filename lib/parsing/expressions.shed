@@ -28,6 +28,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .capture(expressionRule)
             .next(tokenRules.keyword("then"))
             .capture(expressionRule)
+            .next(rules.optional(tokenRules.newline()))
             .next(tokenRules.keyword("else"))
             .capture(expressionRule)
             .map(nodes.ifThenElse)
