@@ -5,6 +5,7 @@ members {
     identifier,
     keyword,
     whitespace,
+    newline,
     symbol,
     string,
     number,
@@ -24,7 +25,10 @@ def keyword fun(value: String, source: StringSource) =>
     
 def whitespace fun(value: String, source: StringSource) =>
     Token("whitespace", value, source);
-    
+
+def newline fun(source: StringSource) =>
+    Token("newline", "\n", source);
+
 def symbol fun(value: String, source: StringSource) =>
     Token("symbol", value, source);
     

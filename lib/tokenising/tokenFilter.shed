@@ -4,12 +4,70 @@ members {
     filterTokens
 }
 
-def filterTokens fun(input: List[Token]) =>
-    input.filter(isSignificantToken)
+import sequences;
+import lazySequences;
+import lists;
+import regex;
 
+import shed/compiler/tokenising/tokens;
 
-def isSignificantToken fun(token: Token) =>
-    not(or(
-        token.name().equals("whitespace"),
-        token.name().equals("comment")
-    ))
+def filterTokens fun(input: Sequence[Token]) =>
+    lists.sequenceToList(sequences.reversed(filterTokens2(sequences.nil, input, sequences.nil)))
+
+def filterTokens2 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
+    if sequences.isEmpty(input) then
+        lazySequences.concat(accumulator)
+    else
+        extractNewline(input.currentItem(), indentationStack)
+            .map(fun(filtered: Sequence[Token], rest: Sequence[Token], newIndentationStack: Sequence[Integer]) =>
+                filterTokens2(sequences.cons(filtered, accumulator), rest, newIndentationStack)
+            )
+
+def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[Integer]) => let
+    val token = input.head()
+    val withTail = fun(filtered: Sequence[Token]) =>
+        tuple(filtered, input.tail(), indentationStack)
+        
+    in if and(token.name().equals("symbol"), token.value().equals("{")) then
+        sequences.head(input.tail()).map(fun(nextToken: Token) =>
+            if nextToken.name().equals("whitespace") then
+                regex.create("\n( *)$").exec(nextToken.value())
+                    .map(fun(regexResult: RegexResult) =>
+                        tuple(
+                            sequences.singleton(token),
+                            input.tail(),
+                            sequences.cons(regexResult.capture(1).length(), indentationStack)
+                        )
+                    )
+                    .valueOrElse(fun() => withTail(sequences.singleton(token)))
+            else
+                withTail(sequences.singleton(token))
+        ).valueOrElse(fun() => withTail(sequences.singleton(token)))
+        
+    else if and(token.name().equals("symbol"), token.value().equals("}")) then
+        tuple(
+            sequences.singleton(token),
+            input.tail(),
+            if sequences.isEmpty(indentationStack) then
+                sequences.nil
+            else
+                indentationStack.tail()
+        )
+        
+    else if token.name().equals("whitespace") then let
+        val isSignificantNewline = regex.create("\n( *)$")
+            .exec(token.value())
+            .map(fun(result: RegexResult) =>
+                result.capture(1).length().equals(sequences.head(indentationStack).valueOrElse(fun() => 0))
+            )
+            .valueOrElse(fun() => false)
+        in if isSignificantNewline then
+            withTail(sequences.singleton(tokens.newline(token.source())))
+        else
+            withTail(sequences.nil)
+            
+    else if token.name().equals("comment") then
+        withTail(sequences.nil)
+        
+    else
+        withTail(sequences.singleton(token))
