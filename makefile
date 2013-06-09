@@ -18,7 +18,7 @@ TEST_CASES = shed.compiler.tokenising.tokeniserTests.testCases \
 	shed.compiler.referenceResolvingTest.testCases \
 	shed.compiler.compilationTest.testCases
 	
-build-tests:
+build-tests: bootstrap
 	mkdir -p _build
 	$(DEFAULT_COMPILER) $(COMPILE_TESTS_ARGS) > _build/tests.js
 
