@@ -102,12 +102,15 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             )
     );
 
+    val memberSeparator = tokenRules.symbolOrNewline(",")
+
     val membersRule =
         rules.sequence()
             .next(tokenRules.keyword("members"))
             .cut()
             .next(tokenRules.openingBrace())
-            .capture(rules.zeroOrMoreWithSeparator(memberDeclarationRule, tokenRules.symbolOrNewline(",")))
+            .capture(rules.zeroOrMoreWithSeparator(memberDeclarationRule, memberSeparator))
+            .next(rules.optional(memberSeparator))
             .next(tokenRules.symbol("}"))
             .next(rules.optional(tokenRules.statementTerminator))
             .head();

@@ -55,9 +55,15 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         )
         
     else if token.name().equals("whitespace") then let
-        val isSignificantNewline =
-            not(nextTokenIsComment(input.tail())) &&
-            isNewlineAtIndentation(token.value(), currentIndentation(indentationStack))
+        val isAtCorrectIndentation = isNewlineAtIndentation(
+            token.value(),
+            currentIndentation(indentationStack)
+        )
+        val isSignificantNewline = or(
+            not(nextTokenIsComment(input.tail())) && isAtCorrectIndentation,
+            nextTokenIsClosingBrace(input.tail()) && regex.create("\n").test(token.value())
+        )
+            
         in if isSignificantNewline then
             withTail(sequences.singleton(tokens.newline(token.source())))
         else
@@ -70,8 +76,20 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         withTail(sequences.singleton(token))
 
 def nextTokenIsComment fun(input: Sequence[Token]) =>
+    nextTokenIs(
+        fun(token: Token) => token.name().equals("comment"),
+        input
+    )
+
+def nextTokenIsClosingBrace fun(input: Sequence[Token]) =>
+    nextTokenIs(fun(token: Token) =>
+        token.name().equals("symbol") && token.value().equals("}"),
+        input
+    )
+
+def nextTokenIs fun(predicate: Function[Token, Boolean], input: Sequence[Token]) =>
     sequences.head(input)
-        .map(fun(token: Token) => token.name().equals("comment"))
+        .map(predicate)
         .valueOrElse(fun() => false)
 
 def isNewlineAtIndentation fun(value: String, indentation: Integer) =>

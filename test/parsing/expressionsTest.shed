@@ -273,6 +273,16 @@ val testCases = listOf[TestCase](
             emptyList
         )
     ),
+    
+    TestCase("last member can be followed by comma", fun() =>
+        assertSuccessfulMembersParse(
+            "members { x, y, }",
+            listOf(
+                nodes.memberDeclaration("x", nodes.ref("x")),
+                nodes.memberDeclaration("y", nodes.ref("y"))
+            )
+        )
+    ),
                 
     TestCase("can parse do block", fun() =>
         assertSuccessfulParse(

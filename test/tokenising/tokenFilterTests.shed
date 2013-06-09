@@ -172,6 +172,45 @@ val testCases = listOf[TestCase](
                 symbol("}")
             ))
         );
+    }),
+    
+    TestCase("newline before closing brace is significant", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                symbol("{"),
+                whitespace("\n    "),
+                symbol("+"),
+                whitespace("\n"),
+                symbol("}"),
+                whitespace("\n    ")
+            )),
+            equalTo(listOf(
+                symbol("{"),
+                newline(),
+                symbol("+"),
+                newline(),
+                symbol("}")
+            ))
+        );
+    }),
+    
+    TestCase("whitespace without newline before closing brace is not significant", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                symbol("{"),
+                whitespace("\n    "),
+                symbol("+"),
+                whitespace("  "),
+                symbol("}"),
+                whitespace("\n    ")
+            )),
+            equalTo(listOf(
+                symbol("{"),
+                newline(),
+                symbol("+"),
+                symbol("}")
+            ))
+        );
     })
 );
 
