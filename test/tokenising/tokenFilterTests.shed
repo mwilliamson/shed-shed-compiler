@@ -28,6 +28,17 @@ val testCases = listOf[TestCase](
             ))
         );
     }),
+    
+    TestCase("newline before comment is not significant", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                whitespace("\n"),
+                comment("// asf"),
+                whitespace("\n  ")
+            )),
+            equalTo(emptyList)
+        );
+    }),
 
     TestCase("comment tokens are filtered out", fun() => do {
         return assertThat(
