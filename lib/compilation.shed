@@ -1,19 +1,19 @@
-module shed/compiler/compilation;
+module shed/compiler/compilation
 
 members {
     compileString,
     main
 }
 
-import files;
-import promises;
-import strings;
-import lists;
-import sequences;
+import files
+import promises
+import strings
+import lists
+import sequences
 
-import lop/strings.createStringSource;
+import lop/strings.createStringSource
 
-import shed/compiler/moduleCompilation;
+import shed/compiler/moduleCompilation
 
 def main fun(argv: List[String]) => let
     val pathRoots = argv.filter(fun(arg: String) => not(arg.substring(0, 2).equals("--")))
@@ -30,12 +30,12 @@ def main fun(argv: List[String]) => let
     )
     
     in programParts.map(joinJavaScriptUnits).map(fun(program: String) => do {
-        print(program);
+        print(program)
         mainFunction.map(fun(mainFunction: String) => do {
-            print("\n\n$shed.js.import(\"".concat(mainFunction).concat("\")"));
-            print("($shed.lists.createFromArray(process.argv.slice(2).map($shed.string)));");
-        });
-    });
+            print("\n\n$shed.js.import(\"".concat(mainFunction).concat("\")"))
+            print("($shed.lists.createFromArray(process.argv.slice(2).map($shed.string)));")
+        })
+    })
 
 def compileString fun(input: String) => let
     val source = createStringSource(input, "raw string")
@@ -84,8 +84,8 @@ def compileShedFiles fun(paths: List[String]) : Promise[List[String]] =>
     
 def compileShedFile fun(path: String) : Promise[String] =>
     readUtf8File(path).map(fun(contents: String) => do {
-        val source = createStringSource(contents, "File: ".concat(path));
-        return moduleCompilation.compileSourceToString(source);
+        val source = createStringSource(contents, "File: ".concat(path))
+        return moduleCompilation.compileSourceToString(source)
     })
 
 def readUtf8File fun(path: String) =>
