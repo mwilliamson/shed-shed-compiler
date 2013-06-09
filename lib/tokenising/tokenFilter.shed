@@ -55,12 +55,9 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         )
         
     else if token.name().equals("whitespace") then let
-        val isSignificantNewline = not(nextTokenIsComment(input.tail())) && regex.create("\n( *)$")
-            .exec(token.value())
-            .map(fun(result: RegexResult) =>
-                result.capture(1).length().equals(sequences.head(indentationStack).valueOrElse(fun() => 0))
-            )
-            .valueOrElse(fun() => false)
+        val isSignificantNewline =
+            not(nextTokenIsComment(input.tail())) &&
+            isNewlineAtIndentation(token.value(), currentIndentation(indentationStack))
         in if isSignificantNewline then
             withTail(sequences.singleton(tokens.newline(token.source())))
         else
@@ -76,3 +73,14 @@ def nextTokenIsComment fun(input: Sequence[Token]) =>
     sequences.head(input)
         .map(fun(token: Token) => token.name().equals("comment"))
         .valueOrElse(fun() => false)
+
+def isNewlineAtIndentation fun(value: String, indentation: Integer) =>
+    regex.create("\n( *)$")
+        .exec(value)
+        .map(fun(result: RegexResult) =>
+            result.capture(1).length().equals(indentation)
+        )
+        .valueOrElse(fun() => false)
+
+def currentIndentation fun(indentationStack: Sequence[Integer]) =>
+    sequences.head(indentationStack).valueOrElse(fun() => 0)
