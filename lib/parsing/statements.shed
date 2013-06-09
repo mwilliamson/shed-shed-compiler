@@ -9,9 +9,10 @@ import lop/results;
 
 import shed/compiler/nodes;
 import shed/compiler/parsing/tokenRules;
+import shed/compiler/parsing/tokenRules.statementTerminator;
+
 
 def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
-    val statementTerminator = tokenRules.symbol(";");
     
     val expressionStatementRule =
         rules.sequence()
@@ -43,7 +44,7 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             .cut()
             .capture(tokenRules.identifier())
             .capture(expressionRule)
-            .next(rules.optional(tokenRules.symbol(";")))
+            .next(rules.optional(statementTerminator))
             .map(nodes.definition);
     
     return rules.firstOf("statement",

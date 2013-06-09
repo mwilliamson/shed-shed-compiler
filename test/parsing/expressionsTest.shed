@@ -235,6 +235,33 @@ val testCases = listOf[TestCase](
             listOf(nodes.memberDeclaration("x", nodes.ref("x")))
         )
     ),
+    
+    TestCase("members are comma separated", fun() =>
+        assertSuccessfulMembersParse(
+            "members { x, y }",
+            listOf(
+                nodes.memberDeclaration("x", nodes.ref("x")),
+                nodes.memberDeclaration("y", nodes.ref("y"))
+            )
+        )
+    ),
+    
+    TestCase("members can be separated by newlines", fun() =>
+        assertSuccessfulMembersParse(
+            "members { x\ny }",
+            listOf(
+                nodes.memberDeclaration("x", nodes.ref("x")),
+                nodes.memberDeclaration("y", nodes.ref("y"))
+            )
+        )
+    ),
+    
+    TestCase("opening brace of members can be followed by newline", fun() =>
+        assertSuccessfulMembersParse(
+            "members {\n}",
+            emptyList
+        )
+    ),
                 
     TestCase("can parse do block", fun() =>
         assertSuccessfulParse(

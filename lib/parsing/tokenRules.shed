@@ -1,7 +1,8 @@
 module shed/compiler/parsing/tokenRules;
 
 members {
-    symbol, keyword, identifier
+    symbol, keyword, identifier, newline, symbolOrNewline, openingBrace,
+    statementTerminator, closingParen
 }
 
 import lop/rules;
@@ -14,3 +15,29 @@ def keyword fun(value: String) =>
     
 def identifier fun() =>
     rules.tokenOfType("identifier");
+    
+def newline fun() =>
+    rules.tokenOfType("newline");
+
+def symbolOrNewline fun(symbolValue: String) =>
+    rules.sequence()
+        .next(rules.firstOf(";", listOf(
+            symbol(symbolValue),
+            newline()
+        )))
+        .next(rules.zeroOrMore(newline()))
+        .map(fun() => ());
+
+def openingBrace fun() =>
+    rules.sequence()
+        .next(symbol("{"))
+        .next(rules.zeroOrMore(newline()))
+        .map(fun() => ());
+
+val statementTerminator = symbolOrNewline(";");
+
+def closingParen fun() =>
+    rules.sequence()
+        .next(rules.optional(newline()))
+        .next(symbol(")"))
+        .map(fun() => ());

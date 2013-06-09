@@ -10,6 +10,7 @@ import lop/rules;
 
 import shed/compiler/nodes;
 import shed/compiler/parsing/tokenRules;
+import shed/compiler/parsing/tokenRules.statementTerminator;
 
 def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do {
     val moduleBody =
@@ -44,7 +45,7 @@ val moduleDeclaration =
         .next(tokenRules.keyword("module"))
         .cut()
         .capture(moduleName)
-        .next(tokenRules.symbol(";"))
+        .next(statementTerminator)
         .head();
         
 val importRule =
@@ -53,5 +54,5 @@ val importRule =
         .cut()
         .capture(moduleName)
         .capture(valuePath)
-        .next(tokenRules.symbol(";"))
+        .next(statementTerminator)
         .map(nodes.importStatement);

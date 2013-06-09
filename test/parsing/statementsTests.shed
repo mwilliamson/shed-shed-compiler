@@ -22,6 +22,20 @@ val testCases = listOf(
         )
     ),
     
+    TestCase("statement can be terminated by newline", fun() =>
+        assertSuccessfulParse(
+            "hello\n",
+            nodes.expressionStatement(nodes.ref("hello"))
+        )
+    ),
+    
+    TestCase("newlines after semicolon statement terminator are ignored", fun() =>
+        assertSuccessfulParse(
+            "hello;\n",
+            nodes.expressionStatement(nodes.ref("hello"))
+        )
+    ),
+    
     TestCase("return statement is return keyword followed by expression", fun() =>
         assertSuccessfulParse(
             "return hello;",
