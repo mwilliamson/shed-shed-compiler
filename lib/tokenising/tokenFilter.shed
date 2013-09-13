@@ -29,7 +29,14 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         tuple(filtered, input.tail(), indentationStack)
         
     in if and(token.name().equals("symbol"), token.value().equals("{")) then
-        sequences.head(input.tail()).map(fun(nextToken: Token) =>
+        let val noSignificantWhitespace = fun() =>
+            tuple(
+                sequences.singleton(token),
+                input.tail(),
+                sequences.cons(currentIndentation(indentationStack), indentationStack)
+            )
+            
+        in sequences.head(input.tail()).map(fun(nextToken: Token) =>
             if nextToken.name().equals("whitespace") then
                 regex.create("\n( *)$").exec(nextToken.value())
                     .map(fun(regexResult: RegexResult) =>
@@ -39,10 +46,10 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
                             sequences.cons(regexResult.capture(1).length(), indentationStack)
                         )
                     )
-                    .valueOrElse(fun() => withTail(sequences.singleton(token)))
+                    .valueOrElse(noSignificantWhitespace)
             else
-                withTail(sequences.singleton(token))
-        ).valueOrElse(fun() => withTail(sequences.singleton(token)))
+                noSignificantWhitespace()
+        ).valueOrElse(noSignificantWhitespace)
         
     else if and(token.name().equals("symbol"), token.value().equals("}")) then
         tuple(
@@ -63,7 +70,6 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
             not(nextTokenIsComment(input.tail())) && isAtCorrectIndentation,
             nextTokenIsClosingBrace(input.tail()) && regex.create("\n").test(token.value())
         )
-            
         in if isSignificantNewline then
             withTail(sequences.singleton(tokens.newline(token.source())))
         else

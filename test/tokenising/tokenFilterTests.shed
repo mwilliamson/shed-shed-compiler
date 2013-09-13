@@ -211,6 +211,25 @@ val testCases = listOf[TestCase](
                 symbol("}")
             ))
         );
+    }),
+    
+    TestCase("opening brace then closing brace without newline preserves indentation significance", fun() => do {
+        return assertThat(
+            filterTokens(listOf(
+                symbol("{"),
+                whitespace("\n    "),
+                symbol("{"),
+                symbol("}"),
+                whitespace("\n    ")
+            )),
+            equalTo(listOf(
+                symbol("{"),
+                newline(),
+                symbol("{"),
+                symbol("}"),
+                newline()
+            ))
+        );
     })
 );
 
