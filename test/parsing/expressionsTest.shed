@@ -309,19 +309,6 @@ val testCases = listOf[TestCase](
         )
     ),
                 
-    TestCase("val followed by newline implies let-in expression", fun() =>
-        assertSuccessfulParse(
-            "val x = 1\nval y = 2\nz",
-            nodes.letIn(
-                listOf(
-                    nodes.valDeclaration("x", nodes.number("1")),
-                    nodes.valDeclaration("y", nodes.number("2"))
-                ),
-                nodes.ref("z")
-            )
-        )
-    ),
-                
     TestCase("can parse and expression", fun() =>
         assertSuccessfulParse(
             "first && second",

@@ -4,9 +4,6 @@ members {
     expressionRules
 }
 
-import lists
-import sequences
-
 import lop/rules;
 import lop/pratt;
 
@@ -178,25 +175,6 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .capture(expressionRule)
             .map(nodes.letIn)
     );
-    
-    val implicitLetInRule = lazyFunction(fun() => let
-        val valRule = rules.sequence()
-            .capture(letDeclarationRule)
-            .next(tokenRules.statementTerminator)
-            .head()
-        
-        // TODO: implement oneOrMore rule
-        
-        in rules.sequence()
-            .capture(valRule)
-            .cut()
-            .capture(rules.zeroOrMore(valRule))
-            .capture(expressionRule)
-            .map(fun(firstVal: _, furtherVals: _, expression: _) =>
-                let val vals = lists.sequenceToList(sequences.cons(firstVal, furtherVals))
-                in nodes.letIn(vals, expression)
-            )
-    );
 
     val primaryExpressionRule = rules.firstOf("primary expression",
         listOf(
@@ -208,8 +186,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             objectRule,
             classRule,
             doBlockRule,
-            letInRule,
-            implicitLetInRule
+            letInRule
         )
     );
         
