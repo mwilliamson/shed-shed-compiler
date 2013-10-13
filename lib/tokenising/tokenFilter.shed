@@ -12,7 +12,7 @@ import regex;
 import shed/compiler/tokenising/tokens;
 
 def filterTokens fun(input: Sequence[Token]) =>
-    lists.sequenceToList(sequences.reversed(filterTokens2(sequences.nil, input, sequences.nil)))
+    lists.reversed(filterTokens2(sequences.nil, input, sequences.nil))
 
 def filterTokens2 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
     if sequences.isEmpty(input) then
