@@ -28,7 +28,7 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
     val withTail = fun(filtered: Sequence[Token]) =>
         tuple(filtered, input.tail(), indentationStack)
         
-    in if and(token.name().equals("symbol"), token.value().equals("{")) then
+    in if isSymbol(token, "{") then
         let val noSignificantWhitespace = fun() =>
             tuple(
                 sequences.singleton(token),
@@ -51,7 +51,7 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
                 noSignificantWhitespace()
         ).valueOrElse(noSignificantWhitespace)
         
-    else if and(token.name().equals("symbol"), token.value().equals("}")) then
+    else if isSymbol(token, "}") then
         tuple(
             sequences.singleton(token),
             input.tail(),
@@ -88,8 +88,8 @@ def nextTokenIsComment fun(input: Sequence[Token]) =>
     )
 
 def nextTokenIsClosingBrace fun(input: Sequence[Token]) =>
-    nextTokenIs(fun(token: Token) =>
-        token.name().equals("symbol") && token.value().equals("}"),
+    nextTokenIs(
+        fun(token: Token) => isSymbol(token, "}"),
         input
     )
 
@@ -105,6 +105,12 @@ def isNewlineAtIndentation fun(value: String, indentation: Integer) =>
             result.capture(1).length().equals(indentation)
         )
         .valueOrElse(fun() => false)
+
+def isSymbol fun(token: Token, value: String) =>
+    isTokenValue(token, "symbol", value)
+
+def isTokenValue fun(token: Token, type: String, value: String) =>
+    token.name().equals(type) && token.value().equals(value)
 
 def currentIndentation fun(indentationStack: Sequence[Integer]) =>
     sequences.head(indentationStack).valueOrElse(fun() => 0)
