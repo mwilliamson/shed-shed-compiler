@@ -112,9 +112,11 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     
     def blockRule fun(blockBodyRule: Rule) =>
         rules.sequence()
-            .next(tokenRules.openingBrace())
+            .next(tokenRules.symbol("::"))
+            .cut()
+            .next(tokenRules.indent())
             .capture(blockBodyRule)
-            .next(tokenRules.symbol("}"))
+            .next(tokenRules.dedent())
             .head()
     
     val membersRule =

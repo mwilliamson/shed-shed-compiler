@@ -1,7 +1,7 @@
 module shed/compiler/parsing/tokenRules;
 
 members {
-    symbol, keyword, identifier, newline, symbolOrNewline, openingBrace,
+    symbol, keyword, identifier, newline, symbolOrNewline, indent, dedent
     statementTerminator, closingParen
 }
 
@@ -28,11 +28,11 @@ def symbolOrNewline fun(symbolValue: String) =>
         .next(rules.zeroOrMore(newline()))
         .map(fun() => ());
 
-def openingBrace fun() =>
-    rules.sequence()
-        .next(symbol("{"))
-        .next(rules.zeroOrMore(newline()))
-        .map(fun() => ());
+def indent fun() =>
+    rules.tokenOfType("indent")
+
+def dedent fun() =>
+    rules.tokenOfType("dedent")
 
 val statementTerminator = symbolOrNewline(";");
 
