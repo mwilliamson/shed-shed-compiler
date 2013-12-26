@@ -14,14 +14,17 @@ import shed/compiler/tokenising/tokenFilter.filterTokens;
 import lop/strings;
     
 
+def assertFilteredTokens fun(inputTokens: List[Token], matcher: Matcher[List[Token]]) =>
+    assertThat(filterTokens(inputTokens), matcher)
+
 val testCases = listOf[TestCase](
     TestCase("whitespace tokens are filtered out", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 identifier("x"),
                 whitespace(" \t"),
                 identifier("y")
-            )),
+            ),
             equalTo(listOf(
                 identifier("x"),
                 identifier("y")
@@ -30,30 +33,30 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("newline before comment is not significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 whitespace("\n"),
                 comment("// asf"),
                 whitespace("\n  ")
-            )),
+            ),
             equalTo(emptyList)
         );
     }),
 
     TestCase("comment tokens are filtered out", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 comment("// saf")
-            )),
+            ),
             equalTo(emptyList)
         );
     }),
     
     TestCase("new lines are significant at zero indentation", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 whitespace("\n")
-            )),
+            ),
             equalTo(listOf(
                 newline()
             ))
@@ -61,10 +64,10 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("blank lines are ignored", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 whitespace("\n   \n")
-            )),
+            ),
             equalTo(listOf(
                 newline()
             ))
@@ -72,19 +75,19 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("new line followed by whitespace is ignored", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(emptyList)
         );
     }),
     
     TestCase("no newline if opening brace is last token", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{")
             ))
@@ -92,11 +95,11 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("whitespace after opening brace is not significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace(" ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{")
             ))
@@ -104,11 +107,11 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("indented newline after opening brace is significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline()
@@ -117,12 +120,12 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("indented newline after opening brace is ignored if there is a intervening token", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 symbol("+"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 symbol("+")
@@ -131,13 +134,13 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("indented newlines at same indentation after opening brace are significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    "),
                 symbol("+"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline(),
@@ -148,13 +151,13 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("closing brace pops indentation stack", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    "),
                 symbol("}"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline(),
@@ -164,10 +167,10 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("unmatched closing brace does not cause error", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("}")
-            )),
+            ),
             equalTo(listOf(
                 symbol("}")
             ))
@@ -175,15 +178,15 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("newline before closing brace is significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    "),
                 symbol("+"),
                 whitespace("\n"),
                 symbol("}"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline(),
@@ -195,15 +198,15 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("whitespace without newline before closing brace is not significant", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    "),
                 symbol("+"),
                 whitespace("  "),
                 symbol("}"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline(),
@@ -214,14 +217,14 @@ val testCases = listOf[TestCase](
     }),
     
     TestCase("opening brace then closing brace without newline preserves indentation significance", fun() => do {
-        return assertThat(
-            filterTokens(listOf(
+        return assertFilteredTokens(
+            listOf(
                 symbol("{"),
                 whitespace("\n    "),
                 symbol("{"),
                 symbol("}"),
                 whitespace("\n    ")
-            )),
+            ),
             equalTo(listOf(
                 symbol("{"),
                 newline(),
