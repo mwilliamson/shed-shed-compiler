@@ -12,8 +12,24 @@ import regex;
 import shed/compiler/tokenising/tokens;
 import shed/compiler/results
 
-def filterTokens fun(input: Sequence[Token]) =>
-    results.success(lists.reversed(filterTokens2(sequences.nil, input, sequences.nil)))
+def filterTokens fun(input: Sequence[Token]) => let
+    val uncommentedInput = filterComments(input)
+    in results.success(lists.reversed(filterTokens2(sequences.nil, uncommentedInput, sequences.nil)))
+
+def filterComments fun(input: Sequence[Token]) => let
+    val item = input.currentItem()
+    in if sequences.isEmpty(item) then
+        sequences.nil
+    else
+        let val token = item.head()
+        in if token.name().equals("whitespace") &&
+                nextTokenIsComment(item.tail()) then
+            filterComments(pop(item.tail()))
+        else if token.name().equals("comment") then
+            filterComments(item.tail())
+        else
+            sequences.cons(item.head(), filterComments(item.tail()))
+            
 
 def filterTokens2 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
     if sequences.isEmpty(input) then
@@ -49,8 +65,7 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         ).valueOrElse()
         
     else if token.name().equals("whitespace") then
-        if regex.create("\n").test(token.value()) &&
-            not(nextTokenIsComment(input.tail())) then let
+        if regex.create("\n").test(token.value()) then let
         
             val indentationLevel = regex.create("\n( *)$")
                 .exec(token.value())
@@ -74,8 +89,6 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         else
             withTail(sequences.nil)
             
-    else if token.name().equals("comment") then
-        withTail(sequences.nil)
     else if token.name().equals("keyword") && token.value().equals("pass") then
         withTail(sequences.nil)
     else if token.name().equals("end") && not(sequences.isEmpty(indentationStack)) then

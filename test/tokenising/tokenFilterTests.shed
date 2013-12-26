@@ -163,6 +163,23 @@ val testCases = listOf[TestCase](
         );
     }),
     
+    TestCase("indented newlines followed by line comments are ignored", fun() => do {
+        return assertFilteredTokens(
+            listOf(
+                symbol("::"),
+                whitespace("\n    "),
+                comment("// Hello!"),
+                whitespace("\n    "),
+                symbol("+")
+            ),
+            equalTo(listOf(
+                symbol("::"),
+                indent(),
+                symbol("+")
+            ))
+        );
+    }),
+    
     TestCase("newline at previous indentation level causes single dedent", fun() => do {
         return assertFilteredTokens(
             listOf(
