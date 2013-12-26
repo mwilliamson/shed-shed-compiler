@@ -182,8 +182,24 @@ val testCases = listOf(
         val context = result.value()
         in assertThat(context.contains("song"), equalTo(true))),
     
-    TestCase("import statement adds name of module to context", fun() => let
-        val result = resolveReferences(nodes.importStatement(listOf("song"), emptyList), emptyContext)
-        val context = result.value()
-        in assertThat(context.contains("song"), equalTo(true)))
+    TestCase("member declarations of module have references resolved",
+        badRefDetected(nodes.moduleNode(
+            emptyList,
+            listOf(nodes.memberDeclaration("bad", badRef)),
+            emptyList
+        ))),
+    
+    TestCase("statements of module have references resolved", 
+        badRefDetected(nodes.moduleNode(
+            emptyList,
+            emptyList,
+            listOf(badRef))
+        )),
+    
+    TestCase("members are added to module scope before resolving statements",
+        successfulReferenceResolution(nodes.moduleNode(
+            emptyList,
+            listOf(nodes.memberDeclaration("song", nodes.ref("song"))),
+            listOf(nodes.valDeclaration("song", noRef))
+        )))
 )

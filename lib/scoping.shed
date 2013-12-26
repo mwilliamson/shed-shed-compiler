@@ -34,7 +34,8 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.ReturnStatementNode, returnStatementScope),
         matchClass(nodes.DefinitionNode, definitionScope),
         
-        matchClass(nodes.ImportNode, noScope)
+        matchClass(nodes.ImportNode, noScope),
+        matchClass(nodes.ModuleNode, moduleScope)
     )
 
 def noScope fun(node: ShedNode) => sameScope(emptyList)
@@ -86,6 +87,9 @@ def returnStatementScope fun(node: ReturnStatementNode) =>
 
 def definitionScope fun(node: DefinitionNode) =>
     sameScope(listOf(node.value()))
+
+def moduleScope fun(node: ModuleNode) =>
+    sameScope(node.statements().concat(node.memberDeclarations()))
 
 
 def SameScope class(nodes: List[ShedNode]) => ::
