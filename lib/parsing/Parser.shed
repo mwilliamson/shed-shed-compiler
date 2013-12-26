@@ -25,11 +25,16 @@ def Parser class() => {
     val tokeniser = Tokeniser();
         
     def parse fun(rule: Rule, input: StringSource) =>
-        rule(tokenise(input))
+        tokenise(input)
+            .map(rule)
+            .valueOrElse()
     
     def filteredParse fun(predicate: Function[Token, Boolean]) =>
         fun(rule: Rule, input: StringSource) =>
-            rule(tokenise(input).filter(predicate))
+            tokenise(input)
+                .map(fun(tokens: List[Token]) => tokens.filter(predicate))
+                .map(rule)
+                .valueOrElse()
     
     val parseWithoutEndToken =
         filteredParse(fun(token: Token) =>

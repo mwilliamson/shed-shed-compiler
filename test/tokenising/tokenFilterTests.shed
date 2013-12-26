@@ -5,6 +5,7 @@ members {
 }
 
 import hat.TestCase;
+import hat;
 import duck.assertThat;
 import duck.isList;
 import duck.equalTo;
@@ -15,7 +16,13 @@ import lop/strings;
     
 
 def assertFilteredTokens fun(inputTokens: List[Token], matcher: Matcher[List[Token]]) =>
-    assertThat(filterTokens(inputTokens), matcher)
+    filterTokens(inputTokens)
+        .map(fun(filteredTokens: List[Token]) =>
+            assertThat(filteredTokens, matcher)
+        )
+        .valueOrElse(fun() =>
+            hat.results.failure("Failed to filter tokens")
+        )
 
 val testCases = listOf[TestCase](
     TestCase("whitespace tokens are filtered out", fun() => do {

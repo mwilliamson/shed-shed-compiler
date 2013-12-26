@@ -10,9 +10,10 @@ import lists;
 import regex;
 
 import shed/compiler/tokenising/tokens;
+import shed/compiler/results
 
 def filterTokens fun(input: Sequence[Token]) =>
-    lists.reversed(filterTokens2(sequences.nil, input, sequences.nil))
+    results.success(lists.reversed(filterTokens2(sequences.nil, input, sequences.nil)))
 
 def filterTokens2 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
     if sequences.isEmpty(input) then
