@@ -18,14 +18,16 @@ import shed/compiler/referenceResolving.variableNotInScope;
 import shed/compiler/resultMatchers.isSuccess;
 import shed/compiler/results.failure;
 
-def requiresNoContext fun(node: ShedNode) => fun() =>
-    assertThat(resolveReferences(node, emptyContext), isSuccess(anything))
-
 def badRefDetected fun(node: ShedNode) => fun() =>
     assertThat(
         resolveReferences(node, emptyContext),
         equalTo(failure(listOf(variableNotInScope("badRef"))))
     )
+
+def successfulReferenceResolution fun(node: ShedNode) => fun() =>
+    assertThat(resolveReferences(node, emptyContext), isSuccess(anything))
+
+val requiresNoContext = successfulReferenceResolution
     
 val badRef = nodes.ref("badRef");
 val noRef = nodes.unit();
@@ -61,17 +63,11 @@ val testCases = listOf(
     TestCase("function fails if body fails",
         badRefDetected(nodes.func(emptyList, badRef))),
     
-    TestCase("function node adds variable to scope", fun() => let
-        val context = emptyContext.add("String", dummyNode)
-        val func = nodes.func(
+    TestCase("function node adds variable to scope", 
+        successfulReferenceResolution(nodes.func(
             listOf(nodes.formalArgument("song", none)),
             nodes.ref("song")
-        )
-        in assertThat(
-            resolveReferences(func, context),
-            isSuccess(anything)
-        )
-    ),
+        ))),
     
     TestCase("function creates new scope for formal args and body", fun() => let
         val func = nodes.func(
