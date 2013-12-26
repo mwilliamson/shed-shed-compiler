@@ -155,5 +155,8 @@ val testCases = listOf(
         badRefDetected(nodes.and(badRef, noRef))),
     
     TestCase("right of and expression has references resolved",
-        badRefDetected(nodes.and(noRef, badRef)))
+        badRefDetected(nodes.and(noRef, badRef))),
+    
+    TestCase("expression of expression statement has references resolved",
+        badRefDetected(nodes.expressionStatement(badRef)))
 )
