@@ -161,5 +161,14 @@ val testCases = listOf(
         badRefDetected(nodes.expressionStatement(badRef))),
     
     TestCase("value of return statement has references resolved",
-        badRefDetected(nodes.ret(badRef)))
+        badRefDetected(nodes.ret(badRef))),
+    
+    TestCase("value definition has references resolved",
+        badRefDetected(nodes.definition("song", badRef))),
+    
+    TestCase("definition adds name to context", fun() => let
+        val result = resolveReferences(nodes.definition("song", noRef), emptyContext)
+        val context = result.value()
+        in assertThat(context.contains("song"), equalTo(true))
+    )
 )

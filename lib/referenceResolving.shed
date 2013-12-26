@@ -37,6 +37,7 @@ def isVariableBinder fun(node: ShedNode) =>
     match(node,
         matchClass(nodes.FormalArgumentNode, fun() => true),
         matchClass(nodes.ValDeclarationNode, fun() => true),
+        matchClass(nodes.DefinitionNode, fun() => true),
         matchDefault(fun() => false)
     )
 
