@@ -23,7 +23,8 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.TypeApplicationNode, typeApplicationScope),
         matchClass(nodes.MemberAccessNode, memberAccessScope),
         matchClass(nodes.ClassNode, classScope),
-        matchClass(nodes.ObjectNode, objectScope)
+        matchClass(nodes.ObjectNode, objectScope),
+        matchClass(nodes.DoBlockNode, doBlockScope)
     )
 
 def noScope fun(node: ShedNode) => sameScope(emptyList)
@@ -53,6 +54,9 @@ def objectScope fun(node: ObjectNode) => let
     val memberDeclarationScope = node.memberDeclarations()
         .map(fun(memberDeclaration) => memberDeclaration.value())
     in subScope(memberDeclarationScope.concat(node.statements()))
+
+def doBlockScope fun(node: DoBlockNode) =>
+    subScope(node.statements())
 
 
 def SameScope class(nodes: List[ShedNode]) => ::

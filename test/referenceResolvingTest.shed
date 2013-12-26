@@ -131,5 +131,8 @@ val testCases = listOf(
         successfulReferenceResolution(nodes.classDeclaration(
             listOf(nodes.formalArgument("song", none)),
             nodes.obj(emptyList, listOf(nodes.ref("song")))
-        )))
+        ))),
+    
+    TestCase("statements of do block have references resolved", 
+        badRefDetected(nodes.doBlock(listOf(badRef))))
 )
