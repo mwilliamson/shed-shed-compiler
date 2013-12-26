@@ -121,5 +121,8 @@ val testCases = listOf(
         badRefDetected(nodes.typeApplication(badRef, emptyList))),
         
     TestCase("arguments of type application has references resolved", 
-        badRefDetected(nodes.typeApplication(noRef, listOf(badRef))))
+        badRefDetected(nodes.typeApplication(noRef, listOf(badRef)))),
+        
+    TestCase("left part of member access has references resolved", 
+        badRefDetected(nodes.memberAccess(badRef, "name")))
 );
