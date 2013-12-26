@@ -160,9 +160,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
         rules.sequence()
             .next(tokenRules.keyword("do"))
             .cut()
-            .next(tokenRules.openingBrace())
-            .capture(rules.zeroOrMore(statementRule))
-            .next(tokenRules.symbol("}"))
+            .capture(blockRule(rules.zeroOrMore(statementRule)))
             .map(nodes.doBlock);
 
     val letDeclarationRule = lazyFunction(fun() =>
