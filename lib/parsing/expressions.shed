@@ -110,13 +110,18 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .next(rules.optional(memberSeparator))
             .head()
     
+    def blockRule fun(blockBodyRule: Rule) =>
+        rules.sequence()
+            .next(tokenRules.openingBrace())
+            .capture(blockBodyRule)
+            .next(tokenRules.symbol("}"))
+            .head()
+    
     val membersRule =
         rules.sequence()
             .next(tokenRules.keyword("members"))
             .cut()
-            .next(tokenRules.openingBrace())
-            .capture(membersBlockRule)
-            .next(tokenRules.symbol("}"))
+            .capture(blockRule(membersBlockRule))
             .next(rules.optional(tokenRules.statementTerminator))
             .head();
 
