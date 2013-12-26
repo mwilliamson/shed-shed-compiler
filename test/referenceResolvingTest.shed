@@ -115,5 +115,11 @@ val testCases = listOf(
         badRefDetected(nodes.call(badRef, emptyList))),
         
     TestCase("arguments of call expression has references resolved", 
-        badRefDetected(nodes.call(noRef, listOf(badRef))))
+        badRefDetected(nodes.call(noRef, listOf(badRef)))),
+        
+    TestCase("function of type application has references resolved", 
+        badRefDetected(nodes.typeApplication(badRef, emptyList))),
+        
+    TestCase("arguments of type application has references resolved", 
+        badRefDetected(nodes.typeApplication(noRef, listOf(badRef))))
 );

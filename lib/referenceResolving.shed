@@ -12,7 +12,6 @@ import shed/compiler/nodes;
 import shed/compiler/scoping;
 
 def resolveReferences fun(node: ShedNode, context: Context) => let
-    val scope = scoping.scopeOf(node)
     val result = if classOf(node).equals(nodes.VariableReferenceNode) then
         resolveRef(node, context)
     else
@@ -23,6 +22,7 @@ def resolveReferences fun(node: ShedNode, context: Context) => let
     else
         result
     
+    val scope = scoping.scopeOf(node)
     in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context))
 
 def resolveRef fun(ref: VariableReferenceNode, context: Context) => let

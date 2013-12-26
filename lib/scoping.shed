@@ -19,7 +19,8 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.FormalArgumentNode, formalArgScope),
         
         matchClass(nodes.VariableReferenceNode, noScope),
-        matchClass(nodes.FunctionNode, functionScope)
+        matchClass(nodes.FunctionNode, functionScope),
+        matchClass(nodes.TypeApplicationNode, typeApplicationScope)
     )
 
 def noScope fun(node: ShedNode) => sameScope(emptyList)
@@ -35,6 +36,10 @@ def formalArgScope fun(node: FormalArgumentNode) =>
 
 def functionScope fun(node: FunctionNode) =>
     subScope(node.formalArgs().concat(listOf(node.body())))
+
+def typeApplicationScope fun(node: TypeApplicationNode) =>
+    sameScope(listOf(node.callee()).concat(node.args()))
+
 
 def SameScope class(nodes: List[ShedNode]) => ::
     members::
