@@ -178,6 +178,36 @@ val testCases = listOf[TestCase](
                 identifier("x"),
                 newline(),
                 dedent(),
+                newline(),
+                identifier("x")
+            ))
+        );
+    }),
+    
+    TestCase("newline can cause multiple dedents", fun() => do {
+        return assertFilteredTokens(
+            listOf(
+                symbol("::"),
+                whitespace("\n  "),
+                identifier("x"),
+                symbol("::"),
+                whitespace("\n    "),
+                identifier("x"),
+                whitespace("\n"),
+                identifier("x")
+            ),
+            equalTo(listOf(
+                symbol("::"),
+                indent(),
+                identifier("x"),
+                symbol("::"),
+                indent(),
+                identifier("x"),
+                newline(),
+                dedent(),
+                newline(),
+                dedent(),
+                newline(),
                 identifier("x")
             ))
         );
@@ -195,7 +225,8 @@ val testCases = listOf[TestCase](
                 symbol("::"),
                 indent(),
                 newline(),
-                dedent()
+                dedent(),
+                newline()
             ))
         )
     )

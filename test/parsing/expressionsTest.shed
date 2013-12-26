@@ -10,6 +10,7 @@ import lop/rules;
 import shed/compiler/nodes;
 import shed/compiler/nodes.Node;
 import shed/compiler/parsing/expressions.expressionRules;
+import shed/compiler/parsing/tokenRules;
 import shed/compiler/parsing/testing.createAssertSuccessfulParse;
 
 val testCases = listOf[TestCase](
@@ -315,7 +316,12 @@ val statementRule =
         .next(rules.tokenOfType("newline"))
         .map(stubStatement)
 
-val assertSuccessfulParse = createAssertSuccessfulParse(expressionRules(statementRule).expression());
+val assertSuccessfulParse = createAssertSuccessfulParse(
+    rules.sequence()
+        .capture(expressionRules(statementRule).expression())
+        .next(rules.optional(tokenRules.newline()))
+        .head()
+);
 
 // TODO: members should be in their own module?
 val assertSuccessfulMembersParse =
