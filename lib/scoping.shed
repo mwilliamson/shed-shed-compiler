@@ -47,7 +47,7 @@ def memberAccessScope fun(node: MemberAccessNode) =>
 
 def objectScope fun(node: ObjectNode) => let
     val memberDeclarationScope = node.memberDeclarations()
-        .map(fun(memberDeclaration: MemberDeclarationNode) => memberDeclaration.value())
+        .map(fun(memberDeclaration) => memberDeclaration.value())
     in subScope(memberDeclarationScope.concat(node.statements()))
 
 

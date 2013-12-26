@@ -36,12 +36,8 @@ val testCases = listOf(
     TestCase("string literal requires no context", requiresNoContext(nodes.string("hello"))),
     TestCase("boolean literal requires no context", requiresNoContext(nodes.bool(true))),
     
-    TestCase("variable reference fails if context is empty", fun() =>
-        assertThat(
-            resolveReferences(nodes.ref("song"), emptyContext),
-            equalTo(failure(listOf(variableNotInScope("song"))))
-        )
-    ),
+    TestCase("variable reference fails if context is empty",
+        badRefDetected(badRef)),
     
     TestCase("variable reference fails if context doesn't contain name", fun() => let
         val context = emptyContext.add("song", dummyNode)
@@ -59,13 +55,8 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("function fails if body fails", fun() => let
-        val func = nodes.func(emptyList, nodes.ref("song"))
-        in assertThat(
-            resolveReferences(func, emptyContext),
-            equalTo(failure(listOf(variableNotInScope("song"))))
-        )
-    ),
+    TestCase("function fails if body fails",
+        badRefDetected(nodes.func(emptyList, badRef))),
     
     TestCase("function node adds variable to scope", fun() => let
         val context = emptyContext.add("String", dummyNode)
