@@ -90,154 +90,95 @@ val testCases = listOf[TestCase](
         );
     }),
     
-    TestCase("no newline if opening brace is last token", fun() => do {
-        return assertFilteredTokens(
+    TestCase("indented newline after block start is significant", fun() =>
+        assertFilteredTokens(
             listOf(
-                symbol("{")
-            ),
-            equalTo(listOf(
-                symbol("{")
-            ))
-        );
-    }),
-    
-    TestCase("whitespace after opening brace is not significant", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("{"),
-                whitespace(" ")
-            ),
-            equalTo(listOf(
-                symbol("{")
-            ))
-        );
-    }),
-    
-    TestCase("indented newline after opening brace is significant", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("{"),
+                symbol("::"),
                 whitespace("\n    ")
             ),
             equalTo(listOf(
-                symbol("{"),
-                newline()
+                symbol("::"),
+                indent()
             ))
-        );
-    }),
+        )
+    ),
     
-    TestCase("indented newline after opening brace is ignored if there is a intervening token", fun() => do {
+    TestCase("whitespace can follow block start before newline", fun() =>
+        assertFilteredTokens(
+            listOf(
+                symbol("::"),
+                whitespace("  \n    ")
+            ),
+            equalTo(listOf(
+                symbol("::"),
+                indent()
+            ))
+        )
+    ),
+    
+    TestCase("end token creates dedents", fun() =>
+        assertFilteredTokens(
+            listOf(
+                symbol("::"),
+                whitespace("\n    "),
+                end()
+            ),
+            equalTo(listOf(
+                symbol("::"),
+                indent(),
+                dedent(),
+                end()
+            ))
+        )
+    ),
+    
+    TestCase("indented newline after block start is ignored if there is a intervening token", fun() => do {
         return assertFilteredTokens(
             listOf(
-                symbol("{"),
+                symbol("::"),
                 symbol("+"),
                 whitespace("\n    ")
             ),
             equalTo(listOf(
-                symbol("{"),
+                symbol("::"),
                 symbol("+")
             ))
         );
     }),
     
-    TestCase("indented newlines at same indentation after opening brace are significant", fun() => do {
+    TestCase("indented newlines at same indentation after block start are significant", fun() => do {
         return assertFilteredTokens(
             listOf(
-                symbol("{"),
+                symbol("::"),
                 whitespace("\n    "),
                 symbol("+"),
                 whitespace("\n    ")
             ),
             equalTo(listOf(
-                symbol("{"),
-                newline(),
+                symbol("::"),
+                indent(),
                 symbol("+"),
                 newline()
             ))
         );
     }),
     
-    TestCase("closing brace pops indentation stack", fun() => do {
+    TestCase("newline at previous indentation level causes single dedent", fun() => do {
         return assertFilteredTokens(
             listOf(
-                symbol("{"),
+                symbol("::"),
                 whitespace("\n    "),
-                symbol("}"),
-                whitespace("\n    ")
-            ),
-            equalTo(listOf(
-                symbol("{"),
-                newline(),
-                symbol("}")
-            ))
-        );
-    }),
-    
-    TestCase("unmatched closing brace does not cause error", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("}")
-            ),
-            equalTo(listOf(
-                symbol("}")
-            ))
-        );
-    }),
-    
-    TestCase("newline before closing brace is significant", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("{"),
-                whitespace("\n    "),
-                symbol("+"),
+                identifier("x"),
                 whitespace("\n"),
-                symbol("}"),
-                whitespace("\n    ")
+                identifier("x")
             ),
             equalTo(listOf(
-                symbol("{"),
+                symbol("::"),
+                indent(),
+                identifier("x"),
                 newline(),
-                symbol("+"),
-                newline(),
-                symbol("}")
-            ))
-        );
-    }),
-    
-    TestCase("whitespace without newline before closing brace is not significant", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("{"),
-                whitespace("\n    "),
-                symbol("+"),
-                whitespace("  "),
-                symbol("}"),
-                whitespace("\n    ")
-            ),
-            equalTo(listOf(
-                symbol("{"),
-                newline(),
-                symbol("+"),
-                symbol("}")
-            ))
-        );
-    }),
-    
-    TestCase("opening brace then closing brace without newline preserves indentation significance", fun() => do {
-        return assertFilteredTokens(
-            listOf(
-                symbol("{"),
-                whitespace("\n    "),
-                symbol("{"),
-                symbol("}"),
-                whitespace("\n    ")
-            ),
-            equalTo(listOf(
-                symbol("{"),
-                newline(),
-                symbol("{"),
-                symbol("}"),
-                newline()
+                dedent(),
+                identifier("x")
             ))
         );
     })
@@ -257,6 +198,15 @@ def comment fun(value: String) =>
     
 def newline fun() =>
     tokens.newline(stringSource())
+
+def indent fun() =>
+    tokens.indent(stringSource())
+
+def dedent fun() =>
+    tokens.dedent(stringSource())
+
+def end fun() =>
+    tokens.end(stringSource())
 
     
 def stringSource fun() =>

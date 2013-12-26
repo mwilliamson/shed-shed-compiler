@@ -29,56 +29,80 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
     val withTail = fun(filtered: Sequence[Token]) =>
         tuple(filtered, input.tail(), indentationStack)
         
-    in if isSymbol(token, "{") then
-        let val noSignificantWhitespace = fun() =>
-            tuple(
-                sequences.singleton(token),
-                input.tail(),
-                sequences.cons(currentIndentation(indentationStack), indentationStack)
-            )
-            
-        in sequences.head(input.tail()).map(fun(nextToken: Token) =>
+    in if isSymbol(token, "::") then
+        sequences.head(input.tail()).map(fun(nextToken: Token) =>
             if nextToken.name().equals("whitespace") then
                 regex.create("\n( *)$").exec(nextToken.value())
                     .map(fun(regexResult: RegexResult) =>
                         tuple(
-                            sequences.singleton(token),
-                            input.tail(),
+                            listOf(
+                                tokens.indent(nextToken.source()),
+                                token
+                            ),
+                            input.tail().currentItem().tail(),
                             sequences.cons(regexResult.capture(1).length(), indentationStack)
                         )
                     )
-                    .valueOrElse(noSignificantWhitespace)
+                    .valueOrElse()
             else
-                noSignificantWhitespace()
-        ).valueOrElse(noSignificantWhitespace)
+                withTail(sequences.singleton(token))
+        ).valueOrElse()
+            
+        //~ in sequences.head(input.tail()).map(fun(nextToken: Token) =>
+            //~ if nextToken.name().equals("whitespace") then
+                //~ regex.create("\n( *)$").exec(nextToken.value())
+                    //~ .map(fun(regexResult: RegexResult) =>
+                        //~ tuple(
+                            //~ sequences.singleton(token),
+                            //~ input.tail(),
+                            //~ sequences.cons(regexResult.capture(1).length(), indentationStack)
+                        //~ )
+                    //~ )
+                    //~ .valueOrElse(noSignificantWhitespace)
+            //~ else
+                //~ noSignificantWhitespace()
+        //~ ).valueOrElse(noSignificantWhitespace)
         
-    else if isSymbol(token, "}") then
-        tuple(
-            sequences.singleton(token),
-            input.tail(),
-            if sequences.isEmpty(indentationStack) then
-                sequences.nil
+    //~ else if isSymbol(token, "}") then
+        //~ tuple(
+            //~ sequences.singleton(token),
+            //~ input.tail(),
+            //~ if sequences.isEmpty(indentationStack) then
+                //~ sequences.nil
+            //~ else
+                //~ indentationStack.tail()
+        //~ )
+        
+    else if token.name().equals("whitespace") then
+        if regex.create("\n").test(token.value()) &&
+            not(nextTokenIsComment(input.tail())) then let
+        
+            val indentationLevel = regex.create("\n( *)$")
+                .exec(token.value())
+                .map(fun(result: RegexResult) =>
+                    result.capture(1).length()
+                )
+                .valueOrElse(fun() => 0)
+            
+            val currentIndentationLevel = currentIndentation(indentationStack)
+            
+            in if indentationLevel.equals(currentIndentationLevel) then
+                withTail(sequences.singleton(tokens.newline(token.source())))
+            else if indentationLevel.lessThan(currentIndentationLevel) then
+                tuple(
+                    listOf(tokens.dedent(token.source()), tokens.newline(token.source())),
+                    input.tail(),
+                    pop(indentationStack)
+                )
             else
-                indentationStack.tail()
-        )
-        
-    else if token.name().equals("whitespace") then let
-        val isAtCorrectIndentation = isNewlineAtIndentation(
-            token.value(),
-            currentIndentation(indentationStack)
-        )
-        val isSignificantNewline = or(
-            not(nextTokenIsComment(input.tail())) && isAtCorrectIndentation,
-            nextTokenIsClosingBrace(input.tail()) && regex.create("\n").test(token.value())
-        )
-        in if isSignificantNewline then
-            withTail(sequences.singleton(tokens.newline(token.source())))
+                withTail(sequences.nil)
         else
             withTail(sequences.nil)
             
     else if token.name().equals("comment") then
         withTail(sequences.nil)
-        
+    else if token.name().equals("end") && not(sequences.isEmpty(indentationStack)) then
+        tuple(sequences.singleton(tokens.dedent(token.source())), input, indentationStack.tail())
     else
         withTail(sequences.singleton(token))
 
@@ -88,23 +112,9 @@ def nextTokenIsComment fun(input: Sequence[Token]) =>
         input
     )
 
-def nextTokenIsClosingBrace fun(input: Sequence[Token]) =>
-    nextTokenIs(
-        fun(token: Token) => isSymbol(token, "}"),
-        input
-    )
-
 def nextTokenIs fun(predicate: Function[Token, Boolean], input: Sequence[Token]) =>
     sequences.head(input)
         .map(predicate)
-        .valueOrElse(fun() => false)
-
-def isNewlineAtIndentation fun(value: String, indentation: Integer) =>
-    regex.create("\n( *)$")
-        .exec(value)
-        .map(fun(result: RegexResult) =>
-            result.capture(1).length().equals(indentation)
-        )
         .valueOrElse(fun() => false)
 
 def isSymbol fun(token: Token, value: String) =>
@@ -115,3 +125,6 @@ def isTokenValue fun(token: Token, type: String, value: String) =>
 
 def currentIndentation fun(indentationStack: Sequence[Integer]) =>
     sequences.head(indentationStack).valueOrElse(fun() => 0)
+
+def pop fun(sequence: Sequence[T]) =>
+    sequences.tail(sequence).valueOrElse(fun() => sequences.nil)

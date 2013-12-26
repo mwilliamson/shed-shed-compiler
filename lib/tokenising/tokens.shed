@@ -6,6 +6,8 @@ members {
     keyword,
     whitespace,
     newline,
+    indent,
+    dedent,
     symbol,
     string,
     number,
@@ -28,6 +30,12 @@ def whitespace fun(value: String, source: StringSource) =>
 
 def newline fun(source: StringSource) =>
     Token("newline", "\n", source);
+
+def indent fun(source: StringSource) =>
+    Token("indent", "", source)
+
+def dedent fun(source: StringSource) =>
+    Token("dedent", "", source)
 
 def symbol fun(value: String, source: StringSource) =>
     Token("symbol", value, source);
