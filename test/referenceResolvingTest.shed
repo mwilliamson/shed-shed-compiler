@@ -63,7 +63,7 @@ val testCases = listOf(
     TestCase("function fails if body fails",
         badRefDetected(nodes.func(emptyList, badRef))),
     
-    TestCase("function node adds variable to scope", 
+    TestCase("function node adds variable to scope",
         successfulReferenceResolution(nodes.func(
             listOf(nodes.formalArgument("song", none)),
             nodes.ref("song")
@@ -81,64 +81,64 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("formal arguments of function have references resolved", 
+    TestCase("formal arguments of function have references resolved",
         badRefDetected(nodes.func(
             listOf(nodes.formalArgument("song", some(badRef))),
             noRef
         ))
     ),
     
-    TestCase("type of formal argument has references resolved", 
+    TestCase("type of formal argument has references resolved",
         badRefDetected(nodes.formalArgument("song", some(badRef)))),
     
-    TestCase("condition of if has references resolved", 
+    TestCase("condition of if has references resolved",
         badRefDetected(nodes.ifThenElse(badRef, noRef, noRef))),
     
     TestCase("true branch of if has references resolved",
         badRefDetected(nodes.ifThenElse(noRef, badRef, noRef))),
     
-    TestCase("false branch of if has references resolved", 
+    TestCase("false branch of if has references resolved",
         badRefDetected(nodes.ifThenElse(noRef, noRef, badRef))),
         
-    TestCase("function of call expression has references resolved", 
+    TestCase("function of call expression has references resolved",
         badRefDetected(nodes.call(badRef, emptyList))),
         
     TestCase("arguments of call expression has references resolved", 
         badRefDetected(nodes.call(noRef, listOf(badRef)))),
         
-    TestCase("function of type application has references resolved", 
+    TestCase("function of type application has references resolved",
         badRefDetected(nodes.typeApplication(badRef, emptyList))),
         
-    TestCase("arguments of type application has references resolved", 
+    TestCase("arguments of type application has references resolved",
         badRefDetected(nodes.typeApplication(noRef, listOf(badRef)))),
         
-    TestCase("left part of member access has references resolved", 
+    TestCase("left part of member access has references resolved",
         badRefDetected(nodes.memberAccess(badRef, "name"))),
     
-    TestCase("member declarations of object have references resolved", 
+    TestCase("member declarations of object have references resolved",
         badRefDetected(nodes.obj(listOf(nodes.memberDeclaration("bad", badRef)), emptyList))),
     
     TestCase("statements of object have references resolved", 
         badRefDetected(nodes.obj(emptyList, listOf(badRef)))),
     
-    TestCase("body of class has references resolved", 
+    TestCase("body of class has references resolved",
         badRefDetected(nodes.classDeclaration(
             emptyList,
             nodes.obj(emptyList, listOf(badRef))
         ))),
     
-    TestCase("class node adds variable to scope", 
+    TestCase("class node adds variable to scope",
         successfulReferenceResolution(nodes.classDeclaration(
             listOf(nodes.formalArgument("song", none)),
             nodes.obj(emptyList, listOf(nodes.ref("song")))
         ))),
     
-    TestCase("statements of do block have references resolved", 
+    TestCase("statements of do block have references resolved",
         badRefDetected(nodes.doBlock(listOf(badRef)))),
     
-    TestCase("left of and expression has references resolved", 
+    TestCase("left of and expression has references resolved",
         badRefDetected(nodes.and(badRef, noRef))),
     
-    TestCase("right of and expression has references resolved", 
+    TestCase("right of and expression has references resolved",
         badRefDetected(nodes.and(noRef, badRef)))
 )
