@@ -133,8 +133,23 @@ val testCases = listOf(
             nodes.obj(emptyList, listOf(nodes.ref("song")))
         ))),
     
+    TestCase("value of val declaration has references resolved",
+        badRefDetected(nodes.valDeclaration("song", badRef))),
+    
+    TestCase("val declaration adds name to context", fun() => let
+        val result = resolveReferences(nodes.valDeclaration("song", noRef), emptyContext)
+        val context = result.value()
+        in assertThat(context.contains("song"), equalTo(true))
+    ),
+    
     TestCase("statements of do block have references resolved",
         badRefDetected(nodes.doBlock(listOf(badRef)))),
+    
+    TestCase("expression of let-in expression has references resolved",
+        badRefDetected(nodes.letIn(emptyList, badRef))),
+    
+    TestCase("val declarations of let-in expression have references resolved",
+        badRefDetected(nodes.letIn(listOf(nodes.valDeclaration("x", badRef)), noRef))),
     
     TestCase("left of and expression has references resolved",
         badRefDetected(nodes.and(badRef, noRef))),

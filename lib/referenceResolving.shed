@@ -36,6 +36,7 @@ def isVariableBinder fun(node: ShedNode) =>
     // TODO: introduce a VariableBinderNode interface to remove this logic
     match(node,
         matchClass(nodes.FormalArgumentNode, fun() => true),
+        matchClass(nodes.ValDeclarationNode, fun() => true),
         matchDefault(fun() => false)
     )
 

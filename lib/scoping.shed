@@ -24,7 +24,9 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.MemberAccessNode, memberAccessScope),
         matchClass(nodes.ClassNode, classScope),
         matchClass(nodes.ObjectNode, objectScope),
+        matchClass(nodes.ValDeclarationNode, valDeclarationScope),
         matchClass(nodes.DoBlockNode, doBlockScope),
+        matchClass(nodes.LetInNode, letInScope),
         matchClass(nodes.AndNode, andScope)
     )
 
@@ -58,6 +60,12 @@ def objectScope fun(node: ObjectNode) => let
 
 def doBlockScope fun(node: DoBlockNode) =>
     subScope(node.statements())
+    
+def valDeclarationScope fun(node: ValDeclarationNode) =>
+    sameScope(listOf(node.value()))
+
+def letInScope fun(node: LetInScope) =>
+    subScope(node.declarations().concat(listOf(node.expression())))
 
 def andScope fun(node: AndNode) =>
     sameScope(listOf(node.left(), node.right()))
