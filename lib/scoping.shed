@@ -34,7 +34,7 @@ def callScope fun(node: CallNode) =>
     sameScope(listOf(node.callee()).concat(node.args()))
 
 def formalArgScope fun(node: FormalArgumentNode) =>
-    sameScope(listOf(node.type()))
+    sameScope(node.type().map(fun(t) => listOf(t)).valueOrElse(fun() => emptyList))
 
 def functionScope fun(node: FunctionNode) =>
     subScope(node.formalArgs().concat(listOf(node.body())))

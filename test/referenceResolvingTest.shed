@@ -3,6 +3,9 @@ module shed/compiler/referenceResolvingTest;
 members::
     testCases
 
+import options.none;
+import options.some;
+
 import hat.TestCase;
 import duck.assertThat;
 import duck.equalTo;
@@ -61,7 +64,7 @@ val testCases = listOf(
     TestCase("function node adds variable to scope", fun() => let
         val context = emptyContext.add("String", dummyNode)
         val func = nodes.func(
-            listOf(nodes.formalArgument("song", nodes.ref("String"))),
+            listOf(nodes.formalArgument("song", none)),
             nodes.ref("song")
         )
         in assertThat(
@@ -71,27 +74,26 @@ val testCases = listOf(
     ),
     
     TestCase("function creates new scope for formal args and body", fun() => let
-        val context = emptyContext.add("String", dummyNode)
         val func = nodes.func(
-            listOf(nodes.formalArgument("song", nodes.ref("String"))),
+            listOf(nodes.formalArgument("song", none)),
             noRef
         )
         val call = nodes.call(noRef, listOf(func, nodes.ref("song")))
         in assertThat(
-            resolveReferences(call, context),
+            resolveReferences(call, emptyContext),
             equalTo(failure(listOf(variableNotInScope("song"))))
         )
     ),
     
     TestCase("formal arguments of function have references resolved", 
         badRefDetected(nodes.func(
-            listOf(nodes.formalArgument("song", badRef)),
+            listOf(nodes.formalArgument("song", some(badRef))),
             noRef
         ))
     ),
     
     TestCase("type of formal argument has references resolved", 
-        badRefDetected(nodes.formalArgument("song", badRef))),
+        badRefDetected(nodes.formalArgument("song", some(badRef)))),
     
     TestCase("condition of if has references resolved", 
         badRefDetected(nodes.ifThenElse(badRef, noRef, noRef))),
