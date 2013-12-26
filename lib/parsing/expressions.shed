@@ -103,14 +103,19 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     );
 
     val memberSeparator = tokenRules.symbolOrNewline(",")
-
+    
+    val membersBlockRule =
+        rules.sequence()
+            .capture(rules.zeroOrMoreWithSeparator(memberDeclarationRule, memberSeparator))
+            .next(rules.optional(memberSeparator))
+            .head()
+    
     val membersRule =
         rules.sequence()
             .next(tokenRules.keyword("members"))
             .cut()
             .next(tokenRules.openingBrace())
-            .capture(rules.zeroOrMoreWithSeparator(memberDeclarationRule, memberSeparator))
-            .next(rules.optional(memberSeparator))
+            .capture(membersBlockRule)
             .next(tokenRules.symbol("}"))
             .next(rules.optional(tokenRules.statementTerminator))
             .head();
