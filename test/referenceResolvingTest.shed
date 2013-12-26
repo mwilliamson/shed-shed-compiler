@@ -119,5 +119,17 @@ val testCases = listOf(
         badRefDetected(nodes.obj(listOf(nodes.memberDeclaration("bad", badRef)), emptyList))),
     
     TestCase("statements of object have references resolved", 
-        badRefDetected(nodes.obj(emptyList, listOf(badRef))))
+        badRefDetected(nodes.obj(emptyList, listOf(badRef)))),
+    
+    TestCase("body of class has references resolved", 
+        badRefDetected(nodes.classDeclaration(
+            emptyList,
+            nodes.obj(emptyList, listOf(badRef))
+        ))),
+    
+    TestCase("class node adds variable to scope", 
+        successfulReferenceResolution(nodes.classDeclaration(
+            listOf(nodes.formalArgument("song", none)),
+            nodes.obj(emptyList, listOf(nodes.ref("song")))
+        )))
 )

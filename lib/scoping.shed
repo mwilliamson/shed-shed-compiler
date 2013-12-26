@@ -22,6 +22,7 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.FunctionNode, functionScope),
         matchClass(nodes.TypeApplicationNode, typeApplicationScope),
         matchClass(nodes.MemberAccessNode, memberAccessScope),
+        matchClass(nodes.ClassNode, classScope),
         matchClass(nodes.ObjectNode, objectScope)
     )
 
@@ -44,6 +45,9 @@ def typeApplicationScope fun(node: TypeApplicationNode) =>
 
 def memberAccessScope fun(node: MemberAccessNode) =>
     sameScope(listOf(node.left()))
+
+def classScope fun(node: ClassNode) =>
+    subScope(node.formalArgs().concat(listOf(node.body())))
 
 def objectScope fun(node: ObjectNode) => let
     val memberDeclarationScope = node.memberDeclarations()
