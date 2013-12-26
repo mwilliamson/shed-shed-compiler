@@ -169,6 +169,10 @@ val testCases = listOf(
     TestCase("definition adds name to context", fun() => let
         val result = resolveReferences(nodes.definition("song", noRef), emptyContext)
         val context = result.value()
-        in assertThat(context.contains("song"), equalTo(true))
-    )
+        in assertThat(context.contains("song"), equalTo(true))),
+    
+    TestCase("import statement adds name of module to context", fun() => let
+        val result = resolveReferences(nodes.importStatement(listOf("song"), emptyList), emptyContext)
+        val context = result.value()
+        in assertThat(context.contains("song"), equalTo(true)))
 )

@@ -59,6 +59,7 @@ members::
     ModuleNode
 
 import structs;
+import sequences;
 
 // TODO: should be an interface
 def Node class() => ::
@@ -186,7 +187,13 @@ def ImportNode class(moduleName: List[String], valuePath: List[String]) => ::
     members::
         moduleName fun() => moduleName,
         valuePath fun() => valuePath,
-        struct fun() => structs.create(ImportNode, listOf(moduleName, valuePath))
+        struct fun() => structs.create(ImportNode, listOf(moduleName, valuePath)),
+        
+        name fun() =>
+            if sequences.isEmpty(valuePath) then
+                moduleName.last()
+            else
+                valuePath.last()
 
 def ModuleNode class(name: List[String], memberDeclarations: List[MemberNode], statements: List[StatementNode]) => ::
     members::

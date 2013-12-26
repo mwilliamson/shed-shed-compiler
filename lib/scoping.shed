@@ -32,7 +32,9 @@ def scopeOf fun(node: ShedNode) =>
         
         matchClass(nodes.ExpressionStatementNode, expressionStatementScope),
         matchClass(nodes.ReturnStatementNode, returnStatementScope),
-        matchClass(nodes.DefinitionNode, definitionScope)
+        matchClass(nodes.DefinitionNode, definitionScope),
+        
+        matchClass(nodes.ImportNode, noScope)
     )
 
 def noScope fun(node: ShedNode) => sameScope(emptyList)
