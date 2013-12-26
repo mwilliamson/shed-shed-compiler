@@ -132,13 +132,12 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
                 value.valueOrElse(fun() => emptyList)
         );
     
-    val objectBodyRule =
+    val objectBodyRule = blockRule(
         rules.sequence()
-            .next(tokenRules.openingBrace())
             .capture(optionalMembersRule)
             .capture(rules.zeroOrMore(statementRule))
-            .next(tokenRules.symbol("}"))
-            .map(nodes.obj);
+            .map(nodes.obj)
+        )
     
     val classRule =
         rules.sequence()
