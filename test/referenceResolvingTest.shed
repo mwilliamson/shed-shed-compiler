@@ -134,5 +134,11 @@ val testCases = listOf(
         ))),
     
     TestCase("statements of do block have references resolved", 
-        badRefDetected(nodes.doBlock(listOf(badRef))))
+        badRefDetected(nodes.doBlock(listOf(badRef)))),
+    
+    TestCase("left of and expression has references resolved", 
+        badRefDetected(nodes.and(badRef, noRef))),
+    
+    TestCase("right of and expression has references resolved", 
+        badRefDetected(nodes.and(noRef, badRef)))
 )

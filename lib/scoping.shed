@@ -24,7 +24,8 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.MemberAccessNode, memberAccessScope),
         matchClass(nodes.ClassNode, classScope),
         matchClass(nodes.ObjectNode, objectScope),
-        matchClass(nodes.DoBlockNode, doBlockScope)
+        matchClass(nodes.DoBlockNode, doBlockScope),
+        matchClass(nodes.AndNode, andScope)
     )
 
 def noScope fun(node: ShedNode) => sameScope(emptyList)
@@ -57,6 +58,9 @@ def objectScope fun(node: ObjectNode) => let
 
 def doBlockScope fun(node: DoBlockNode) =>
     subScope(node.statements())
+
+def andScope fun(node: AndNode) =>
+    sameScope(listOf(node.left(), node.right()))
 
 
 def SameScope class(nodes: List[ShedNode]) => ::
