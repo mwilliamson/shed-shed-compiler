@@ -61,7 +61,7 @@ def classScope fun(node: ClassNode) =>
     subScope(node.formalArgs().concat(listOf(node.body())))
 
 def objectScope fun(node: ObjectNode) =>
-    subScope(node.memberDeclarations().concat(node.statements()))
+    subScope(node.statements().concat(node.memberDeclarations()))
 
 def doBlockScope fun(node: DoBlockNode) =>
     subScope(node.statements())
