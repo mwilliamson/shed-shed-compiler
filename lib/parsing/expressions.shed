@@ -80,7 +80,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
         rules.sequence()
             .capture(tokenRules.identifier())
             .cut()
-            .capture(typeSpecifierRule)
+            .capture(rules.optional(typeSpecifierRule))
             .map(nodes.formalArgument)
     );
     

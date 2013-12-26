@@ -3,6 +3,9 @@ module shed/compiler/parsing/expressionsTest;
 members::
     testCases
 
+import options.some;
+import options.none;
+
 import hat.TestCase;
 import lop/rules;
 
@@ -122,8 +125,20 @@ val testCases = listOf[TestCase](
             "fun(first: String, second: Any) => ()",
             nodes.func(
                 listOf(
-                    nodes.formalArgument("first", nodes.ref("String")),
-                    nodes.formalArgument("second", nodes.ref("Any"))
+                    nodes.formalArgument("first", some(nodes.ref("String"))),
+                    nodes.formalArgument("second", some(nodes.ref("Any")))
+                ),
+                nodes.unit()
+            )
+        )
+    ),
+    
+    TestCase("type of function formal argument is optional", fun() =>
+        assertSuccessfulParse(
+            "fun(first) => ()",
+            nodes.func(
+                listOf(
+                    nodes.formalArgument("first", none)
                 ),
                 nodes.unit()
             )
@@ -208,8 +223,8 @@ val testCases = listOf[TestCase](
             "class(first: String, second: Any) => ::\n  x\n",
             nodes.classDeclaration(
                 listOf(
-                    nodes.formalArgument("first", nodes.ref("String")),
-                    nodes.formalArgument("second", nodes.ref("Any"))
+                    nodes.formalArgument("first", some(nodes.ref("String"))),
+                    nodes.formalArgument("second", some(nodes.ref("Any")))
                 ),
                 nodes.obj(emptyList, listOf(stubStatement("x")))
             )

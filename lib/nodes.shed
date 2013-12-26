@@ -64,7 +64,7 @@ import structs;
 def Node class() => ::
     pass
 
-def FormalArgumentNode class(name: String, type: ExpressionNode) => ::
+def FormalArgumentNode class(name: String, type: Option[ExpressionNode]) => ::
     members::
         name fun() => name,
         type fun() => type,
