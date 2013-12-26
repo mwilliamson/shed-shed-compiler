@@ -152,7 +152,7 @@ val testCases = listOf[TestCase](
     
     TestCase("can parse empty object", fun() =>
         assertSuccessfulParse(
-            "object ::",
+            "object ::\n  pass\n",
             nodes.obj(
                 emptyList,
                 emptyList
@@ -182,7 +182,7 @@ val testCases = listOf[TestCase](
     
     TestCase("can parse empty class", fun() =>
         assertSuccessfulParse(
-            "class() => { }",
+            "class() =>::\n  pass\n",
             nodes.classDeclaration(
                 emptyList,
                 nodes.obj(emptyList, emptyList)
@@ -223,13 +223,6 @@ val testCases = listOf[TestCase](
                 emptyList,
                 nodes.obj(emptyList, listOf(stubStatement("x")))
             )
-        )
-    ),
-    
-    TestCase("members can be empty", fun() =>
-        assertSuccessfulMembersParse(
-            "members { }",
-            emptyList
         )
     ),
     

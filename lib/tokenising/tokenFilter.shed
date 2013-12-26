@@ -101,6 +101,8 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
             
     else if token.name().equals("comment") then
         withTail(sequences.nil)
+    else if token.name().equals("keyword") && token.value().equals("pass") then
+        withTail(sequences.nil)
     else if token.name().equals("end") && not(sequences.isEmpty(indentationStack)) then
         tuple(sequences.singleton(tokens.dedent(token.source())), input, indentationStack.tail())
     else

@@ -181,7 +181,24 @@ val testCases = listOf[TestCase](
                 identifier("x")
             ))
         );
-    })
+    }),
+    
+    TestCase("pass keyword allows empty blocks", fun() =>
+        assertFilteredTokens(
+            listOf(
+                symbol("::"),
+                whitespace("\n    "),
+                keyword("pass"),
+                whitespace("\n")
+            ),
+            equalTo(listOf(
+                symbol("::"),
+                indent(),
+                newline(),
+                dedent()
+            ))
+        )
+    )
 );
 
 def identifier fun(value: String) =>
@@ -192,6 +209,9 @@ def whitespace fun(value: String) =>
 
 def symbol fun(value: String) =>
     tokens.symbol(value, stringSource())
+
+def keyword fun(value: String) =>
+    tokens.keyword(value, stringSource())
 
 def comment fun(value: String) =>
     tokens.comment(value, stringSource())

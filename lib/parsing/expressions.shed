@@ -116,6 +116,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
             .cut()
             .next(tokenRules.indent())
             .capture(blockBodyRule)
+            .next(rules.optional(tokenRules.newline()))
             .next(tokenRules.dedent())
             .head()
     
