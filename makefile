@@ -1,6 +1,6 @@
 .PHONY: test 
 
-BOOTSTRAP_VERSION = 0.2.4
+BOOTSTRAP_VERSION = 0.3.0-dev4
 BOOTSTRAP_COMPILER_SCRIPT = _build/shed-compiler-$(BOOTSTRAP_VERSION).js
 DEFAULT_COMPILER = node $(BOOTSTRAP_COMPILER_SCRIPT)
 SOURCE_FILES = node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib

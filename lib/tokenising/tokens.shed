@@ -1,6 +1,6 @@
 module shed/compiler/tokenising/tokens;
 
-members {
+members::
     end,
     identifier,
     keyword,
@@ -12,7 +12,6 @@ members {
     string,
     number,
     comment
-}
 
 import lop/token.Token;
 

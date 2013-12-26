@@ -1,9 +1,8 @@
 module shed/compiler/parsing/tokenRules;
 
-members {
+members::
     symbol, keyword, identifier, newline, symbolOrNewline, indent, dedent
     statementTerminator, closingParen
-}
 
 import lop/rules;
 

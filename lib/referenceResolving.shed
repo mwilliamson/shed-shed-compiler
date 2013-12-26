@@ -1,10 +1,9 @@
 module shed/compiler/referenceResolving;
 
-members {
+members::
     resolveReferences,
     emptyContext,
     variableNotInScope
-}
 
 import sequences;
 
@@ -58,18 +57,16 @@ def resolveAll fun(nodes: List[ShedNode], context: Context) =>
 def variableNotInScope fun(name: String) =>
     "variable not in scope: ".concat(name)
 
-def Context class(names: Sequence[String]) => {
-    members {
+def Context class(names: Sequence[String]) => ::
+    members::
         contains,
         add
-    }
     
     def contains fun(name: String) =>
         sequences.any(fun(n: String) => n.equals(name), names)
         
     def add fun(name: String) =>
         Context(sequences.cons(name, names))
-}
 
 val emptyContext = Context(sequences.nil);
 

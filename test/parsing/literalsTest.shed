@@ -1,8 +1,7 @@
 module shed/compiler/parsing/literalsTest;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 

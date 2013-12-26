@@ -1,8 +1,7 @@
 module shed/compiler/parsing/modules;
 
-members {
+members::
     moduleRule
-}
 
 import options;
 
@@ -12,7 +11,7 @@ import shed/compiler/nodes;
 import shed/compiler/parsing/tokenRules;
 import shed/compiler/parsing/tokenRules.statementTerminator;
 
-def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do {
+def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do::
     val moduleBody =
         rules.sequence()
             .capture(rules.zeroOrMore(importRule))
@@ -26,7 +25,6 @@ def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule
         .capture(moduleBody)
         .next(rules.tokenOfType("end"))
         .map(nodes.moduleNode);
-}
 
 val moduleName = rules.zeroOrMoreWithSeparator(
     tokenRules.identifier(),

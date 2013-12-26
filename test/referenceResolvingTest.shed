@@ -1,8 +1,7 @@
 module shed/compiler/referenceResolvingTest;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 import duck.assertThat;
@@ -28,7 +27,8 @@ def badRefDetected fun(node: ShedNode) => fun() =>
 val badRef = nodes.ref("badRef");
 val noRef = nodes.unit();
 
-val dummyNode = object { };
+val dummyNode = object::
+    pass
 
 val testCases = listOf(
     TestCase("unit literal requires no context", requiresNoContext(nodes.unit())),

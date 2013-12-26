@@ -1,8 +1,7 @@
 module shed/compiler/parsing/expressionsTest;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 import lop/rules;

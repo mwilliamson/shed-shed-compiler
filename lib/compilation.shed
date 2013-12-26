@@ -1,9 +1,8 @@
 module shed/compiler/compilation
 
-members {
+members::
     compileString,
     main
-}
 
 import files
 import promises
@@ -29,13 +28,13 @@ def main fun(argv: List[String]) => let
             .map(fun(arg: String) => arg.sliceFrom(7))
     )
     
-    in programParts.map(joinJavaScriptUnits).map(fun(program: String) => do {
+    in programParts.map(joinJavaScriptUnits).map(fun(program: String) => do::
         print(program)
-        mainFunction.map(fun(mainFunction: String) => do {
+        mainFunction.map(fun(mainFunction: String) => do::
             print("\n\n$shed.js.import(\"".concat(mainFunction).concat("\")"))
             print("($shed.lists.createFromArray(process.argv.slice(2).map($shed.string)));")
-        })
-    })
+        )
+    )
 
 def compileString fun(input: String) => let
     val source = createStringSource(input, "raw string")
@@ -83,10 +82,10 @@ def compileShedFiles fun(paths: List[String]) : Promise[List[String]] =>
     promises.combineList(paths.map(compileShedFile))
     
 def compileShedFile fun(path: String) : Promise[String] =>
-    readUtf8File(path).map(fun(contents: String) => do {
+    readUtf8File(path).map(fun(contents: String) => do::
         val source = createStringSource(contents, "File: ".concat(path))
         return moduleCompilation.compileSourceToString(source)
-    })
+    )
 
 def readUtf8File fun(path: String) =>
     files.readFile(path, "utf8");

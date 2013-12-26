@@ -1,8 +1,7 @@
 module shed/compiler/tokenising/tokenFilter;
 
-members {
+members::
     filterTokens
-}
 
 import sequences;
 import lazySequences;

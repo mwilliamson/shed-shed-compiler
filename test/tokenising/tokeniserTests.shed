@@ -1,8 +1,7 @@
 module shed/compiler/tokenising/tokeniserTests;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 import duck.assertThat;
@@ -15,24 +14,23 @@ import lop/token.Token;
 import shed/compiler/tokenising/tokens;
 import shed/compiler/tokenising/tokeniser.Tokeniser;
 
-def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
+def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do::
     val tokeniser = Tokeniser();
     val actualTokens = tokeniser.tokenise(input);
     val expectedMatchers = expectedTokens.map(equalTo[Token]);
     return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
-};
     
 
 val testCases = listOf[TestCase](
-    TestCase("empty string => end token", fun() => do {
+    TestCase("empty string => end token", fun() => do::
         val source = stringSource("");
         return assertIsTokenisedTo(
             source,
             listOf[Token](tokens.end(source.range(0, 0)))
         );
-    }),
+    ),
     
-    TestCase("alphanumeric string => identifier", fun() => do {
+    TestCase("alphanumeric string => identifier", fun() => do::
         val source = stringSource("blah");
         return assertIsTokenisedTo(
             source,
@@ -41,9 +39,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(4, 4))
             )
         );
-    }),
+    ),
     
-    TestCase("whitespace string => whitespace token", fun() => do {
+    TestCase("whitespace string => whitespace token", fun() => do::
         val source = stringSource(" \t\n");
         return assertIsTokenisedTo(
             source,
@@ -52,9 +50,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(3, 3))
             )
         );
-    }),
+    ),
     
-    TestCase("identifiers separated by whitespace", fun() => do {
+    TestCase("identifiers separated by whitespace", fun() => do::
         val source = stringSource("first   second\t third");
         return assertIsTokenisedTo(
             source,
@@ -67,9 +65,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(21, 21))
             )
         );
-    }),
+    ),
     
-    TestCase("keywords are recognised", fun() => do {
+    TestCase("keywords are recognised", fun() => do::
         val source = stringSource("fun");
         return assertIsTokenisedTo(
             source,
@@ -78,9 +76,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(3, 3))
             )
         );
-    }),
+    ),
     
-    TestCase("single character symbol is tokenised", fun() => do {
+    TestCase("single character symbol is tokenised", fun() => do::
         val source = stringSource("(");
         return assertIsTokenisedTo(
             source,
@@ -89,9 +87,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(1, 1))
             )
         );
-    }),
+    ),
     
-    TestCase("adjacent symbols are tokenised separately", fun() => do {
+    TestCase("adjacent symbols are tokenised separately", fun() => do::
         val source = stringSource("()");
         return assertIsTokenisedTo(
             source,
@@ -101,9 +99,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(2, 2))
             )
         );
-    }),
+    ),
     
-    TestCase("multiple character symbol is tokenised", fun() => do {
+    TestCase("multiple character symbol is tokenised", fun() => do::
         val source = stringSource("=>");
         return assertIsTokenisedTo(
             source,
@@ -112,9 +110,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(2, 2))
             )
         );
-    }),
+    ),
     
-    TestCase("whitespace is not required between identifier and symbol", fun() => do {
+    TestCase("whitespace is not required between identifier and symbol", fun() => do::
         val source = stringSource("blah()");
         return assertIsTokenisedTo(
             source,
@@ -125,9 +123,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(6, 6))
             )
         );
-    }),
+    ),
     
-    TestCase("can tokenise empty string", fun() => do {
+    TestCase("can tokenise empty string", fun() => do::
         val source = stringSource("\"\"");
         return assertIsTokenisedTo(
             source,
@@ -136,9 +134,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(2, 2))
             )
         );
-    }),
+    ),
     
-    TestCase("can tokenise simple string", fun() => do {
+    TestCase("can tokenise simple string", fun() => do::
         val source = stringSource("\"blah\"");
         return assertIsTokenisedTo(
             source,
@@ -147,9 +145,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(6, 6))
             )
         );
-    }),
+    ),
     
-    TestCase("can tokenise string with escaped characters", fun() => do {
+    TestCase("can tokenise string with escaped characters", fun() => do::
         val source = stringSource("\"\\\"\\b\\t\\n\\f\\r\\\\\"");
         return assertIsTokenisedTo(
             source,
@@ -158,9 +156,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(16, 16))
             )
         );
-    }),
+    ),
     
-    TestCase("can tokenise zero literal", fun() => do {
+    TestCase("can tokenise zero literal", fun() => do::
         val source = stringSource("0");
         return assertIsTokenisedTo(
             source,
@@ -169,9 +167,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(1, 1))
             )
         );
-    }),
+    ),
     
-    TestCase("can tokenise positive integer", fun() => do {
+    TestCase("can tokenise positive integer", fun() => do::
         val source = stringSource("42");
         return assertIsTokenisedTo(
             source,
@@ -180,9 +178,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(2, 2))
             )
         );
-    }),
+    ),
     
-    TestCase("double slash indicates start of line comment", fun() => do {
+    TestCase("double slash indicates start of line comment", fun() => do::
         val source = stringSource("go // Blah");
         return assertIsTokenisedTo(
             source,
@@ -193,9 +191,9 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(10, 10))
             )
         );
-    }),
+    ),
     
-    TestCase("line comment ends at newline", fun() => do {
+    TestCase("line comment ends at newline", fun() => do::
         val source = stringSource("go // Blah\naway");
         return assertIsTokenisedTo(
             source,
@@ -208,7 +206,7 @@ val testCases = listOf[TestCase](
                 tokens.end(source.range(15, 15))
             )
         );
-    })
+    )
 );
     
 def stringSource fun(string: String) =>

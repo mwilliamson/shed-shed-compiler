@@ -3,7 +3,7 @@ module shed/compiler/nodes;
 // TODO: to just expose the class as a function, need to wrap in an
 // identity function that's typed as Function[...] -> Function[...]
 
-members {
+members::
     Node,
     
     formalArgument FormalArgumentNode,
@@ -57,187 +57,140 @@ members {
     ImportNode,
     moduleNode ModuleNode,
     ModuleNode
-}
 
 import structs;
 
 // TODO: should be an interface
-def Node class() => {
-}
+def Node class() => ::
+    pass
 
-def FormalArgumentNode class(name: String, type: ExpressionNode) => {
-    members {
+def FormalArgumentNode class(name: String, type: ExpressionNode) => ::
+    members::
         name fun() => name,
         type fun() => type,
         struct fun() => structs.create(FormalArgumentNode, listOf(name, type))
-    }
-}
 
-def MemberDeclarationNode class(name: String, value: ExpressionNode) => {
-    members {
+def MemberDeclarationNode class(name: String, value: ExpressionNode) => ::
+    members::
         name fun() => name,
         value fun() => value,
         struct fun() => structs.create(MemberDeclarationNode, listOf(name, value))
-    }
-}
 
-def UnitNode class() => {
-    members {
+def UnitNode class() => ::
+    members::
         struct fun() => structs.create(UnitNode, emptyList)
-    }
-}
 
-def NumberNode class(value: Double) => {
-    members {
+def NumberNode class(value: Double) => ::
+    members::
         value fun() => value,
         struct fun() => structs.create(NumberNode, listOf(value))
-    }
-}
 
-def BooleanNode class(value: Boolean) => {
-    members {
+def BooleanNode class(value: Boolean) => ::
+    members::
         value fun() => value,
         struct fun() => structs.create(BooleanNode, listOf(value))
-    }
-}
 
-def StringNode class(value: String) => {
-    members {
+def StringNode class(value: String) => ::
+    members::
         value fun() => value,
         struct fun() => structs.create(StringNode, listOf(value))
-    }
-}
 
-def VariableReferenceNode class(identifier: String) => {
-    members {
+def VariableReferenceNode class(identifier: String) => ::
+    members::
         identifier fun() => identifier,
         struct fun() => structs.create(VariableReferenceNode, listOf(identifier))
-    }
-}
 
-def IfThenElseNode class(condition: ExpressionNode, trueValue: ExpressionNode, falseValue: ExpressionNode) => {
-    members {
+def IfThenElseNode class(condition: ExpressionNode, trueValue: ExpressionNode, falseValue: ExpressionNode) => ::
+    members::
         condition fun() => condition,
         trueValue fun() => trueValue,
         falseValue fun() => falseValue,
         struct fun() => structs.create(IfThenElseNode, listOf(condition, trueValue, falseValue))
-    }
-}
 
-def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
-    members {
+def CallNode class(callee: ExpressionNode, args: List[ExpressionNode]) => ::
+    members::
         callee fun() => callee,
         args fun() => args,
         struct fun() => structs.create(CallNode, listOf(callee, args))
-    }
-}
 
-def TypeApplicationNode class(callee: ExpressionNode, args: List[ExpressionNode]) => {
-    members {
+def TypeApplicationNode class(callee: ExpressionNode, args: List[ExpressionNode]) => ::
+    members::
         callee fun() => callee,
         args fun() => args,
         struct fun() => structs.create(TypeApplicationNode, listOf(callee, args))
-    }
-}
 
-def MemberAccessNode class(left: ExpressionNode, memberName: String) => {
-    members {
+def MemberAccessNode class(left: ExpressionNode, memberName: String) => ::
+    members::
         left fun() => left,
         memberName fun() => memberName,
         struct fun() => structs.create(MemberAccessNode, listOf(left, memberName))
-    }
-}
 
-def FunctionNode class(formalArgs: List[FormalArgumentNode], body: ExpressionNode) => {
-    members {
+def FunctionNode class(formalArgs: List[FormalArgumentNode], body: ExpressionNode) => ::
+    members::
         formalArgs fun() => formalArgs,
         body fun() => body,
         struct fun() => structs.create(FunctionNode, listOf(formalArgs, body))
-    }
-}
 
-def ClassNode class(formalArgs: List[FormalArgumentNode], body: ObjectNode) => {
-    members {
+def ClassNode class(formalArgs: List[FormalArgumentNode], body: ObjectNode) => ::
+    members::
         formalArgs fun() => formalArgs,
         body fun() => body,
         struct fun() => structs.create(ClassNode, listOf(formalArgs, body))
-    }
-}
 
-def ObjectNode class(memberDeclarations: List[MemberNode], statements: List[StatementNode]) => {
-    members {
+def ObjectNode class(memberDeclarations: List[MemberNode], statements: List[StatementNode]) => ::
+    members::
         memberDeclarations fun() => memberDeclarations,
         statements fun() => statements,
         struct fun() => structs.create(ObjectNode, listOf(memberDeclarations, statements))
-    }
-}
 
-def DoBlockNode class(statements: List[StatementNode]) => {
-    members {
+def DoBlockNode class(statements: List[StatementNode]) => ::
+    members::
         statements fun() => statements,
         struct fun() => structs.create(DoBlockNode, listOf(statements))
-    }
-}
 
-def LetInNode class(declarations: List[ValDeclarationNode], expression: ExpressionNode) => {
-    members {
+def LetInNode class(declarations: List[ValDeclarationNode], expression: ExpressionNode) => ::
+    members::
         declarations fun() => declarations,
         expression fun() => expression,
         struct fun() => structs.create(LetInNode, listOf(declarations, expression))
-    }
-}
 
-def AndNode class(left: ExpressionNode, right: ExpressionNode) => {
-    members {
+def AndNode class(left: ExpressionNode, right: ExpressionNode) => ::
+    members::
         left fun() => left,
         right fun() => right,
         struct fun() => structs.create(AndNode, listOf(left, right))
-    }
-}
 
-def ExpressionStatementNode class(expression: ExpressionNode) => {
-    members {
+def ExpressionStatementNode class(expression: ExpressionNode) => ::
+    members::
         expression fun() => expression,
         struct fun() => structs.create(ExpressionStatementNode, listOf(expression))
-    }
-}
 
-def ReturnStatementNode class(value: ExpressionNode) => {
-    members {
+def ReturnStatementNode class(value: ExpressionNode) => ::
+    members::
         value fun() => value,
         struct fun() => structs.create(ReturnStatementNode, listOf(value))  
-    }
-}
 
-def ValDeclarationNode class(name: String, value: ExpressionNode) => {
-    members {
+def ValDeclarationNode class(name: String, value: ExpressionNode) => ::
+    members::
         name fun() => name,
         value fun() => value,
         struct fun() => structs.create(ValDeclarationNode, listOf(name, value))  
-    }
-}
 
-def DefinitionNode class(name: String, value: ExpressionNode) => {
-    members {
+def DefinitionNode class(name: String, value: ExpressionNode) => ::
+    members::
         name fun() => name,
         value fun() => value,
         struct fun() => structs.create(DefinitionNode, listOf(name, value))  
-    }
-}
 
-def ImportNode class(moduleName: List[String], valuePath: List[String]) => {
-    members {
+def ImportNode class(moduleName: List[String], valuePath: List[String]) => ::
+    members::
         moduleName fun() => moduleName,
         valuePath fun() => valuePath,
         struct fun() => structs.create(ImportNode, listOf(moduleName, valuePath))
-    }
-}
 
-def ModuleNode class(name: List[String], memberDeclarations: List[MemberNode], statements: List[StatementNode]) => {
-    members {
+def ModuleNode class(name: List[String], memberDeclarations: List[MemberNode], statements: List[StatementNode]) => ::
+    members::
         name fun() => name,
         memberDeclarations fun() => memberDeclarations,
         statements fun() => statements,
         struct fun() => structs.create(ModuleNode, listOf(name, memberDeclarations, statements))
-    }
-}

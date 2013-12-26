@@ -1,8 +1,7 @@
 module shed/compiler/tokenising/tokenFilterTests;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 import hat;
@@ -25,7 +24,7 @@ def assertFilteredTokens fun(inputTokens: List[Token], matcher: Matcher[List[Tok
         )
 
 val testCases = listOf[TestCase](
-    TestCase("whitespace tokens are filtered out", fun() => do {
+    TestCase("whitespace tokens are filtered out", fun() => do::
         return assertFilteredTokens(
             listOf(
                 identifier("x"),
@@ -37,9 +36,9 @@ val testCases = listOf[TestCase](
                 identifier("y")
             ))
         );
-    }),
+    ),
     
-    TestCase("newline before comment is not significant", fun() => do {
+    TestCase("newline before comment is not significant", fun() => do::
         return assertFilteredTokens(
             listOf(
                 whitespace("\n"),
@@ -48,18 +47,18 @@ val testCases = listOf[TestCase](
             ),
             equalTo(emptyList)
         );
-    }),
+    ),
 
-    TestCase("comment tokens are filtered out", fun() => do {
+    TestCase("comment tokens are filtered out", fun() => do::
         return assertFilteredTokens(
             listOf(
                 comment("// saf")
             ),
             equalTo(emptyList)
         );
-    }),
+    ),
     
-    TestCase("new lines are significant at zero indentation", fun() => do {
+    TestCase("new lines are significant at zero indentation", fun() => do::
         return assertFilteredTokens(
             listOf(
                 whitespace("\n")
@@ -68,9 +67,9 @@ val testCases = listOf[TestCase](
                 newline()
             ))
         );
-    }),
+    ),
     
-    TestCase("blank lines are ignored", fun() => do {
+    TestCase("blank lines are ignored", fun() => do::
         return assertFilteredTokens(
             listOf(
                 whitespace("\n   \n")
@@ -79,16 +78,16 @@ val testCases = listOf[TestCase](
                 newline()
             ))
         );
-    }),
+    ),
     
-    TestCase("new line followed by whitespace is ignored", fun() => do {
+    TestCase("new line followed by whitespace is ignored", fun() => do::
         return assertFilteredTokens(
             listOf(
                 whitespace("\n    ")
             ),
             equalTo(emptyList)
         );
-    }),
+    ),
     
     TestCase("indented newline after block start is significant", fun() =>
         assertFilteredTokens(
@@ -132,7 +131,7 @@ val testCases = listOf[TestCase](
         )
     ),
     
-    TestCase("indented newline after block start is ignored if there is a intervening token", fun() => do {
+    TestCase("indented newline after block start is ignored if there is a intervening token", fun() => do::
         return assertFilteredTokens(
             listOf(
                 symbol("::"),
@@ -144,9 +143,9 @@ val testCases = listOf[TestCase](
                 symbol("+")
             ))
         );
-    }),
+    ),
     
-    TestCase("indented newlines at same indentation after block start are significant", fun() => do {
+    TestCase("indented newlines at same indentation after block start are significant", fun() => do::
         return assertFilteredTokens(
             listOf(
                 symbol("::"),
@@ -161,9 +160,9 @@ val testCases = listOf[TestCase](
                 newline()
             ))
         );
-    }),
+    ),
     
-    TestCase("indented newlines followed by line comments are ignored", fun() => do {
+    TestCase("indented newlines followed by line comments are ignored", fun() => do::
         return assertFilteredTokens(
             listOf(
                 symbol("::"),
@@ -178,9 +177,9 @@ val testCases = listOf[TestCase](
                 symbol("+")
             ))
         );
-    }),
+    ),
     
-    TestCase("newline at previous indentation level causes single dedent", fun() => do {
+    TestCase("newline at previous indentation level causes single dedent", fun() => do::
         return assertFilteredTokens(
             listOf(
                 symbol("::"),
@@ -199,9 +198,9 @@ val testCases = listOf[TestCase](
                 identifier("x")
             ))
         );
-    }),
+    ),
     
-    TestCase("newline can cause multiple dedents", fun() => do {
+    TestCase("newline can cause multiple dedents", fun() => do::
         return assertFilteredTokens(
             listOf(
                 symbol("::"),
@@ -228,7 +227,7 @@ val testCases = listOf[TestCase](
                 identifier("x")
             ))
         );
-    }),
+    ),
     
     TestCase("pass keyword allows empty blocks", fun() =>
         assertFilteredTokens(

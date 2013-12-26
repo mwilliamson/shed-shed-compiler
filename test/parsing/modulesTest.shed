@@ -1,8 +1,7 @@
 module shed/compiler/parsing/modulesTest;
 
-members {
+members::
     testCases
-}
 
 import options;
 
@@ -99,8 +98,7 @@ val membersRule = rules.map(
 def stringSource fun(string: String) =>
     createStringSource(string, "raw string");
 
-def assertSuccessfulParse fun(input: String, expected: Node) => do {
+def assertSuccessfulParse fun(input: String, expected: Node) => do::
     val source = stringSource(input);
     val result = Parser().parse(modules.moduleRule(statementRule, membersRule), source);
     return assertThat(result, isSuccess(equalTo(expected)));
-}

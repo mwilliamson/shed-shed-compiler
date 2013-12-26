@@ -1,8 +1,7 @@
 module shed/compiler/parsing/parser;
 
-members {
+members::
     Parser
-}
 
 import lop/token.Token;
 import lop/results.Success;
@@ -15,12 +14,11 @@ import shed/compiler/parsing/expressions.expressionRules;
 import shed/compiler/parsing/statements.statementRule;
 import shed/compiler/parsing/modules.moduleRule;
 
-def Parser class() => {
-    members {
+def Parser class() => ::
+    members::
         parse,
         parseWithoutEndToken,
         parseModule
-    }
     
     val tokeniser = Tokeniser();
         
@@ -41,7 +39,7 @@ def Parser class() => {
             not(token.name().equals("end"))
         );
     
-    def parseModule fun(input: StringSource) => do {
+    def parseModule fun(input: StringSource) => do::
         val parseResult = parse(parseRule(), input);
         return if parseResult.isSuccess() then
             results.success(parseResult.value())
@@ -50,9 +48,8 @@ def Parser class() => {
                 "Parse failed: "
                     .concat(parseResult.message().toString())
             ));
-    }
 
-    def parseRule fun() => do {
+    def parseRule fun() => do::
         // HACK TODO FIXME: need a better way of doing indirect mutual recursion
         val optionalMembers = lazyFunction(fun() =>
             expressionRules(statement).optionalMembers()
@@ -67,8 +64,6 @@ def Parser class() => {
         );
         
         return moduleRule(statement, optionalMembers);
-    }
     
     def tokenise fun(input: StringSource) =>
         filterTokens(tokeniser.tokenise(input));
-}

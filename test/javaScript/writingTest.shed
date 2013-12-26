@@ -1,8 +1,7 @@
 module shed/compiler/javaScript/writingTest;
 
-members {
+members::
     testCases
-}
 
 import hat.TestCase;
 import duck.assertThat;

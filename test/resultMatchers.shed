@@ -1,18 +1,16 @@
 module shed/compiler/resultMatchers;
 
-members {
+members::
     isSuccess
-}
 
 import duck.MatchResult;
 
-def isSuccess fun[T] => (matcher: Matcher[T]) => object {
-    members {
+def isSuccess fun[T] => (matcher: Matcher[T]) => object::
+    members::
         describeSelf,
         matches,
         describeMismatch,
         matchesWithDescription
-    }
     
     def describeSelf fun() => "success with value ".concat(matcher.describeSelf());
     
@@ -30,4 +28,3 @@ def isSuccess fun[T] => (matcher: Matcher[T]) => object {
                 MatchResult(true, "")
         else
             MatchResult(false, "was not success, was ".concat(represent(result)))
-}

@@ -1,10 +1,9 @@
 module shed/compiler/scoping;
 
-members {
+members::
     scopeOf,
     SameScope,
     SubScope
-}
 
 import shed/compiler/nodes;
 
@@ -37,17 +36,13 @@ def formalArgScope fun(node: FormalArgumentNode) =>
 def functionScope fun(node: FunctionNode) =>
     subScope(node.formalArgs().concat(listOf(node.body())))
 
-def SameScope class(nodes: List[ShedNode]) => {
-    members {
+def SameScope class(nodes: List[ShedNode]) => ::
+    members::
         nodes fun() => nodes
-    }
-}
 
-def SubScope class(nodes: List[ShedNode]) => {
-    members {
+def SubScope class(nodes: List[ShedNode]) => ::
+    members::
         nodes fun() => nodes
-    }
-}
     
 val sameScope = SameScope;
 val subScope = SubScope;

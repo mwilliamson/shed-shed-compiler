@@ -1,8 +1,7 @@
 module shed/compiler/parsing/statements;
 
-members {
+members::
     statementRule
-}
 
 import lop/rules;
 import lop/results;
@@ -12,7 +11,7 @@ import shed/compiler/parsing/tokenRules;
 import shed/compiler/parsing/tokenRules.statementTerminator;
 
 
-def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
+def statementRule fun(expressionRule: Rule[ExpressionNode]) => do::
     
     val expressionStatementRule =
         rules.sequence()
@@ -55,5 +54,4 @@ def statementRule fun(expressionRule: Rule[ExpressionNode]) => do {
             expressionStatementRule
         )
     );
-}
 

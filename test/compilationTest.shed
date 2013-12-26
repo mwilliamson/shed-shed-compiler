@@ -1,8 +1,7 @@
 module shed/compiler/compilationTest;
 
-members {
+members::
     testCases
-}
 
 import nodejs;
 
@@ -12,15 +11,14 @@ import duck.MatchResult;
 
 import shed/compiler/compilation;
 
-def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do {
+def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do::
     val tokeniser = Tokeniser();
     val actualTokens = tokeniser.tokenise(input);
     val expectedMatchers = expectedTokens.map(equalTo[Token]);
     return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
-};
 
 val testCases = listOf(
-    TestCase("can execute program containing print statement", fun() => do {
+    TestCase("can execute program containing print statement", fun() => do::
         val shedProgram = "print(\"Hello world\");";
         val jsProgramPromise = compilation.compileString(shedProgram);
         
@@ -29,11 +27,11 @@ val testCases = listOf(
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
-    })
+    )
 );
 
 val testCases = listOf(
-    TestCase("can import module", fun() => do {
+    TestCase("can import module", fun() => do::
         val shedProgram = "import options;\nprint(options.none.orElse(fun() => \"Hello world\"));";
         val jsProgramPromise = compilation.compileString(shedProgram);
         
@@ -42,11 +40,11 @@ val testCases = listOf(
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
-    })
+    )
 );
 
 val testCases = listOf(
-    TestCase("can import value from module", fun() => do {
+    TestCase("can import value from module", fun() => do::
         val shedProgram = "import options.none;\nprint(none.orElse(fun() => \"Hello world\"));";
         val jsProgramPromise = compilation.compileString(shedProgram);
         
@@ -55,16 +53,15 @@ val testCases = listOf(
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
-    })
+    )
 );
     
-def isSuccessWithOutput fun(expectedOutput: String) => object {
-    members {
+def isSuccessWithOutput fun(expectedOutput: String) => object::
+    members::
         describeSelf,
         matches,
         describeMismatch,
         matchesWithDescription
-    }
     
     def describeSelf fun() => "successful exit with output: ".concat(expectedOutput);
     def matches fun(result: ParseResult) =>
@@ -91,4 +88,3 @@ def isSuccessWithOutput fun(expectedOutput: String) => object {
         
     def describeError fun(result: ExecutionResult) =>
         "stderr was: ".concat(result.stderr())
-}

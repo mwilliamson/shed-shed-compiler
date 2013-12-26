@@ -1,8 +1,7 @@
 module shed/compiler/codeGeneration/microJavaScriptTest;
 
-members {
+members::
     testCases
-}
 
 import options;
 
@@ -54,7 +53,7 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed if-then-else expression generates JavaScript conditional operator", fun() => do {
+    TestCase("Shed if-then-else expression generates JavaScript conditional operator", fun() => do::
         val condition = shed.ref("condition");
         val trueValue = shed.ref("trueValue");
         val falseValue = shed.ref("falseValue");
@@ -62,7 +61,7 @@ val testCases = listOf(
             generate(shed.ifThenElse(condition, trueValue, falseValue)),
             equalTo(js.conditional(stub(condition), stub(trueValue), stub(falseValue)))
         );
-    }),
+    ),
     
     TestCase("Shed call generates JavaScript call", fun() =>
         assertThat(
@@ -181,7 +180,7 @@ val testCases = listOf(
         )
     ),
     
-    TestCase("Shed object generates Shed class that's immediately instantiated", fun() => do {
+    TestCase("Shed object generates Shed class that's immediately instantiated", fun() => do::
         val obj = shed.obj(
             listOf(shed.memberDeclaration("x", nodes.ref("x"))),
             listOf(shedStatement)
@@ -193,9 +192,9 @@ val testCases = listOf(
                 emptyList
             ))
         );
-    }),
+    ),
     
-    TestCase("Shed do block generates JavaScript function that's immediately called", fun() => do {
+    TestCase("Shed do block generates JavaScript function that's immediately called", fun() => do::
         val firstStatement = shed.expressionStatement(shed.string("Hello"));
         val secondStatement = shed.ret(shed.string("world"));
         return assertThat(
@@ -208,9 +207,9 @@ val testCases = listOf(
                 emptyList
             ))
         );
-    }),
+    ),
     
-    TestCase("Shed let-in expression generates JavaScript function that's immediately called", fun() => do {
+    TestCase("Shed let-in expression generates JavaScript function that's immediately called", fun() => do::
         val declaration = shed.valDeclaration("x", shed.ref("y"));
         val expression = shed.string("world");
         return assertThat(
@@ -226,7 +225,7 @@ val testCases = listOf(
                 emptyList
             ))
         );
-    }),
+    ),
     
     TestCase("Shed and expression generates JavaScript and expression", fun() =>
         assertThat(

@@ -1,8 +1,7 @@
 module shed/compiler/javaScript/writing;
 
-members {
+members::
     write
-}
 
 import json;
 import strings;
@@ -36,7 +35,7 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
     )
 
 def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Double) =>
-    fun(node: T) => do {
+    fun(node: T) => do::
         def subWrite fun(node: JavaScriptNode) =>
             writeWithPrecedence(node, expressionType.precedence)
             
@@ -45,13 +44,11 @@ def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Do
             "(".concat(innerString).concat(")")
         else
             innerString;
-    }
 
-val conditionalOperatorWriter = object {
-    members {
+val conditionalOperatorWriter = object::
+    members::
         precedence 15,
         write writeConditionalOperator
-    }
     
     def writeConditionalOperator fun(write: Function[JavaScriptNode, String], conditional: ConditionalOperatorNode) =>
         write(conditional.condition())
@@ -59,7 +56,6 @@ val conditionalOperatorWriter = object {
             .concat(write(conditional.trueValue()))
             .concat(" : ")
             .concat(write(conditional.falseValue()))
-};
 
 def writeBoolean fun(bool: BooleanNode) =>
     if bool.value() then "true" else "false"
@@ -84,11 +80,10 @@ def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
         .concat(".")
         .concat(propertyAccess.propertyName())
 
-val functionWriter = object {
-    members {
+val functionWriter = object::
+    members::
         precedence 20,
         write writeFunction
-    }
     
     def writeFunction fun(write: Function[JavaScriptNode, String], func: FunctionNode) =>
         "function("
@@ -96,7 +91,6 @@ val functionWriter = object {
             .concat(") {")
             .concat(writeIndentedStatements(func.statements()))
             .concat("\n}")
-};
 
 def writeIndentedStatements fun(statements: List[StatementNode]) =>
     strings.join(
@@ -115,15 +109,13 @@ def writeObject fun(obj: ObjectNode) =>
         .concat("\n}")
 
 
-val andWriter = object {
-    members {
+val andWriter = object::
+    members::
         precedence 13,
         write writeAnd
-    }
     
     def writeAnd fun(write: Function[JavaScriptNode, String], andNode: AndNode) =>
         write(andNode.left()).concat(" && ").concat(write(andNode.right()))
-};
 
 def writeProperty fun(property: Tuple[String, ExpressionNode]) =>
     property.map(fun(name: String, value: ExpressionNode) =>

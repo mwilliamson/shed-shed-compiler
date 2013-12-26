@@ -1,9 +1,8 @@
 module shed/compiler/codeGeneration/microJavaScript;
 
-members {
+members::
     generate,
     Generator
-}
 
 import strings;
 import lists;
@@ -18,10 +17,9 @@ val shed = nodes;
 def generate fun(node: Node) =>
     Generator(generate).generate(node)
 
-def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
-    members {
+def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
+    members::
         generate generatorGenerate
-    }
     
     val shedGlobal = js.ref("$shed");
     
@@ -256,4 +254,3 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => {
             ),
             emptyList
         )
-}

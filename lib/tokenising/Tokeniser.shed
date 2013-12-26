@@ -1,8 +1,7 @@
 module shed/compiler/tokenising/tokeniser;
 
-members {
+members::
     Tokeniser
-}
 
 import json;
 import regex;
@@ -18,10 +17,9 @@ import shed/compiler/tokenising/tokens;
 import lop/token.Token;
 import lop/sources.StringSource;
 
-def Tokeniser class() => {
-    members {
+def Tokeniser class() => ::
+    members::
         tokenise
-    }
     
     val keywords = sets.fromList[String](listOf(
         "true", "false", "return", "package", "import", "val", "var", "public",
@@ -39,10 +37,9 @@ def Tokeniser class() => {
     def tokenise fun(input: StringSource) =>
         sequenceToList[Token](tokeniseString(input));
     
-    def TokenSequence class(input: StringSource) => {
-        members {
+    def TokenSequence class(input: StringSource) => ::
+        members::
             currentItem
-        }
         
         def currentItem fun() => let
             val length = input.asString().length()
@@ -54,7 +51,6 @@ def Tokeniser class() => {
                 )
             else
                 sequences.singleton[Token](tokens.end(input.range(0, 0))).currentItem()
-    }
     
     def tokeniseString fun(input: StringSource) =>
         TokenSequence(input)
@@ -70,25 +66,23 @@ def Tokeniser class() => {
             ));
     
     def regexReader fun(regex: Regex, tokenBuilder: function[String, StringSource, Token]) =>
-        fun(input: StringSource) => do {
+        fun(input: StringSource) => do::
             val string = input.asString();
             
-            return regex.exec(string).map[NextToken](fun(regexResult: RegexResult) => do {
+            return regex.exec(string).map[NextToken](fun(regexResult: RegexResult) => do::
                 val value = regexResult.capture(1);
                 return NextToken(
                     tokenBuilder(value, input.range(0, value.length())),
                     input.sliceFrom(value.length())
                 );
-            });
-        };
+            );
         
-    def alphanumericToken fun(value: String, source: StringSource) => do {
+    def alphanumericToken fun(value: String, source: StringSource) => do::
         val tokenBuilder = if keywords.contains(value) then
             tokens.keyword
         else
             tokens.identifier;
         return tokenBuilder(value, source);
-    }
     
     def capture fun(value: String) =>
         regex.create("^(".concat(value).concat(")"));
@@ -106,10 +100,7 @@ def Tokeniser class() => {
     
     val readString = regexReader(capture("\"[^\"\\\\]*(?:\\\\.[^\"\\\\]*)*\""), createStringToken);
     
-    def NextToken class(token: Token, rest: StringSource) => {
-        members {
+    def NextToken class(token: Token, rest: StringSource) => ::
+        members::
             token fun() => token,
             rest fun() => rest
-        }
-    }
-};

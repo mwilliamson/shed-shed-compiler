@@ -1,8 +1,7 @@
 module shed/compiler/parsing/expressions;
 
-members {
+members::
     expressionRules
-}
 
 import lop/rules;
 import lop/pratt;
@@ -20,7 +19,7 @@ val variableReferenceRule = rules.map(
     nodes.variableReference
 );
     
-def expressionRules fun(statementRule: Rule[StatementNode]) => do {
+def expressionRules fun(statementRule: Rule[StatementNode]) => do::
     val ifThenElseRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.keyword("if"))
@@ -248,11 +247,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do {
     );
 
     val expressionRule = expressionParser.rule();
-    return object {
-        members {
+    return object::
+        members::
             expression fun() => expressionRule,
             membersRule fun() => membersRule,
             optionalMembers fun() => optionalMembersRule
-        }
-    };  
-}

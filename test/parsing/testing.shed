@@ -1,8 +1,7 @@
 module shed/compiler/parsing/testing;
 
-members {
+members::
     createAssertSuccessfulParse
-}
 
 import duck.assertThat;
 import duck.equalTo;
@@ -16,8 +15,7 @@ def rawStringSource fun(string: String) =>
     createStringSource(string, "raw string");
 
 def createAssertSuccessfulParse fun(rule: Rule[ShedNode]) =>
-    fun(input: String, expected: Node) => do {
+    fun(input: String, expected: Node) => do::
         val source = rawStringSource(input);
         val result = Parser().parseWithoutEndToken(rule, source);
         return assertThat(result, isSuccess(equalTo(expected)));
-    }

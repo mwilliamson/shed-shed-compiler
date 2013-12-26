@@ -1,8 +1,7 @@
 module shed/compiler/moduleCompilation;
 
-members {
+members::
     compileSourceToString
-}
 
 import strings;
 import console;
