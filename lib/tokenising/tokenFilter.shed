@@ -47,31 +47,6 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
             else
                 withTail(sequences.singleton(token))
         ).valueOrElse()
-            
-        //~ in sequences.head(input.tail()).map(fun(nextToken: Token) =>
-            //~ if nextToken.name().equals("whitespace") then
-                //~ regex.create("\n( *)$").exec(nextToken.value())
-                    //~ .map(fun(regexResult: RegexResult) =>
-                        //~ tuple(
-                            //~ sequences.singleton(token),
-                            //~ input.tail(),
-                            //~ sequences.cons(regexResult.capture(1).length(), indentationStack)
-                        //~ )
-                    //~ )
-                    //~ .valueOrElse(noSignificantWhitespace)
-            //~ else
-                //~ noSignificantWhitespace()
-        //~ ).valueOrElse(noSignificantWhitespace)
-        
-    //~ else if isSymbol(token, "}") then
-        //~ tuple(
-            //~ sequences.singleton(token),
-            //~ input.tail(),
-            //~ if sequences.isEmpty(indentationStack) then
-                //~ sequences.nil
-            //~ else
-                //~ indentationStack.tail()
-        //~ )
         
     else if token.name().equals("whitespace") then
         if regex.create("\n").test(token.value()) &&
