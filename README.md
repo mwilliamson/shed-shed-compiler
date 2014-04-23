@@ -54,6 +54,14 @@ val id = fun(x) => x
 def id fun(x) => x
 ```
 
+`def` is actually just a bit of syntatic sugar:
+
+```
+def id fun(x) => x
+// is equivalent to
+val id = (fun(x) => x).define("x")
+```
+
 ## Ordering
 
 (Note: this doesn't work yet since statement reordering hasn't been implemented)
