@@ -53,3 +53,56 @@ val id = fun(x) => x
 // Named function
 def id fun(x) => x
 ```
+
+## Ordering
+
+(Note: this doesn't work yet since statement reordering hasn't been implemented)
+
+In many contexts, the order of execution of statements in a block is irrelevant.
+The goal is to allow statements to be defined in any order,
+and the compiler will reorder statements to satisfy dependencies.
+The value of a block is indicated with a keyword, such as `pick`.
+In order to preserve ordering (for instance, when outputting to stdout),
+a special block should be used (probably `do`).
+
+This would replace the `let` and `where` constructs found in some languages.
+
+For instance (apologies for triteness), using let:
+
+```
+def f(x, y, z) => let
+    val a = x + y
+    val b = x + z
+    in a / b
+```
+
+Using `where`:
+
+```
+def f(x, y, z) =>
+    a / b
+    where a = x + y
+          b = x + z
+```
+
+In Shed, either can be expressed using the same constructs:
+
+```
+// Equivalent of let
+def f(x, y, z) => ::
+    val a = x + y
+    val b = x + z
+    pick a / b
+    
+// Equivalent of where
+def f(x, y, z) => ::
+    pick a / b
+    val a = x + y
+    val b = x + z
+
+// Mixing it up
+def f(x, y, z) => ::
+    val b = x + z
+    pick a / b
+    val a = x + y
+```
