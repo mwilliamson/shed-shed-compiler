@@ -38,3 +38,18 @@ compiled to other targets.
 * Contravariance/covariance
 * Type-checking
 * Do-notation?
+
+## Naming things
+
+There are some programming language constructs come in both named and
+anonymous forms, such as functions and classes. Rather than using distinct
+syntax for each case, Shed only defines syntax to create anonymous instances of
+each construct. The `def` statement can then name any such nameable construct.
+For instance:
+
+```
+// Anonymous function
+val id = fun(x) => x
+// Named function
+def id fun(x) => x
+```
