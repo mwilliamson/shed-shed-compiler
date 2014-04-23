@@ -41,7 +41,7 @@ compiled to other targets.
 
 ## Naming things
 
-There are some programming language constructs come in both named and
+Some programming language constructs come in both named and
 anonymous forms, such as functions and classes. Rather than using distinct
 syntax for each case, Shed only defines syntax to create anonymous instances of
 each construct. The `def` statement can then name any such nameable construct.
