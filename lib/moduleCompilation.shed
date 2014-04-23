@@ -10,6 +10,7 @@ import lop/strings.createStringSource;
 
 import shed/compiler/parsing/parser.Parser;
 import shed/compiler/referenceResolving.resolveReferences;
+import shed/compiler/referenceResolving;
 import shed/compiler/codeGeneration/microJavaScript;
 import shed/compiler/javaScript/writing;
 import shed/compiler/results;
@@ -19,7 +20,7 @@ val parser = Parser();
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
     val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => let
-        //resolveReferences(shedNode).bind(fun() => let
+        //resolveReferences(shedNode, referenceResolving.emptyContext).bind(fun() => let
             val javaScriptNode = microJavaScript.generate(shedNode)
             in results.success(writing.write(javaScriptNode))
         //)
