@@ -246,7 +246,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
         )
     );
 
-    val expressionRule = expressionParser.rule();
+    val expressionRule = rules.addSource(expressionParser.rule())
     return object::
         members::
             expression fun() => expressionRule,

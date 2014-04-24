@@ -21,7 +21,7 @@ import shed/compiler/results.failure;
 def badRefDetected fun(node: ShedNode) => fun() =>
     assertThat(
         resolveReferences(node, emptyContext),
-        equalTo(failure(listOf(variableNotInScope("badRef"))))
+        equalTo(failure(listOf(variableNotInScope(badRef))))
     )
 
 def successfulReferenceResolution fun(node: ShedNode) => fun() =>
@@ -46,9 +46,10 @@ val testCases = listOf(
     
     TestCase("variable reference fails if context doesn't contain name", fun() => let
         val context = emptyContext.add("song", dummyNode)
+        val ref = nodes.ref("artist")
         in assertThat(
-            resolveReferences(nodes.ref("artist"), context),
-            equalTo(failure(listOf(variableNotInScope("artist"))))
+            resolveReferences(ref, context),
+            equalTo(failure(listOf(variableNotInScope(ref))))
         )
     ),
     
@@ -74,10 +75,11 @@ val testCases = listOf(
             listOf(nodes.formalArgument("song", none)),
             noRef
         )
-        val call = nodes.call(noRef, listOf(func, nodes.ref("song")))
+        val ref = nodes.ref("song")
+        val call = nodes.call(noRef, listOf(func, ref))
         in assertThat(
             resolveReferences(call, emptyContext),
-            equalTo(failure(listOf(variableNotInScope("song"))))
+            equalTo(failure(listOf(variableNotInScope(ref))))
         )
     ),
     

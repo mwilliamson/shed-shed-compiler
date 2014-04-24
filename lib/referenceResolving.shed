@@ -7,6 +7,8 @@ members::
 
 import sequences;
 
+import lop/sources
+
 import shed/compiler/results;
 import shed/compiler/nodes;
 import shed/compiler/scoping;
@@ -30,7 +32,7 @@ def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
     in if context.contains(name) then
         results.success(context)
     else
-        results.failure(listOf(variableNotInScope(name)))
+        results.failure(listOf(variableNotInScope(ref)))
 
 def isVariableBinder fun(node: ShedNode) =>
     // TODO: introduce a VariableBinderNode interface to remove this logic
@@ -57,8 +59,13 @@ def resolveAll fun(nodes: List[ShedNode], context: Context) =>
         result.bind(fun(context: Context) => resolveReferences(child, context))
     )
 
-def variableNotInScope fun(name: String) =>
-    "variable not in scope: ".concat(name)
+def variableNotInScope fun(ref: VariableReferenceNode) => let
+    val mainMessage = "variable not in scope: ".concat(ref.identifier())
+    val suffix = sources.tryGetSource(ref)
+        .map(fun(source) => source.describe())
+        .valueOrElse(fun() => "")
+    in mainMessage.concat(suffix)
+        
 
 def Context class(names: Sequence[String]) => ::
     members::
