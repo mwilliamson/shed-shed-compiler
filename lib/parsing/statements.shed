@@ -3,7 +3,7 @@ module shed/compiler/parsing/statements;
 members::
     statementRule
 
-import shed/compiler/parsing/rules
+import lop/rules;
 import lop/results;
 
 import shed/compiler/nodes;
