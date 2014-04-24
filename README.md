@@ -26,6 +26,7 @@ compiled to other targets.
 
 ## TODO
 
+* Allow trailing commas in argument list
 * Reference resolution
 * Add a pipeline operator or similar (see `|>` in F#, or thrush/thread in Clojure)
 * Add simple syntax for partial application, such as using # as an operator. For
