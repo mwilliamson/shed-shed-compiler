@@ -7,6 +7,7 @@ import sequences;
 import lazySequences;
 import lists;
 import regex;
+import trampolining
 
 import shed/compiler/tokenising/tokens;
 import shed/compiler/results
@@ -31,12 +32,15 @@ def filterComments fun(input: Sequence[Token]) => let
             
 
 def filterTokens2 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
+    trampolining.trampoline(fun() => filterTokens3(accumulator, input, indentationStack))
+
+def filterTokens3 fun(accumulator: Sequence[Sequence[Token]], input: Sequence[Token], indentationStack: Sequence[Integer]) =>
     if sequences.isEmpty(input) then
-        lazySequences.concat(accumulator)
+        trampolining.stop(lazySequences.concat(accumulator))
     else
         extractNewline(input.currentItem(), indentationStack)
             .map(fun(filtered: Sequence[Token], rest: Sequence[Token], newIndentationStack: Sequence[Integer]) =>
-                filterTokens2(sequences.cons(filtered, accumulator), rest, newIndentationStack)
+                trampolining.nextFunction(fun() => filterTokens3(sequences.cons(filtered, accumulator), rest, newIndentationStack))
             )
 
 def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[Integer]) => let
