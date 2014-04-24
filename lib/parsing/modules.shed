@@ -5,7 +5,7 @@ members::
 
 import options;
 
-import lop/rules;
+import shed/compiler/parsing/rules
 
 import shed/compiler/nodes;
 import shed/compiler/parsing/tokenRules;

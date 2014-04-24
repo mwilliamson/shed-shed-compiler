@@ -4,7 +4,7 @@ members::
     symbol, keyword, identifier, newline, symbolOrNewline, indent, dedent
     statementTerminator, closingParen
 
-import lop/rules;
+import shed/compiler/parsing/rules
 
 def symbol fun(value: String) =>
     rules.token("symbol", value);

@@ -3,8 +3,9 @@ module shed/compiler/parsing/expressions;
 members::
     expressionRules
 
-import lop/rules;
 import lop/pratt;
+
+import shed/compiler/parsing/rules
 
 import shed/compiler/nodes;
 import shed/compiler/nodes.NumberNode;
