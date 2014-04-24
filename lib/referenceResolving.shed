@@ -62,7 +62,7 @@ def resolveAll fun(nodes: List[ShedNode], context: Context) =>
 def variableNotInScope fun(ref: VariableReferenceNode) => let
     val mainMessage = "variable not in scope: ".concat(ref.identifier())
     val suffix = sources.tryGetSource(ref)
-        .map(fun(source) => source.describe())
+        .map(fun(source) => "\n".concat(source.describe()))
         .valueOrElse(fun() => "")
     in mainMessage.concat(suffix)
         
