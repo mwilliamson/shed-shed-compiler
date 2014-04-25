@@ -1,22 +1,22 @@
 .PHONY: test 
 
-BOOTSTRAP_VERSION = 0.3.1
+BOOTSTRAP_VERSION = 0.3.1-a
 BOOTSTRAP_COMPILER_SCRIPT = _build/shed-compiler-$(BOOTSTRAP_VERSION).js
 DEFAULT_COMPILER = node $(BOOTSTRAP_COMPILER_SCRIPT)
 SOURCE_FILES = node_modules/shed-hat/hat.shed node_modules/shed-duck/duck.shed node_modules/shed-lop/lib lib
 COMPILER_SCRIPT = _build/compile.js
-COMPILE_COMPILER_ARGS = $(SOURCE_FILES) --main=shed.compiler.compilation.main
+COMPILE_COMPILER_ARGS = $(SOURCE_FILES) --main=shed/compiler/compilation.main
 COMPILE_TESTS_ARGS = $(SOURCE_FILES) test --main=hat.run
-TEST_CASES = shed.compiler.tokenising.tokeniserTests.testCases \
-	shed.compiler.tokenising.tokenFilterTests.testCases \
-	shed.compiler.parsing.literalsTest.testCases \
-	shed.compiler.parsing.expressionsTest.testCases \
-	shed.compiler.parsing.statementsTest.testCases \
-	shed.compiler.parsing.modulesTest.testCases \
-	shed.compiler.codeGeneration.microJavaScriptTest.testCases \
-	shed.compiler.javaScript.writingTest.testCases \
-	shed.compiler.referenceResolvingTest.testCases \
-	shed.compiler.compilationTest.testCases
+TEST_CASES = shed/compiler/tokenising/tokeniserTests.testCases \
+	shed/compiler/tokenising/tokenFilterTests.testCases \
+	shed/compiler/parsing/literalsTest.testCases \
+	shed/compiler/parsing/expressionsTest.testCases \
+	shed/compiler/parsing/statementsTest.testCases \
+	shed/compiler/parsing/modulesTest.testCases \
+	shed/compiler/codeGeneration/microJavaScriptTest.testCases \
+	shed/compiler/javaScript/writingTest.testCases \
+	shed/compiler/referenceResolvingTest.testCases \
+	shed/compiler/compilationTest.testCases
 	
 build-tests: bootstrap
 	mkdir -p _build

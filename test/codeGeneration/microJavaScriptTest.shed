@@ -293,7 +293,7 @@ val testCases = listOf(
                         ),
                         "import"
                     ),
-                    listOf(js.string("shed.example"))
+                    listOf(js.string("shed/example"))
                 )
             ))
         )
@@ -314,7 +314,7 @@ val testCases = listOf(
                                 ),
                                 "import"
                             ),
-                            listOf(js.string("shed.example"))
+                            listOf(js.string("shed/example"))
                         ),
                         "some"
                     ),
@@ -349,7 +349,7 @@ val testCases = listOf(
                     js.call(
                         js.propertyAccess(js.ref("$shed"), "exportModule"),
                         listOf(
-                            js.string("shed.example"),
+                            js.string("shed/example"),
                             js.func(
                                 emptyList,
                                 listOf(

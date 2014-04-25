@@ -190,7 +190,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
                 ),
                 "import"
             ),
-            listOf(js.string(strings.join(".", importNode.moduleName())))
+            listOf(js.string(strings.join("/", importNode.moduleName())))
         )
         
         in js.varDeclaration(
@@ -231,7 +231,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             js.call(
                 js.propertyAccess(shedGlobal, "exportModule"),
                 listOf(
-                    js.string(strings.join(".", name)),
+                    js.string(strings.join("/", name)),
                     js.func(
                         emptyList,
                         moduleNode.statements().map(generate)
