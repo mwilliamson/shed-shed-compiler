@@ -8,6 +8,8 @@ members::
     
     formalArgument FormalArgumentNode,
     FormalArgumentNode,
+    formalInputs FormalInputsNode,
+    FormalInputsNode,
     memberDeclaration MemberDeclarationNode,
     MemberDeclarationNode,
     
@@ -71,6 +73,11 @@ def FormalArgumentNode class(name: String, type: Option[ExpressionNode]) => ::
         type fun() => type,
         struct fun() => structs.create(FormalArgumentNode, listOf(name, type))
 
+def FormalInputsNode class(args: List[FormalArgumentNode]) => ::
+    members ::
+        args fun() => args,
+        struct fun() => structs.create(FormalInputsNode, listOf(args))
+
 def MemberDeclarationNode class(name: String, value: ExpressionNode) => ::
     members::
         name fun() => name,
@@ -126,17 +133,17 @@ def MemberAccessNode class(left: ExpressionNode, memberName: String) => ::
         memberName fun() => memberName,
         struct fun() => structs.create(MemberAccessNode, listOf(left, memberName))
 
-def FunctionNode class(formalArgs: List[FormalArgumentNode], body: ExpressionNode) => ::
+def FunctionNode class(formalInputs: FormalInputsNode, body: ExpressionNode) => ::
     members::
-        formalArgs fun() => formalArgs,
+        formalInputs fun() => formalInputs,
         body fun() => body,
-        struct fun() => structs.create(FunctionNode, listOf(formalArgs, body))
+        struct fun() => structs.create(FunctionNode, listOf(formalInputs, body))
 
-def ClassNode class(formalArgs: List[FormalArgumentNode], body: ObjectNode) => ::
+def ClassNode class(formalInputs: FormalInputsNode, body: ObjectNode) => ::
     members::
-        formalArgs fun() => formalArgs,
+        formalInputs fun() => formalInputs,
         body fun() => body,
-        struct fun() => structs.create(ClassNode, listOf(formalArgs, body))
+        struct fun() => structs.create(ClassNode, listOf(formalInputs, body))
 
 def ObjectNode class(memberDeclarations: List[MemberNode], statements: List[StatementNode]) => ::
     members::

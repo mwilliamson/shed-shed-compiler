@@ -100,7 +100,9 @@ val testCases = listOf(
     TestCase("Shed function generates JavaScript function wrapped in $shed.function", fun() =>
         assertThat(
             generate(shed.func(
-                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.formalInputs(
+                    listOf(shed.formalArgument("name", shed.ref("String")))
+                ),
                 shed.unit()
             )),
             equalTo(js.call(
@@ -116,7 +118,9 @@ val testCases = listOf(
     TestCase("Shed class without members generates JavaScript function that returns an object with $class property", fun() =>
         assertThat(
             generate(shed.classDeclaration(
-                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.formalInputs(
+                    listOf(shed.formalArgument("name", shed.ref("String")))
+                ),
                 shed.obj(
                     emptyList,
                     listOf(shedStatement)
@@ -149,7 +153,9 @@ val testCases = listOf(
     TestCase("Shed class generates JavaScript function that returns an object of members and $class", fun() =>
         assertThat(
             generate(shed.classDeclaration(
-                listOf(shed.formalArgument("name", shed.ref("String"))),
+                shed.formalInputs(
+                    listOf(shed.formalArgument("name", shed.ref("String")))
+                ),
                 shed.obj(
                     listOf(shed.memberDeclaration("x", nodes.ref("x"))),
                     listOf(shedStatement)
@@ -188,7 +194,7 @@ val testCases = listOf(
         return assertThat(
             generate(obj),
             equalTo(js.call(
-                stub(shed.classDeclaration(emptyList, obj)),
+                stub(shed.classDeclaration(shed.formalInputs(emptyList), obj)),
                 emptyList
             ))
         );

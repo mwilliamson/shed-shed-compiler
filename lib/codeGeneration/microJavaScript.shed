@@ -103,7 +103,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
         js.call(
             js.propertyAccess(shedGlobal, "function"),
             listOf(js.func(
-                generateFormalArgs(func.formalArgs()),
+                generateFormalArgs(func.formalInputs()),
                 listOf(js.ret(generate(func.body())))
             ))
         )
@@ -116,7 +116,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
                     js.varDeclaration("$class", js.call(
                         js.propertyAccess(shedGlobal, "class"),
                         listOf(js.func(
-                            generateFormalArgs(classDeclaration.formalArgs()),
+                            generateFormalArgs(classDeclaration.formalInputs()),
                             generateObjectBody(classDeclaration.body())
                         ))
                     )),
@@ -130,7 +130,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
         
     def obj fun(obj: ObjectNode) =>
         js.call(
-            generate(shed.classDeclaration(emptyList, obj)),
+            generate(shed.classDeclaration(nodes.formalInputs(emptyList), obj)),
             emptyList
         )
 
@@ -203,8 +203,8 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             .map(fun(name: List[String]) => generateNamedModule(name, moduleNode))
             .valueOrElse(fun() => generateUnnamedModule(moduleNode))
 
-    def generateFormalArgs fun(formalArgs: List[FormalArgumentNode]) =>
-        formalArgs.map(fun(arg: FormalArgumentNode) => arg.name())
+    def generateFormalArgs fun(formalInputs: FormalInputsNode) =>
+        formalInputs.args().map(fun(arg) => arg.name())
 
     def generateObjectBody fun(body: ObjectNode) =>
         body.statements().map(generate)

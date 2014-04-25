@@ -17,6 +17,7 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.IfThenElseNode, ifScope),
         matchClass(nodes.CallNode, callScope),
         matchClass(nodes.FormalArgumentNode, formalArgScope),
+        matchClass(nodes.FormalInputsNode, formalInputsScope),
         
         matchClass(nodes.VariableReferenceNode, noScope),
         matchClass(nodes.FunctionNode, functionScope),
@@ -49,8 +50,11 @@ def callScope fun(node: CallNode) =>
 def formalArgScope fun(node: FormalArgumentNode) =>
     sameScope(node.type().map(fun(t) => listOf(t)).valueOrElse(fun() => emptyList))
 
+def formalInputsScope fun(node: FormalInputsNode) =>
+    sameScope(node.args())
+
 def functionScope fun(node: FunctionNode) =>
-    subScope(node.formalArgs().concat(listOf(node.body())))
+    subScope(listOf(node.formalInputs(), node.body()))
 
 def typeApplicationScope fun(node: TypeApplicationNode) =>
     sameScope(listOf(node.callee()).concat(node.args()))
@@ -59,7 +63,7 @@ def memberAccessScope fun(node: MemberAccessNode) =>
     sameScope(listOf(node.left()))
 
 def classScope fun(node: ClassNode) =>
-    subScope(node.formalArgs().concat(listOf(node.body())))
+    subScope(listOf(node.formalInputs(), node.body()))
 
 def objectScope fun(node: ObjectNode) =>
     subScope(node.statements().concat(node.memberDeclarations()))

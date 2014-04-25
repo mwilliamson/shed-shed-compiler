@@ -62,17 +62,21 @@ val testCases = listOf(
     ),
     
     TestCase("function fails if body fails",
-        badRefDetected(nodes.func(emptyList, badRef))),
+        badRefDetected(nodes.func(nodes.formalInputs(emptyList), badRef))),
     
     TestCase("function node adds variable to scope",
         successfulReferenceResolution(nodes.func(
-            listOf(nodes.formalArgument("song", none)),
+            nodes.formalInputs(
+                listOf(nodes.formalArgument("song", none))
+            ),
             nodes.ref("song")
         ))),
     
     TestCase("function creates new scope for formal args and body", fun() => let
         val func = nodes.func(
-            listOf(nodes.formalArgument("song", none)),
+            nodes.formalInputs(
+                listOf(nodes.formalArgument("song", none))
+            ),
             noRef
         )
         val ref = nodes.ref("song")
@@ -85,7 +89,9 @@ val testCases = listOf(
     
     TestCase("formal arguments of function have references resolved",
         badRefDetected(nodes.func(
-            listOf(nodes.formalArgument("song", some(badRef))),
+            nodes.formalInputs(
+                listOf(nodes.formalArgument("song", some(badRef)))
+            ),
             noRef
         ))
     ),
@@ -131,13 +137,13 @@ val testCases = listOf(
     
     TestCase("body of class has references resolved",
         badRefDetected(nodes.classDeclaration(
-            emptyList,
+            nodes.formalInputs(emptyList),
             nodes.obj(emptyList, listOf(badRef))
         ))),
     
     TestCase("class node adds variable to scope",
         successfulReferenceResolution(nodes.classDeclaration(
-            listOf(nodes.formalArgument("song", none)),
+            nodes.formalInputs(listOf(nodes.formalArgument("song", none))),
             nodes.obj(emptyList, listOf(nodes.ref("song")))
         ))),
     
