@@ -101,6 +101,7 @@ val testCases = listOf(
         assertThat(
             generate(shed.func(
                 shed.formalInputs(
+                    emptyList,
                     listOf(shed.formalArgument("name", shed.ref("String")))
                 ),
                 shed.unit()
@@ -119,6 +120,7 @@ val testCases = listOf(
         assertThat(
             generate(shed.classDeclaration(
                 shed.formalInputs(
+                    emptyList,
                     listOf(shed.formalArgument("name", shed.ref("String")))
                 ),
                 shed.obj(
@@ -154,6 +156,7 @@ val testCases = listOf(
         assertThat(
             generate(shed.classDeclaration(
                 shed.formalInputs(
+                    emptyList,
                     listOf(shed.formalArgument("name", shed.ref("String")))
                 ),
                 shed.obj(
@@ -194,7 +197,7 @@ val testCases = listOf(
         return assertThat(
             generate(obj),
             equalTo(js.call(
-                stub(shed.classDeclaration(shed.formalInputs(emptyList), obj)),
+                stub(shed.classDeclaration(shed.formalInputs(emptyList, emptyList), obj)),
                 emptyList
             ))
         );

@@ -130,7 +130,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
         
     def obj fun(obj: ObjectNode) =>
         js.call(
-            generate(shed.classDeclaration(nodes.formalInputs(emptyList), obj)),
+            generate(shed.classDeclaration(nodes.formalInputs(emptyList, emptyList), obj)),
             emptyList
         )
 

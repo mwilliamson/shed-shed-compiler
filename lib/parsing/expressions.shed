@@ -55,11 +55,18 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
     
     val formalInputs = lazyFunction(fun() =>
         rules.sequence()
-            .next(rules.optional(formalTypeParametersRule))
+            .capture(optionalFormalTypeParametersRule)
             .capture(formalArgumentListRule)
             .map(nodes.formalInputs)
     )
-
+    
+    val optionalFormalTypeParametersRule = lazyFunction(fun() =>
+        rules.map(
+            rules.optional(formalTypeParametersRule),
+            fun(option) => option.valueOrElse(fun() => emptyList)
+        )
+    )
+    
     val formalTypeParametersRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("["))

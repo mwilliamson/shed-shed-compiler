@@ -8,6 +8,8 @@ members::
     
     formalArgument FormalArgumentNode,
     FormalArgumentNode,
+    formalParameter FormalParameterNode,
+    FormalParameterNode,
     formalInputs FormalInputsNode,
     FormalInputsNode,
     memberDeclaration MemberDeclarationNode,
@@ -73,8 +75,14 @@ def FormalArgumentNode class(name: String, type: Option[ExpressionNode]) => ::
         type fun() => type,
         struct fun() => structs.create(FormalArgumentNode, listOf(name, type))
 
-def FormalInputsNode class(args: List[FormalArgumentNode]) => ::
+def FormalParameterNode class(name: String) => ::
+    members::
+        name fun() => name,
+        struct fun() => structs.create(FormalParameterNode, listOf(name))
+
+def FormalInputsNode class(parameters: List[FormalParameterNode], args: List[FormalArgumentNode]) => ::
     members ::
+        parameters fun() => parameters,
         args fun() => args,
         struct fun() => structs.create(FormalInputsNode, listOf(args))
 

@@ -85,7 +85,8 @@ val testCases = listOf[TestCase](
             nodes.call(nodes.call(nodes.call(nodes.ref("go"), emptyList), emptyList), emptyList)
         )
     ),
-    
+
+// TODO: re-enable this test case
 //    TestCase("can parse type application", fun() =>
 //        assertSuccessfulParse(
 //            "Dictionary[String, Number]",
@@ -114,7 +115,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "fun() => ()",
             nodes.func(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(emptyList, emptyList),
                 nodes.unit()
             )
         )
@@ -125,6 +126,7 @@ val testCases = listOf[TestCase](
             "fun(first: String, second: Any) => ()",
             nodes.func(
                 nodes.formalInputs(
+                    emptyList,
                     listOf(
                         nodes.formalArgument("first", some(nodes.ref("String"))),
                         nodes.formalArgument("second", some(nodes.ref("Any")))
@@ -140,6 +142,7 @@ val testCases = listOf[TestCase](
             "fun(first) => ()",
             nodes.func(
                 nodes.formalInputs(
+                    emptyList,
                     listOf(
                         nodes.formalArgument("first", none)
                     )
@@ -153,7 +156,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "fun() : Unit => ()",
             nodes.func(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(emptyList, emptyList),
                 nodes.unit()
             )
         )
@@ -163,7 +166,10 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "fun[T] => () => ()",
             nodes.func(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(
+                    listOf(nodes.formalParameter("T")),
+                    emptyList
+                ),
                 nodes.unit()
             )
         )
@@ -203,7 +209,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "class() =>::\n  pass\n",
             nodes.classDeclaration(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(emptyList, emptyList),
                 nodes.obj(emptyList, emptyList)
             )
         )
@@ -213,7 +219,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "class() => ::\n  members::\n    x\n  x\n  y\n",
             nodes.classDeclaration(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(emptyList, emptyList),
                 nodes.obj(
                     listOf(nodes.memberDeclaration("x", nodes.ref("x"))),
                     listOf(stubStatement("x"), stubStatement("y"))
@@ -227,6 +233,7 @@ val testCases = listOf[TestCase](
             "class(first: String, second: Any) => ::\n  x\n",
             nodes.classDeclaration(
                 nodes.formalInputs(
+                    emptyList,
                     listOf(
                         nodes.formalArgument("first", some(nodes.ref("String"))),
                         nodes.formalArgument("second", some(nodes.ref("Any")))
@@ -241,7 +248,7 @@ val testCases = listOf[TestCase](
         assertSuccessfulParse(
             "class[T] => () => ::\n  x\n",
             nodes.classDeclaration(
-                nodes.formalInputs(emptyList),
+                nodes.formalInputs(listOf(nodes.formalParameter("T")), emptyList),
                 nodes.obj(emptyList, listOf(stubStatement("x")))
             )
         )
