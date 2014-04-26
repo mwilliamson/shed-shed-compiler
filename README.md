@@ -41,6 +41,34 @@ compiled to other targets.
 * Type-checking
 * Do-notation?
 
+## Monads
+
+The type system of Shed should be able to support monads, but with some notable
+differences from the support in Haskell (I mention Haskell specifically since
+it's the most prominent example).
+
+Since Shed has no notion of type classes, monads must instead be represented by
+values. For instance, for the Option type:
+
+```
+val optionMonad = object ::
+    implements Monad[Option]
+    members ::
+        unit fun[T] => (value: T) => Some(value)
+        
+        bind fun[T, R] => (monad: Option[T], func: Function[T, Option[R]]) =>
+            match(monad,
+                isNone, fun() => none,
+                isSome, fun(some) => func(some.value())
+            )
+```
+
+This monad type is then explicitly passed as an argument when a monad is
+required. For instance, the equivalent of Haskell's do-notation could be
+supported by explicitly passing the monad to `do`. This is more verbose than
+using type classes, but also more in keeping with the philosophy of Shed
+i.e. explicit rather than implicit, fewer language features where possible.
+
 ## Naming things
 
 Some programming language constructs come in both named and
