@@ -17,10 +17,18 @@ import shed/compiler/results;
 
 val parser = Parser();
 
+val defaultContext = referenceResolving.emptyContext
+    .add("List")
+    .add("Sequence")
+    .add("String")
+    .add("Function")
+    .add("Type")
+    .add("represent")
+
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
     val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => let
-        //resolveReferences(shedNode, referenceResolving.emptyContext).bind(fun() => let
+        //resolveReferences(shedNode, defaultContext).bind(fun() => let
             val javaScriptNode = microJavaScript.generate(shedNode)
             in results.success(writing.write(javaScriptNode))
         //)
