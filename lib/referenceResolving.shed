@@ -78,8 +78,6 @@ def variableNotInScope fun(ref: VariableReferenceNode) => let
     in mainMessage.concat(suffix)
         
 
-// TODO: modify the context to contain the current phase
-
 def Context class(bindings: Sequence[Binding], phase: phases.Phase) => ::
     members::
         contains,
