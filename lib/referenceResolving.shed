@@ -14,12 +14,9 @@ import shed/compiler/nodes
 import shed/compiler/scoping
 import shed/compiler/phases
 
-def resolveReferences fun(node: ShedNode, context: Context) =>
-    resolveReferencesInPhase(node, context, phases.runTime)
-
-def resolveReferencesInPhase fun(node: ShedNode, context: Context, phase: phases.Phase) => let
+def resolveReferences fun(node: ShedNode, context: Context) => let
     val result = if classOf(node).equals(nodes.VariableReferenceNode) then
-        resolveRef(node, context, phase)
+        resolveRef(node, context)
     else
         results.success(context)
     
@@ -34,11 +31,11 @@ def resolveReferencesInPhase fun(node: ShedNode, context: Context, phase: phases
         result
     
     val scope = scoping.scopeOf(node)
-    in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context, phase))
+    in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context))
 
-def resolveRef fun(ref: VariableReferenceNode, context: Context, phase: phases.Phase) => let
+def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
     val name = ref.identifier()
-    in if context.contains(name, phase) then
+    in if context.contains(name) then
         results.success(context)
     else
         results.failure(listOf(variableNotInScope(ref)))
@@ -54,11 +51,12 @@ def isVariableBinder fun(node: ShedNode) =>
         matchDefault(fun() => false)
     )
 
-def resolveScope fun(scope: Scope, context: Context, phase: phases.Phase) =>
+def resolveScope fun(scope: Scope, context: Context) =>
     if classOf(scope).equals(scoping.ChangePhase) then
-        resolveScope(scope.scope(), context, scope.phase())
+        resolveScope(scope.scope(), context.changePhase(scope.phase()))
+            .map(fun(newContext) => newContext.changePhase(context.phase()))
     else let 
-        val result = resolveAll(scope.nodes(), context, phase)
+        val result = resolveAll(scope.nodes(), context)
         in match(scope,
             matchClass(scoping.SameScope, fun(scope: SameScope) => result),
             matchClass(scoping.SubScope, fun(scope: SubScope) =>
@@ -67,9 +65,9 @@ def resolveScope fun(scope: Scope, context: Context, phase: phases.Phase) =>
         )
     
 
-def resolveAll fun(nodes: List[ShedNode], context: Context, phase: phases.Phase) =>
+def resolveAll fun(nodes: List[ShedNode], context: Context) =>
     nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>
-        result.bind(fun(context: Context) => resolveReferencesInPhase(child, context, phase))
+        result.bind(fun(context: Context) => resolveReferences(child, context))
     )
 
 def variableNotInScope fun(ref: VariableReferenceNode) => let
@@ -82,18 +80,19 @@ def variableNotInScope fun(ref: VariableReferenceNode) => let
 
 // TODO: modify the context to contain the current phase
 
-def Context class(bindings: Sequence[Binding]) => ::
+def Context class(bindings: Sequence[Binding], phase: phases.Phase) => ::
     members::
         contains,
         addRunTime,
         addCompileTime,
-        add
+        add,
+        changePhase,
+        phase fun() => phase
     
-    def contains fun(name: String, phase: phases.Phase) => let
+    def contains fun(name: String) => let
         // TODO: grab the first binding regardless of phase
         val isMatchingBinding = fun(binding: Binding) =>
             binding.name().equals(name) && phase.lessThanOrEqual(binding.phase())
-        
         in sequences.any(isMatchingBinding, bindings)
     
     def addRunTime fun(name: String) =>
@@ -103,9 +102,12 @@ def Context class(bindings: Sequence[Binding]) => ::
         add(name, phases.compileTime)
     
     def add fun(name: String, phase: Phase) =>
-        Context(sequences.cons(Binding(name, phase), bindings))
-
-val emptyContext = Context(sequences.nil);
+        Context(sequences.cons(Binding(name, phase), bindings), phase)
+    
+    def changePhase fun(newPhase: phases.Phase) =>
+        Context(bindings, newPhase)
+    
+val emptyContext = Context(sequences.nil, phases.runTime);
 
 def Binding class(name: String, phase: phases.Phase) => ::
     members ::
