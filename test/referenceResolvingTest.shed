@@ -17,6 +17,7 @@ import shed/compiler/referenceResolving.emptyContext;
 import shed/compiler/referenceResolving.variableNotInScope;
 import shed/compiler/resultMatchers.isSuccess;
 import shed/compiler/results.failure;
+import shed/compiler/phases
 
 def badRefDetected fun(node: ShedNode) => fun() =>
     assertThat(
@@ -45,7 +46,7 @@ val testCases = listOf(
         badRefDetected(badRef)),
     
     TestCase("variable reference fails if context doesn't contain name", fun() => let
-        val context = emptyContext.add("song", dummyNode)
+        val context = emptyContext.addRunTime("song", dummyNode)
         val ref = nodes.ref("artist")
         in assertThat(
             resolveReferences(ref, context),
@@ -54,7 +55,7 @@ val testCases = listOf(
     ),
     
     TestCase("variable reference succeeds if name is in scope", fun() => let
-        val context = emptyContext.add("song", dummyNode)
+        val context = emptyContext.addRunTime("song", dummyNode)
         in assertThat(
             resolveReferences(nodes.ref("song"), context),
             isSuccess(anything)
@@ -64,7 +65,7 @@ val testCases = listOf(
     TestCase("function fails if body fails",
         badRefDetected(nodes.func(nodes.formalInputs(emptyList, emptyList), badRef))),
     
-    TestCase("function node adds variable to scope",
+    TestCase("function node adds formal argument to scope",
         successfulReferenceResolution(nodes.func(
             nodes.formalInputs(
                 emptyList,
@@ -72,6 +73,29 @@ val testCases = listOf(
             ),
             nodes.ref("song")
         ))),
+    
+    TestCase("function node adds formal parameter to scope",
+        successfulReferenceResolution(nodes.func(
+            nodes.formalInputs(
+                listOf(nodes.formalParameter("T")),
+                listOf(nodes.formalArgument("value", some(nodes.ref("T"))))
+            ),
+            nodes.ref("value")
+        ))),
+    
+    TestCase("formal parameter cannot be used as runtime value", fun() => let
+        val node = nodes.func(
+            nodes.formalInputs(
+                listOf(nodes.formalParameter("T")),
+                listOf(nodes.formalArgument("value", some(nodes.ref("T"))))
+            ),
+            nodes.ref("T")
+        )
+        in assertThat(
+            resolveReferences(node, emptyContext),
+            equalTo(failure(listOf(variableNotInScope(nodes.ref("T")))))
+        )
+    ),
     
     TestCase("function creates new scope for formal args and body", fun() => let
         val func = nodes.func(
@@ -156,7 +180,7 @@ val testCases = listOf(
     TestCase("val declaration adds name to context", fun() => let
         val result = resolveReferences(nodes.valDeclaration("song", noRef), emptyContext)
         val context = result.value()
-        in assertThat(context.contains("song"), equalTo(true))
+        in assertThat(context.contains("song", phases.runTime), equalTo(true))
     ),
     
     TestCase("statements of do block have references resolved",
@@ -186,12 +210,12 @@ val testCases = listOf(
     TestCase("definition adds name to context", fun() => let
         val result = resolveReferences(nodes.definition("song", noRef), emptyContext)
         val context = result.value()
-        in assertThat(context.contains("song"), equalTo(true))),
+        in assertThat(context.contains("song", phases.runTime), equalTo(true))),
     
     TestCase("import statement adds name of module to context", fun() => let
         val result = resolveReferences(nodes.importStatement(listOf("song"), emptyList), emptyContext)
         val context = result.value()
-        in assertThat(context.contains("song"), equalTo(true))),
+        in assertThat(context.contains("song", phases.runTime), equalTo(true))),
     
     TestCase("member declarations of module have references resolved",
         badRefDetected(nodes.moduleNode(

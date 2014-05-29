@@ -18,12 +18,12 @@ import shed/compiler/results;
 val parser = Parser();
 
 val defaultContext = referenceResolving.emptyContext
-    .add("List")
-    .add("Sequence")
-    .add("String")
-    .add("Function")
-    .add("Type")
-    .add("represent")
+    .addRunTime("List")
+    .addRunTime("Sequence")
+    .addRunTime("String")
+    .addRunTime("Function")
+    .addRunTime("Type")
+    .addRunTime("represent")
 
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result

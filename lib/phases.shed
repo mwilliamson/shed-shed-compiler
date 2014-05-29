@@ -1,0 +1,9 @@
+module shed/compiler/phases
+
+members ::
+    Phase
+    compileTime 1
+    runTime 2
+
+// TODO: type-safe typedefs
+val Phase = Number

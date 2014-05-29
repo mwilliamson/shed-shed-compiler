@@ -9,27 +9,36 @@ import sequences;
 
 import lop/sources
 
-import shed/compiler/results;
-import shed/compiler/nodes;
-import shed/compiler/scoping;
+import shed/compiler/results
+import shed/compiler/nodes
+import shed/compiler/scoping
+import shed/compiler/phases
 
-def resolveReferences fun(node: ShedNode, context: Context) => let
+def resolveReferences fun(node: ShedNode, context: Context) =>
+    resolveReferencesInPhase(node, context, phases.runTime)
+
+def resolveReferencesInPhase fun(node: ShedNode, context: Context, phase: phases.Phase) => let
     val result = if classOf(node).equals(nodes.VariableReferenceNode) then
-        resolveRef(node, context)
+        resolveRef(node, context, phase)
     else
         results.success(context)
     
     val resultUpdatedContext = if isVariableBinder(node) then
-        result.map(fun(context: Context) => context.add(node.name()))
+        result.map(fun(context: Context) =>
+            if classOf(node).equals(nodes.FormalParameterNode) then
+                context.addCompileTime(node.name())
+            else
+                context.addRunTime(node.name())
+        )
     else
         result
     
     val scope = scoping.scopeOf(node)
-    in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context))
+    in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context, phase))
 
-def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
+def resolveRef fun(ref: VariableReferenceNode, context: Context, phase: phases.Phase) => let
     val name = ref.identifier()
-    in if context.contains(name) then
+    in if context.contains(name, phase) then
         results.success(context)
     else
         results.failure(listOf(variableNotInScope(ref)))
@@ -37,6 +46,7 @@ def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
 def isVariableBinder fun(node: ShedNode) =>
     // TODO: introduce a VariableBinderNode interface to remove this logic
     match(node,
+        matchClass(nodes.FormalParameterNode, fun() => true),
         matchClass(nodes.FormalArgumentNode, fun() => true),
         matchClass(nodes.ValDeclarationNode, fun() => true),
         matchClass(nodes.DefinitionNode, fun() => true),
@@ -44,19 +54,22 @@ def isVariableBinder fun(node: ShedNode) =>
         matchDefault(fun() => false)
     )
 
-def resolveScope fun(scope: Scope, context: Context) => let
-    val result = resolveAll(scope.nodes(), context)
-    in match(scope,
-        matchClass(scoping.SameScope, fun(scope: SameScope) => result),
-        matchClass(scoping.SubScope, fun(scope: SubScope) =>
-            result.map(fun(subContext: Context) => context)
+def resolveScope fun(scope: Scope, context: Context, phase: phases.Phase) =>
+    if classOf(scope).equals(scoping.ChangePhase) then
+        resolveScope(scope.scope(), context, scope.phase())
+    else let 
+        val result = resolveAll(scope.nodes(), context, phase)
+        in match(scope,
+            matchClass(scoping.SameScope, fun(scope: SameScope) => result),
+            matchClass(scoping.SubScope, fun(scope: SubScope) =>
+                result.map(fun(subContext: Context) => context)
+            )
         )
-    )
     
 
-def resolveAll fun(nodes: List[ShedNode], context: Context) =>
+def resolveAll fun(nodes: List[ShedNode], context: Context, phase: phases.Phase) =>
     nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>
-        result.bind(fun(context: Context) => resolveReferences(child, context))
+        result.bind(fun(context: Context) => resolveReferencesInPhase(child, context, phase))
     )
 
 def variableNotInScope fun(ref: VariableReferenceNode) => let
@@ -67,16 +80,34 @@ def variableNotInScope fun(ref: VariableReferenceNode) => let
     in mainMessage.concat(suffix)
         
 
-def Context class(names: Sequence[String]) => ::
+// TODO: modify the context to contain the current phase
+
+def Context class(bindings: Sequence[Binding]) => ::
     members::
         contains,
+        addRunTime,
+        addCompileTime,
         add
     
-    def contains fun(name: String) =>
-        sequences.any(fun(n: String) => n.equals(name), names)
+    def contains fun(name: String, phase: phases.Phase) => let
+        // TODO: grab the first binding regardless of phase
+        val isMatchingBinding = fun(binding: Binding) =>
+            binding.name().equals(name) && phase.lessThanOrEqual(binding.phase())
         
-    def add fun(name: String) =>
-        Context(sequences.cons(name, names))
+        in sequences.any(isMatchingBinding, bindings)
+    
+    def addRunTime fun(name: String) =>
+        add(name, phases.runTime)
+    
+    def addCompileTime fun(name: String) =>
+        add(name, phases.compileTime)
+    
+    def add fun(name: String, phase: Phase) =>
+        Context(sequences.cons(Binding(name, phase), bindings))
 
 val emptyContext = Context(sequences.nil);
 
+def Binding class(name: String, phase: phases.Phase) => ::
+    members ::
+        name fun() => name
+        phase fun() => phase
