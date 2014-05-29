@@ -37,6 +37,13 @@ val dummyNode = object::
     pass
 
 val testCases = listOf(
+    TestCase("compile time variables shadow run time variables", fun() => let
+        val context = emptyContext
+            .addRunTime("value")
+            .addCompileTime("value")
+            .changePhase(phases.runTime)
+        in assertThat(context.contains("value"), equalTo(false))),
+        
     TestCase("unit literal requires no context", requiresNoContext(nodes.unit())),
     TestCase("number literal requires no context", requiresNoContext(nodes.number("2"))),
     TestCase("string literal requires no context", requiresNoContext(nodes.string("hello"))),

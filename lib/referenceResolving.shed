@@ -5,7 +5,8 @@ members::
     emptyContext,
     variableNotInScope
 
-import sequences;
+import sequences
+import lazySequences
 
 import lop/sources
 
@@ -90,8 +91,11 @@ def Context class(bindings: Sequence[Binding], phase: phases.Phase) => ::
     def contains fun(name: String) => let
         // TODO: grab the first binding regardless of phase
         val isMatchingBinding = fun(binding: Binding) =>
-            binding.name().equals(name) && phase.lessThanOrEqual(binding.phase())
-        in sequences.any(isMatchingBinding, bindings)
+            binding.name().equals(name)
+        
+        in find(isMatchingBinding, bindings)
+            .map(fun(binding) => phase.lessThanOrEqual(binding.phase()))
+            .valueOrElse(fun() => false)
     
     def addRunTime fun(name: String) =>
         add(name, phases.runTime)
@@ -111,3 +115,6 @@ def Binding class(name: String, phase: phases.Phase) => ::
     members ::
         name fun() => name
         phase fun() => phase
+
+def find fun[T] => (predicate: Predicate[T], sequence: Sequence[T]) =>
+    sequences.head(lazySequences.filter(predicate, sequence))
