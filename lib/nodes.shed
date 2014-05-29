@@ -84,7 +84,7 @@ def FormalInputsNode class(parameters: List[FormalParameterNode], args: List[For
     members ::
         parameters fun() => parameters,
         args fun() => args,
-        struct fun() => structs.create(FormalInputsNode, listOf(args))
+        struct fun() => structs.create(FormalInputsNode, listOf(parameters, args))
 
 def MemberDeclarationNode class(name: String, value: ExpressionNode) => ::
     members::
