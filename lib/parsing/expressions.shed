@@ -198,7 +198,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             .map(nodes.letIn)
     );
 
-    val primaryExpressionRule = rules.firstOf("primary expression",
+    val primaryExpressionRule = rules.addSource(rules.firstOf("primary expression",
         listOf(
             literals.literalRule,
             variableReferenceRule,
@@ -210,7 +210,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             doBlockRule,
             letInRule
         )
-    );
+    ))
         
     val partialCallRule = lazyFunction(fun() =>
         rules.sequence()
@@ -259,7 +259,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
         )
     );
 
-    val expressionRule = rules.addSource(expressionParser.rule())
+    val expressionRule = expressionParser.rule()
     return object::
         members::
             expression fun() => expressionRule,
