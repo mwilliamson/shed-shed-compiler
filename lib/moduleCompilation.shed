@@ -53,7 +53,7 @@ val defaultContext = referenceResolving.emptyContext
 
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
-    val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => //let
+    val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) =>
         resolveReferences(shedNode, defaultContext).bind(fun() => let
             val javaScriptNode = microJavaScript.generate(shedNode)
             in results.success(writing.write(javaScriptNode))
