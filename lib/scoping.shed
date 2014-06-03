@@ -99,7 +99,7 @@ def definitionScope fun(node: DefinitionNode) =>
     sameScope(listOf(node.value()))
 
 def moduleScope fun(node: ModuleNode) =>
-    sameScope(node.statements().concat(node.memberDeclarations()))
+    subScope(node.statements().concat(node.memberDeclarations()))
 
 
 def SameScope class(nodes: List[ShedNode]) => ::
