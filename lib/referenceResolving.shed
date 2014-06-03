@@ -21,15 +21,8 @@ def resolveReferences fun(node: ShedNode, context: Context) => let
     else
         results.success(context)
     
-    val resultUpdatedContext = if isVariableBinder(node) then
-        result.map(fun(context: Context) =>
-            if classOf(node).equals(nodes.FormalParameterNode) then
-                context.addCompileTime(node.name())
-            else
-                context.addRunTime(node.name())
-        )
-    else
-        result
+    val resultUpdatedContext = result.map(fun(context: Context) =>
+        updateContext(node, context))
     
     val scope = scoping.scopeOf(node)
     in resultUpdatedContext.bind(fun(context: Context) => resolveScope(scope, context))
@@ -40,6 +33,16 @@ def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
         results.success(context)
     else
         results.failure(listOf(variableNotInScope(ref)))
+
+def updateContext fun(node: ShedNode, context: Context) =>
+    if isVariableBinder(node) then
+        if classOf(node).equals(nodes.FormalParameterNode) then
+            context.addCompileTime(node.name())
+        else
+            context.addRunTime(node.name())
+    else
+        context
+    
 
 def isVariableBinder fun(node: ShedNode) =>
     // TODO: introduce a VariableBinderNode interface to remove this logic
