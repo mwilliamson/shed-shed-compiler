@@ -37,9 +37,11 @@ members::
 
 import structs;
 
+def ExpressionNode class() => ::
+    pass
+
 def UnitNode class() => ::
     members::
-        value fun() => value,
         struct fun() => structs.create(UnitNode, emptyList)
 
 def StringNode class(value: String) => ::

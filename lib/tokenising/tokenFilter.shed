@@ -9,6 +9,8 @@ import lists;
 import regex;
 import trampolining
 
+import lop/token.Token
+
 import shed/compiler/tokenising/tokens;
 import shed/compiler/results
 
@@ -52,7 +54,7 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         sequences.head(input.tail()).map(fun(nextToken: Token) =>
             if nextToken.name().equals("whitespace") then
                 regex.create("\n( *)$").exec(nextToken.value())
-                    .map(fun(regexResult: RegexResult) =>
+                    .map(fun(regexResult) =>
                         tuple(
                             listOf(
                                 tokens.indent(nextToken.source()),
@@ -72,7 +74,7 @@ def extractNewline fun(input: SequenceItem[Token], indentationStack: Sequence[In
         
             val indentationLevel = regex.create("\n( *)$")
                 .exec(token.value())
-                .map(fun(result: RegexResult) =>
+                .map(fun(result) =>
                     result.capture(1).length()
                 )
                 .valueOrElse(fun() => 0)

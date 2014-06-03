@@ -14,16 +14,16 @@ import shed/compiler/javaScript/js;
 
 val shed = nodes;
     
-def generate fun(node: Node) =>
+def generate fun(node: nodes.ShedNode) =>
     Generator(generate).generate(node)
 
-def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
+def Generator class(generate: Function[nodes.ShedNode, js.JavaScriptNode]) => ::
     members::
         generate generatorGenerate
     
     val shedGlobal = js.ref("$shed");
     
-    def generatorGenerate fun(node: ShedNode) =>
+    def generatorGenerate fun(node: nodes.ShedNode) =>
         match(node,
             matchClass(shed.UnitNode, unit),
             matchClass(shed.BooleanNode, bool),
@@ -50,35 +50,35 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             matchClass(shed.ModuleNode, moduleNode)
         )
 
-    def unit fun(unit: UnitNode) =>
+    def unit fun(unit: nodes.UnitNode) =>
         js.propertyAccess(shedGlobal, "unit")
 
-    def bool fun(bool: BooleanNode) =>
+    def bool fun(bool: nodes.BooleanNode) =>
         js.bool(bool.value())
 
-    def number fun(number: NumberNode) =>
+    def number fun(number: nodes.NumberNode) =>
         js.call(
             js.propertyAccess(shedGlobal, "number"),
             listOf(js.number(number.value()))
         )
 
-    def string fun(string: StringNode) =>
+    def string fun(string: nodes.StringNode) =>
         js.call(
             js.propertyAccess(shedGlobal, "string"),
             listOf(js.string(string.value()))
         )
 
-    def variableReference fun(variableReference: VariableReferenceNode) =>
+    def variableReference fun(variableReference: nodes.VariableReferenceNode) =>
         js.ref(variableReference.identifier())
     
-    def ifThenElse fun(ifThenElse: IfThenElseNode) =>
+    def ifThenElse fun(ifThenElse: nodes.IfThenElseNode) =>
         js.conditional(
             generate(ifThenElse.condition()),
             generate(ifThenElse.trueValue()),
             generate(ifThenElse.falseValue())
         )
     
-    def call fun(call: CallNode) =>
+    def call fun(call: nodes.CallNode) =>
         js.call(
             if classOf(call.callee()).equals(nodes.MemberAccessNode) then
                 js.propertyAccess(generate(call.callee().left()), call.callee().memberName())
@@ -87,10 +87,10 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             call.args().map(generate)
         )
     
-    def typeApplication fun(typeApplication: TypeApplicationNode) =>
+    def typeApplication fun(typeApplication: nodes.TypeApplicationNode) =>
         generate(typeApplication.callee())
     
-    def memberAccess fun(memberAccess: MemberAccessNode) =>
+    def memberAccess fun(memberAccess: nodes.MemberAccessNode) =>
         js.call(
             js.propertyAccess(js.ref("$shed"), "memberAccess"),
             listOf(
@@ -99,7 +99,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             )
         )
 
-    def func fun(func: FunctionNode) =>
+    def func fun(func: nodes.FunctionNode) =>
         js.call(
             js.propertyAccess(shedGlobal, "function"),
             listOf(js.func(
@@ -108,7 +108,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             ))
         )
         
-    def classDeclaration fun(classDeclaration: ClassNode) =>
+    def classDeclaration fun(classDeclaration: nodes.ClassNode) =>
         js.call(
             js.func(
                 emptyList,
@@ -128,13 +128,13 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
         
         
         
-    def obj fun(obj: ObjectNode) =>
+    def obj fun(obj: nodes.ObjectNode) =>
         js.call(
             generate(shed.classDeclaration(nodes.formalInputs(emptyList, emptyList), obj)),
             emptyList
         )
 
-    def doBlock fun(doBlock: DoBlockNode) =>
+    def doBlock fun(doBlock: nodes.DoBlockNode) =>
         js.call(
             js.func(
                 emptyList,
@@ -143,7 +143,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             emptyList
         )
     
-    def letIn fun(letIn: LetInNode) => let
+    def letIn fun(letIn: nodes.LetInNode) => let
         val jsDeclarations = letIn.declarations().map(generate)
         val jsExpression = generate(letIn.expression())
         in js.call(
@@ -154,25 +154,25 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             emptyList
         )
     
-    def and fun(andNode: AndNode) =>
+    def and fun(andNode: nodes.AndNode) =>
         js.and(
             generate(andNode.left()),
             generate(andNode.right())
         )
 
-    def expressionStatement fun(expressionStatement: ExpressionStatementNode) =>
+    def expressionStatement fun(expressionStatement: nodes.ExpressionStatementNode) =>
         js.expressionStatement(generate(expressionStatement.expression()))
     
-    def returnStatement fun(returnStatement: ReturnStatementNode) =>
+    def returnStatement fun(returnStatement: nodes.ReturnStatementNode) =>
         js.ret(generate(returnStatement.value()))
         
-    def valDeclaration fun(valDeclaration: ValDeclarationNode) =>
+    def valDeclaration fun(valDeclaration: nodes.ValDeclarationNode) =>
         js.varDeclaration(
             valDeclaration.name(),
             generate(valDeclaration.value())
         )
     
-    def definition fun(definition: DefinitionNode) =>
+    def definition fun(definition: nodes.DefinitionNode) =>
         js.varDeclaration(
             definition.name(),
             js.call(
@@ -181,7 +181,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             )
         )
     
-    def importNode fun(importNode: ImportNode) => let
+    def importNode fun(importNode: nodes.ImportNode) => let
         val moduleExpression = js.call(
             js.propertyAccess(
                 js.propertyAccess(
@@ -198,32 +198,32 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             importNode.valuePath().foldLeft(moduleExpression, js.propertyAccess)
         )
     
-    def moduleNode fun(moduleNode: ModuleNode) =>
+    def moduleNode fun(moduleNode: nodes.ModuleNode) =>
         moduleNode.name()
             .map(fun(name: List[String]) => generateNamedModule(name, moduleNode))
             .valueOrElse(fun() => generateUnnamedModule(moduleNode))
 
-    def generateFormalArgs fun(formalInputs: FormalInputsNode) =>
+    def generateFormalArgs fun(formalInputs: nodes.FormalInputsNode) =>
         formalInputs.args().map(fun(arg) => arg.name())
 
-    def generateObjectBody fun(body: ObjectNode) =>
+    def generateObjectBody fun(body: nodes.ObjectNode) =>
         body.statements().map(generate)
             .concat(listOf(js.ret(generateMembersObject(body.memberDeclarations()))))
             
-    def generateMembersObject fun(membersDeclaration: List[MemberDeclarationNode]) =>
+    def generateMembersObject fun(membersDeclaration: nodes.List[MemberDeclarationNode]) =>
         js.obj(lists.sequenceToList(sequences.cons(
             tuple("$class", js.ref("$class")),
             generateMembers(membersDeclaration)
         )))
         
-    def generateMembers fun(membersDeclaration: List[MemberDeclarationNode]) =>
+    def generateMembers fun(membersDeclaration: List[nodes.MemberDeclarationNode]) =>
         lazySequences.map(
-            fun(memberDeclaration: MemberDeclarationNode) =>
+            fun(memberDeclaration: nodes.MemberDeclarationNode) =>
                 tuple(memberDeclaration.name(), generate(memberDeclaration.value())),
             membersDeclaration
         )
         
-    def generateNamedModule fun(name: List[String], moduleNode: ModuleNode) => let
+    def generateNamedModule fun(name: List[String], moduleNode: nodes.ModuleNode) => let
         val membersObject = js.obj(lists.sequenceToList(
             generateMembers(moduleNode.memberDeclarations())
         ))
@@ -241,7 +241,7 @@ def Generator class(generate: Function[ShedNode, JavaScriptNode]) => ::
             )
         );
     
-    def generateUnnamedModule fun(moduleNode: ModuleNode) =>
+    def generateUnnamedModule fun(moduleNode: nodes.ModuleNode) =>
         js.call(
             js.func(
                 emptyList,

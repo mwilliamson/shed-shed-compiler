@@ -5,6 +5,8 @@ members::
 
 import lop/token.Token;
 import lop/results.Success;
+import lop/rules.Rule
+import lop/sources.StringSource
 
 import shed/compiler/tokenising/tokeniser.Tokeniser;
 import shed/compiler/tokenising/tokenFilter.filterTokens;

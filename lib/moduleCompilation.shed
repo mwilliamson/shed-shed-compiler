@@ -7,6 +7,7 @@ import strings;
 import console;
 
 import lop/strings.createStringSource;
+import lop/sources.StringSource
 
 import shed/compiler/parsing/parser.Parser;
 import shed/compiler/referenceResolving.resolveReferences;
@@ -14,22 +15,39 @@ import shed/compiler/referenceResolving;
 import shed/compiler/codeGeneration/microJavaScript;
 import shed/compiler/javaScript/writing;
 import shed/compiler/results;
+import shed/compiler/nodes.ShedNode
 
 val parser = Parser();
 
 val defaultContext = referenceResolving.emptyContext
     .addRunTime("List")
+    .addRunTime("Tuple")
     .addRunTime("Sequence")
+    .addRunTime("SequenceItem")
     .addRunTime("String")
+    .addRunTime("Boolean")
+    .addRunTime("Double")
+    .addRunTime("Number")
     .addRunTime("Function")
+    .addRunTime("Predicate")
     .addRunTime("Type")
+    .addCompileTime("Any")
     .addRunTime("represent")
     .addRunTime("equal")
     .addRunTime("not")
+    .addRunTime("or")
+    .addRunTime("and")
     .addRunTime("listOf")
+    .addRunTime("emptyList")
     .addRunTime("classOf")
     .addRunTime("pack")
     .addRunTime("print")
+    .addRunTime("tuple")
+    .addRunTime("runtimeImport")
+    .addRunTime("match")
+    .addRunTime("matchClass")
+    .addRunTime("matchDefault")
+    .addRunTime("lazyFunction")
 
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
@@ -40,7 +58,10 @@ def compileSourceToString fun(source: StringSource) => let
         //)
     )
     
-    in result.valueOrElse(fun(failure: Failure) =>
-        failure.messages().forEach(console.stderr.write)
+    in result.valueOrElse(fun(failure) =>
+        failure.messages().forEach(printFailure)
     )
     
+def printFailure fun(message: String) => do ::
+    console.stderr.write(message)
+    console.stderr.write("\n\n")

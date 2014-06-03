@@ -11,7 +11,7 @@ import shed/compiler/nodes;
 import shed/compiler/parsing/tokenRules;
 import shed/compiler/parsing/tokenRules.statementTerminator;
 
-def moduleRule fun(statementRule: Rule[StatementNode], optionalMembersRule: Rule[MembersNode]) => do::
+def moduleRule fun(statementRule: rules.Rule[StatementNode], optionalMembersRule: rules.Rule[MembersNode]) => do::
     val moduleBody =
         rules.sequence()
             .capture(rules.zeroOrMore(importRule))

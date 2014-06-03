@@ -3,19 +3,21 @@ module shed/compiler/tokenising/tokeniser;
 members::
     Tokeniser
 
-import json;
-import regex;
-import options.none;
-import options.some;
-import sequences;
-import lazySequences.map;
-import lists.sequenceToList;
-import sets;
-import strings;
+import json
+import regex
+import regex.Regex
+import options.none
+import options.some
+import options.Option
+import sequences
+import lazySequences.map
+import lists.sequenceToList
+import sets
+import strings
 
-import shed/compiler/tokenising/tokens;
-import lop/token.Token;
-import lop/sources.StringSource;
+import shed/compiler/tokenising/tokens
+import lop/token.Token
+import lop/sources.StringSource
 
 def Tokeniser class() => ::
     members::
@@ -65,11 +67,11 @@ def Tokeniser class() => ::
                 input.sliceFrom(1)
             ));
     
-    def regexReader fun(regex: Regex, tokenBuilder: function[String, StringSource, Token]) =>
+    def regexReader fun(regex: Regex, tokenBuilder: Function[String, StringSource, Token]) =>
         fun(input: StringSource) => do::
             val string = input.asString();
             
-            return regex.exec(string).map[NextToken](fun(regexResult: RegexResult) => do::
+            return regex.exec(string).map[NextToken](fun(regexResult) => do::
                 val value = regexResult.capture(1);
                 return NextToken(
                     tokenBuilder(value, input.range(0, value.length())),

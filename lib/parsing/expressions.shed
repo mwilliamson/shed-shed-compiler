@@ -3,6 +3,8 @@ module shed/compiler/parsing/expressions;
 members::
     expressionRules
 
+import options.Option
+
 import lop/rules;
 import lop/pratt;
 
@@ -19,7 +21,7 @@ val variableReferenceRule = rules.map(
     nodes.variableReference
 );
     
-def expressionRules fun(statementRule: Rule[StatementNode]) => do::
+def expressionRules fun(statementRule: rules.Rule[StatementNode]) => do::
     val ifThenElseRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.keyword("if"))
@@ -123,7 +125,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             .next(rules.optional(memberSeparator))
             .head()
     
-    def blockRule fun(blockBodyRule: Rule) =>
+    def blockRule fun(blockBodyRule: rules.Rule) =>
         rules.sequence()
             .next(tokenRules.symbol("::"))
             .cut()
@@ -218,8 +220,8 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             .cut()
             .capture(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
             .next(tokenRules.closingParen())
-            .map(fun(args: List[ExpressionNode]) =>
-                fun(left: ExpressionNode) => nodes.call(left, args))
+            .map(fun(args: List[nodes.ExpressionNode]) =>
+                fun(left: nodes.ExpressionNode) => nodes.call(left, args))
     );
     
     val partialTypeApplicationRule = lazyFunction(fun() =>
@@ -228,7 +230,7 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             .cut()
             .next(rules.zeroOrMoreWithSeparator(expressionRule, tokenRules.symbol(",")))
             .next(tokenRules.symbol("]"))
-            .map(fun() => fun(left: ExpressionNode) => left)
+            .map(fun() => fun(left: nodes.ExpressionNode) => left)
     );
         
     val partialMemberAccessRule = lazyFunction(fun() =>
@@ -237,14 +239,14 @@ def expressionRules fun(statementRule: Rule[StatementNode]) => do::
             .cut()
             .capture(tokenRules.identifier())
             .map(fun(memberName: String) =>
-                fun(left: ExpressionNode) => nodes.memberAccess(left, memberName))
+                fun(left: nodes.ExpressionNode) => nodes.memberAccess(left, memberName))
     );
     
     val partialAndRule = lazyFunction(fun() =>
         rules.sequence()
             .next(tokenRules.symbol("&&"))
             .capture(expressionParser.leftAssociative("and"))
-            .map(fun(right: ExpressionNode) => fun(left: ExpressionNode) =>
+            .map(fun(right: nodes.ExpressionNode) => fun(left: nodes.ExpressionNode) =>
                 nodes.and(left, right)
             )
     );

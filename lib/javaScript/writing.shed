@@ -11,10 +11,10 @@ import shed/compiler/javaScript/js;
 
 val lowestPrecedence = 100;
 
-def write fun(javaScriptNode: JavaScriptNode) =>
+def write fun(javaScriptNode: js.JavaScriptNode) =>
     writeWithPrecedence(javaScriptNode, lowestPrecedence)
 
-def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) =>
+def writeWithPrecedence fun(javaScriptNode: js.JavaScriptNode, precedence: Double) =>
     match(javaScriptNode,
         matchClass(js.BooleanNode, writeBoolean),
         matchClass(js.NumberNode, writeNumber),
@@ -34,9 +34,12 @@ def writeWithPrecedence fun(javaScriptNode: JavaScriptNode, precedence: Double) 
         matchClass(js.StatementsNode, writeStatements)
     )
 
+def ExpressionType class() => ::
+    pass
+
 def writeExpression fun[T] => (expressionType: ExpressionType[T], precedence: Double) =>
     fun(node: T) => do::
-        def subWrite fun(node: JavaScriptNode) =>
+        def subWrite fun(node: js.JavaScriptNode) =>
             writeWithPrecedence(node, expressionType.precedence)
             
         val innerString = expressionType.write(subWrite, node);
@@ -50,32 +53,32 @@ val conditionalOperatorWriter = object::
         precedence 15,
         write writeConditionalOperator
     
-    def writeConditionalOperator fun(write: Function[JavaScriptNode, String], conditional: ConditionalOperatorNode) =>
+    def writeConditionalOperator fun(write: Function[JavaScriptNode, String], conditional: js.ConditionalOperatorNode) =>
         write(conditional.condition())
             .concat(" ? ")
             .concat(write(conditional.trueValue()))
             .concat(" : ")
             .concat(write(conditional.falseValue()))
 
-def writeBoolean fun(bool: BooleanNode) =>
+def writeBoolean fun(bool: js.BooleanNode) =>
     if bool.value() then "true" else "false"
     
-def writeNumber fun(number: NumberNode) =>
+def writeNumber fun(number: js.NumberNode) =>
     number.value()
     
-def writeString fun(string: StringNode) =>
+def writeString fun(string: js.StringNode) =>
     json.stringifyString(string.value())
     
-def writeVariableReference fun(ref: VariableReferenceNode) =>
+def writeVariableReference fun(ref: js.VariableReferenceNode) =>
     ref.identifier()
     
-def writeCall fun(call: CallNode) =>
+def writeCall fun(call: js.CallNode) =>
     writeWithPrecedence(call.callee(), 2)
         .concat("(")
         .concat(strings.join(", ", call.args().map(write)))
         .concat(")")
         
-def writePropertyAccess fun(propertyAccess: PropertyAccessNode) =>
+def writePropertyAccess fun(propertyAccess: js.PropertyAccessNode) =>
     writeWithPrecedence(propertyAccess.left(), 1)
         .concat(".")
         .concat(propertyAccess.propertyName())
@@ -85,14 +88,14 @@ val functionWriter = object::
         precedence 20,
         write writeFunction
     
-    def writeFunction fun(write: Function[JavaScriptNode, String], func: FunctionNode) =>
+    def writeFunction fun(write: Function[js.JavaScriptNode, String], func: js.FunctionNode) =>
         "function("
             .concat(strings.join(", ", func.formalArgs()))
             .concat(") {")
             .concat(writeIndentedStatements(func.statements()))
             .concat("\n}")
 
-def writeIndentedStatements fun(statements: List[StatementNode]) =>
+def writeIndentedStatements fun(statements: List[js.StatementNode]) =>
     strings.join(
         "",
         statements
@@ -103,7 +106,7 @@ def writeIndentedStatements fun(statements: List[StatementNode]) =>
 def indent fun(string: String) =>
     string.replace("\n", "\n    ")
 
-def writeObject fun(obj: ObjectNode) =>
+def writeObject fun(obj: js.ObjectNode) =>
     "{"
         .concat(strings.join(",", obj.properties().map(writeProperty)))
         .concat("\n}")
@@ -114,26 +117,26 @@ val andWriter = object::
         precedence 13,
         write writeAnd
     
-    def writeAnd fun(write: Function[JavaScriptNode, String], andNode: AndNode) =>
+    def writeAnd fun(write: Function[js.JavaScriptNode, String], andNode: js.AndNode) =>
         write(andNode.left()).concat(" && ").concat(write(andNode.right()))
 
-def writeProperty fun(property: Tuple[String, ExpressionNode]) =>
-    property.map(fun(name: String, value: ExpressionNode) =>
+def writeProperty fun(property: Tuple[String, js.ExpressionNode]) =>
+    property.map(fun(name: String, value: js.ExpressionNode) =>
         "\n    ".concat(name).concat(": ").concat(indent(write(value)))
     )
 
-def writeExpressionStatement fun(expressionStatement: ExpressionStatementNode) =>
+def writeExpressionStatement fun(expressionStatement: js.ExpressionStatementNode) =>
     write(expressionStatement.expression()).concat(";")
 
-def writeReturn fun(returnStatement: ReturnNode) =>
+def writeReturn fun(returnStatement: js.ReturnNode) =>
     "return ".concat(write(returnStatement.value())).concat(";")
 
-def writeVar fun(varDeclaration: VarDeclarationNode) =>
+def writeVar fun(varDeclaration: js.VarDeclarationNode) =>
     "var "
         .concat(varDeclaration.name())
         .concat(" = ")
         .concat(write(varDeclaration.initialValue()))
         .concat(";")
 
-def writeStatements fun(statements: StatementsNode) =>
+def writeStatements fun(statements: js.StatementsNode) =>
     strings.join("\n", statements.statements().map(write))

@@ -7,9 +7,10 @@ members::
     ChangePhase
 
 import shed/compiler/nodes
+import shed/compiler/nodes
 import shed/compiler/phases
 
-def scopeOf fun(node: ShedNode) =>
+def scopeOf fun(node: nodes.ShedNode) =>
     match(node, 
         matchClass(nodes.UnitNode, noScope),
         matchClass(nodes.NumberNode, noScope),
@@ -42,75 +43,78 @@ def scopeOf fun(node: ShedNode) =>
         matchClass(nodes.ModuleNode, moduleScope)
     )
 
-def noScope fun(node: ShedNode) => sameScope(emptyList)
+def noScope fun(node: nodes.ShedNode) => sameScope(emptyList)
 
-def ifScope fun(node: IfThenElseNode) =>
+def ifScope fun(node: nodes.IfThenElseNode) =>
     sameScope(listOf(node.condition(), node.trueValue(), node.falseValue()))
     
-def callScope fun(node: CallNode) =>
+def callScope fun(node: nodes.CallNode) =>
     sameScope(listOf(node.callee()).concat(node.args()))
 
-def formalArgScope fun(node: FormalArgumentNode) =>
+def formalArgScope fun(node: nodes.FormalArgumentNode) =>
     ChangePhase(
         sameScope(node.type().map(fun(t) => listOf(t)).valueOrElse(fun() => emptyList)),
         phases.compileTime
     )
 
-def formalInputsScope fun(node: FormalInputsNode) =>
+def formalInputsScope fun(node: nodes.FormalInputsNode) =>
     sameScope(node.parameters().concat(node.args()))
 
-def functionScope fun(node: FunctionNode) =>
+def functionScope fun(node: nodes.FunctionNode) =>
     subScope(listOf(node.formalInputs(), node.body()))
 
-def typeApplicationScope fun(node: TypeApplicationNode) =>
+def typeApplicationScope fun(node: nodes.TypeApplicationNode) =>
     sameScope(listOf(node.callee()).concat(node.args()))
 
-def memberAccessScope fun(node: MemberAccessNode) =>
+def memberAccessScope fun(node: nodes.MemberAccessNode) =>
     sameScope(listOf(node.left()))
 
-def classScope fun(node: ClassNode) =>
+def classScope fun(node: nodes.ClassNode) =>
     subScope(listOf(node.formalInputs(), node.body()))
 
-def objectScope fun(node: ObjectNode) =>
+def objectScope fun(node: nodes.ObjectNode) =>
     subScope(node.statements().concat(node.memberDeclarations()))
 
-def doBlockScope fun(node: DoBlockNode) =>
+def doBlockScope fun(node: nodes.DoBlockNode) =>
     subScope(node.statements())
 
-def memberDeclarationScope fun(node: MemberDeclarationNode) =>
+def memberDeclarationScope fun(node: nodes.MemberDeclarationNode) =>
     sameScope(listOf(node.value()))
 
-def valDeclarationScope fun(node: ValDeclarationNode) =>
+def valDeclarationScope fun(node: nodes.ValDeclarationNode) =>
     sameScope(listOf(node.value()))
 
-def letInScope fun(node: LetInScope) =>
+def letInScope fun(node: nodes.LetInScope) =>
     subScope(node.declarations().concat(listOf(node.expression())))
 
-def andScope fun(node: AndNode) =>
+def andScope fun(node: nodes.AndNode) =>
     sameScope(listOf(node.left(), node.right()))
 
-def expressionStatementScope fun(node: ExpressionStatementNode) =>
+def expressionStatementScope fun(node: nodes.ExpressionStatementNode) =>
     sameScope(listOf(node.expression()))
 
-def returnStatementScope fun(node: ReturnStatementNode) =>
+def returnStatementScope fun(node: nodes.ReturnStatementNode) =>
     sameScope(listOf(node.value()))
 
-def definitionScope fun(node: DefinitionNode) =>
+def definitionScope fun(node: nodes.DefinitionNode) =>
     sameScope(listOf(node.value()))
 
-def moduleScope fun(node: ModuleNode) =>
+def moduleScope fun(node: nodes.ModuleNode) =>
     subScope(node.statements().concat(node.memberDeclarations()))
 
 
-def SameScope class(nodes: List[ShedNode]) => ::
+def Scope class() => ::
+    pass
+
+def SameScope class(nodes: List[nodes.ShedNode]) => ::
     members::
         nodes fun() => nodes
 
-def SubScope class(nodes: List[ShedNode]) => ::
+def SubScope class(nodes: List[nodes.ShedNode]) => ::
     members::
         nodes fun() => nodes
 
-def ChangePhase class(scope: Scope, phase: Phase) => ::
+def ChangePhase class(scope: Scope, phase: phases.Phase) => ::
     members ::
         scope fun() => scope
         phase fun() => phase

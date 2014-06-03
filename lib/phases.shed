@@ -5,5 +5,5 @@ members ::
     compileTime 1
     runTime 2
 
-// TODO: type-safe typedefs
+// TODO: type-safe typedefs, change to Integer
 val Phase = Number

@@ -4,7 +4,8 @@ module shed/compiler/nodes;
 // identity function that's typed as Function[...] -> Function[...]
 
 members::
-    Node,
+    ShedNode,
+    ExpressionNode,
     
     formalArgument FormalArgumentNode,
     FormalArgumentNode,
@@ -62,11 +63,15 @@ members::
     moduleNode ModuleNode,
     ModuleNode
 
-import structs;
-import sequences;
+import structs
+import sequences
+import options.Option
 
 // TODO: should be an interface
-def Node class() => ::
+def ShedNode class() => ::
+    pass
+
+def ExpressionNode class() => ::
     pass
 
 def FormalArgumentNode class(name: String, type: Option[ExpressionNode]) => ::

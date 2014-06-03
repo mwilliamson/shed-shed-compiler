@@ -15,7 +15,7 @@ import shed/compiler/nodes
 import shed/compiler/scoping
 import shed/compiler/phases
 
-def resolveReferences fun(node: ShedNode, context: Context) => let
+def resolveReferences fun(node: nodes.ShedNode, context: Context) => let
     val result = if classOf(node).equals(nodes.VariableReferenceNode) then
         resolveRef(node, context)
     else
@@ -24,7 +24,7 @@ def resolveReferences fun(node: ShedNode, context: Context) => let
     val scope = scoping.scopeOf(node)
     in result.bind(fun(context: Context) => resolveScope(scope, context))
 
-def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
+def resolveRef fun(ref: nodes.VariableReferenceNode, context: Context) => let
     val name = ref.identifier()
     in if context.contains(name) then
         results.success(context)
@@ -32,7 +32,7 @@ def resolveRef fun(ref: VariableReferenceNode, context: Context) => let
         results.failure(listOf(variableNotInScope(ref)))
     
 
-def isVariableBinder fun(node: ShedNode) =>
+def isVariableBinder fun(node: nodes.ShedNode) =>
     // TODO: introduce a VariableBinderNode interface to remove this logic
     match(node,
         matchClass(nodes.FormalParameterNode, fun() => true),
@@ -43,7 +43,7 @@ def isVariableBinder fun(node: ShedNode) =>
         matchDefault(fun() => false)
     )
 
-def resolveScope fun(scope: Scope, context: Context) =>
+def resolveScope fun(scope: scoping.Scope, context: Context) =>
     if classOf(scope).equals(scoping.ChangePhase) then
         resolveScope(scope.scope(), context.changePhase(scope.phase()))
             .map(fun(newContext) => newContext.changePhase(context.phase()))
@@ -56,15 +56,15 @@ def resolveScope fun(scope: Scope, context: Context) =>
         val result = resolveAll(scope.nodes(), updatedContext)
         
         in match(scope,
-            matchClass(scoping.SameScope, fun(scope: SameScope) => result),
-            matchClass(scoping.SubScope, fun(scope: SubScope) =>
+            matchClass(scoping.SameScope, fun(scope) => result),
+            matchClass(scoping.SubScope, fun(scope) =>
                 result.map(fun(subContext: Context) => context))
         )
 
 def addVariablesInNodes fun(context: Context, nodes: List[ShedNode]) =>
     nodes.foldLeft(context, addVariablesInNode)
 
-def addVariablesInNode fun(context: Context, node: ShedNode) => let
+def addVariablesInNode fun(context: Context, node: nodes.ShedNode) => let
     val updatedContext = if isVariableBinder(node) then
         if classOf(node).equals(nodes.FormalParameterNode) then
             context.addCompileTime(node.name())
@@ -77,23 +77,23 @@ def addVariablesInNode fun(context: Context, node: ShedNode) => let
     
     in addVariablesInSameScope(updatedContext, scope)
 
-def addVariablesInSameScope fun(context: Context, scope: Scope) =>
+def addVariablesInSameScope fun(context: Context, scope: scoping.Scope) =>
     match(scope,
         matchClass(scoping.ChangePhase, fun(scope) =>
             addVariablesInSameScope(context, scope.scope())),
             
-        matchClass(scoping.SubScope, fun(scope: SubScope) => context),
+        matchClass(scoping.SubScope, fun(scope) => context),
         
-        matchClass(scoping.SameScope, fun(scope: SameScope) =>
+        matchClass(scoping.SameScope, fun(scope) =>
             addVariablesInNodes(context, scope.nodes()))
     )
 
-def resolveAll fun(nodes: List[ShedNode], context: Context) =>
-    nodes.foldLeft(results.success(context), fun(result: Result, child: ShedNode) =>
+def resolveAll fun(nodes: List[nodes.ShedNode], context: Context) =>
+    nodes.foldLeft(results.success(context), fun(result, child) =>
         result.bind(fun(context: Context) => resolveReferences(child, context))
     )
 
-def variableNotInScope fun(ref: VariableReferenceNode) => let
+def variableNotInScope fun(ref: nodes.VariableReferenceNode) => let
     val mainMessage = "variable not in scope: ".concat(ref.identifier())
     val suffix = sources.tryGetSource(ref)
         .map(fun(source) => "\n".concat(source.describe()))
@@ -125,7 +125,7 @@ def Context class(bindings: Sequence[Binding], phase: phases.Phase) => ::
     def addCompileTime fun(name: String) =>
         add(name, phases.compileTime)
     
-    def add fun(name: String, phase: Phase) =>
+    def add fun(name: String, phase: phases.Phase) =>
         Context(sequences.cons(Binding(name, phase), bindings), phase)
     
     def changePhase fun(newPhase: phases.Phase) =>

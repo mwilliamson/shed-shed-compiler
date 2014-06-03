@@ -13,7 +13,8 @@ members::
     number,
     comment
 
-import lop/token.Token;
+import lop/token.Token
+import lop/sources.StringSource
 
 def end fun(source: StringSource) =>
     Token("end", "", source);
