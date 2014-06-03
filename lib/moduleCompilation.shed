@@ -25,6 +25,9 @@ val defaultContext = referenceResolving.emptyContext
     .addRunTime("Type")
     .addRunTime("represent")
     .addRunTime("equal")
+    .addRunTime("not")
+    .addRunTime("listOf")
+    .addRunTime("classOf")
 
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
