@@ -3,7 +3,9 @@ module shed/compiler/resultMatchers;
 members::
     isSuccess
 
-import duck.MatchResult;
+import duck.MatchResult
+import duck.Matcher
+import lop/results.ParseResult
 
 def isSuccess fun[T] => (matcher: Matcher[T]) => object::
     members::
@@ -20,7 +22,7 @@ def isSuccess fun[T] => (matcher: Matcher[T]) => object::
     def describeMismatch fun(result: ParseResult) =>
         matchesWithDescription(result).mismatchDescription();
         
-    def matchesWithDescription fun(result: Result) =>
+    def matchesWithDescription fun(result: ParseResult) =>
         if result.isSuccess() then
             if not(matcher.matches(result.value())) then
                 MatchResult(false, "value didn't match: ".concat(matcher.describeMismatch(result.value())))

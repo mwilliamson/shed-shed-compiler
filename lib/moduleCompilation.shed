@@ -26,6 +26,7 @@ val defaultContext = referenceResolving.emptyContext
     .addRunTime("SequenceItem")
     .addRunTime("String")
     .addRunTime("Boolean")
+    .addRunTime("Integer")
     .addRunTime("Double")
     .addRunTime("Number")
     .addRunTime("Function")
@@ -48,14 +49,15 @@ val defaultContext = referenceResolving.emptyContext
     .addRunTime("matchClass")
     .addRunTime("matchDefault")
     .addRunTime("lazyFunction")
+    .addRunTime("listRange")
 
 def compileSourceToString fun(source: StringSource) => let
     // TODO: should return a result
-    val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => let
-        //resolveReferences(shedNode, defaultContext).bind(fun() => let
+    val result = parser.parseModule(source).bind(fun(shedNode: ShedNode) => //let
+        resolveReferences(shedNode, defaultContext).bind(fun() => let
             val javaScriptNode = microJavaScript.generate(shedNode)
             in results.success(writing.write(javaScriptNode))
-        //)
+        )
     )
     
     in result.valueOrElse(fun(failure) =>

@@ -92,7 +92,7 @@ val stubMembers = listOf("stub", "members");
     
 val membersRule = rules.map(
     rules.optional(rules.token("keyword", "members")),
-    fun(value: Option[Any]) => value.map(fun() => stubMembers).valueOrElse(fun() => emptyList)
+    fun(value) => value.map(fun() => stubMembers).valueOrElse(fun() => emptyList)
 );
     
 def stringSource fun(string: String) =>

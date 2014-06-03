@@ -8,14 +8,16 @@ import duck.equalTo;
 
 import lop/strings.createStringSource;
 import lop/testing.isSuccess;
+import lop/rules.Rule
 
-import shed/compiler/parsing/parser.Parser;
+import shed/compiler/nodes.ShedNode
+import shed/compiler/parsing/parser.Parser
     
 def rawStringSource fun(string: String) =>
     createStringSource(string, "raw string");
 
 def createAssertSuccessfulParse fun(rule: Rule[ShedNode]) =>
-    fun(input: String, expected: Node) => do::
+    fun(input: String, expected: ShedNode) => do::
         val source = rawStringSource(input);
         val result = Parser().parseWithoutEndToken(rule, source);
         return assertThat(result, isSuccess(equalTo(expected)));

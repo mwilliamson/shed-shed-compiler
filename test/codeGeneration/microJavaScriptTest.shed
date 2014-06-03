@@ -367,10 +367,10 @@ val testCases = listOf(
     )
 );
 
-def subGenerate fun(node: ShedNode) =>
+def subGenerate fun(node: nodes.ShedNode) =>
     stub(node)
     
-def stub fun(node: ShedNode) =>
+def stub fun(node: nodes.ShedNode) =>
     js.ref("$stub$".concat(represent(node)))
 
 val generator = Generator(subGenerate);

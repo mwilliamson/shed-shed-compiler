@@ -11,19 +11,13 @@ import duck.MatchResult;
 
 import shed/compiler/compilation;
 
-def assertIsTokenisedTo fun(input: StringSource, expectedTokens: List[Token]) => do::
-    val tokeniser = Tokeniser();
-    val actualTokens = tokeniser.tokenise(input);
-    val expectedMatchers = expectedTokens.map(equalTo[Token]);
-    return assertThat[List[Token]](actualTokens, isList[Token](expectedMatchers));
-
 val testCases = listOf(
     TestCase("can execute program containing print statement", fun() => do::
         val shedProgram = "print(\"Hello world\");";
         val jsProgramPromise = compilation.compileString(shedProgram);
         
         return jsProgramPromise.bind(fun(jsProgram: String) =>
-            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+            nodejs.executeString(jsProgram).map(fun(result) =>
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
@@ -36,7 +30,7 @@ val testCases = listOf(
         val jsProgramPromise = compilation.compileString(shedProgram);
         
         return jsProgramPromise.bind(fun(jsProgram: String) =>
-            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+            nodejs.executeString(jsProgram).map(fun(result) =>
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
@@ -49,7 +43,7 @@ val testCases = listOf(
         val jsProgramPromise = compilation.compileString(shedProgram);
         
         return jsProgramPromise.bind(fun(jsProgram: String) =>
-            nodejs.executeString(jsProgram).map(fun(result: ExecutionResult) =>
+            nodejs.executeString(jsProgram).map(fun(result) =>
                 assertThat(result, isSuccessWithOutput("Hello world"))
             )
         );
@@ -64,13 +58,14 @@ def isSuccessWithOutput fun(expectedOutput: String) => object::
         matchesWithDescription
     
     def describeSelf fun() => "successful exit with output: ".concat(expectedOutput);
-    def matches fun(result: ParseResult) =>
+    
+    def matches fun(result: nodejs.ExecutionResult) =>
         matchesWithDescription(result).matches();
     
-    def describeMismatch fun(result: ParseResult) =>
+    def describeMismatch fun(result: nodejs.ExecutionResult) =>
         matchesWithDescription(result).mismatchDescription();
         
-    def matchesWithDescription fun(result: ExecutionResult) =>
+    def matchesWithDescription fun(result: nodejs.ExecutionResult) =>
         if not(result.isSuccess()) then
             MatchResult(
                 false,
@@ -83,8 +78,8 @@ def isSuccessWithOutput fun(expectedOutput: String) => object::
         else
             MatchResult(true, "");
             
-    def describeOutput fun(result: ExecutionResult) =>
+    def describeOutput fun(result: nodejs.ExecutionResult) =>
         "stdout was: ".concat(result.stdout())
         
-    def describeError fun(result: ExecutionResult) =>
+    def describeError fun(result: nodejs.ExecutionResult) =>
         "stderr was: ".concat(result.stderr())

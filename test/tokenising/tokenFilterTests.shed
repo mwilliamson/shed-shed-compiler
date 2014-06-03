@@ -8,13 +8,14 @@ import hat;
 import duck.assertThat;
 import duck.isList;
 import duck.equalTo;
+import duck
 
 import shed/compiler/tokenising/tokens;
 import shed/compiler/tokenising/tokenFilter.filterTokens;
 import lop/strings;
     
 
-def assertFilteredTokens fun(inputTokens: List[Token], matcher: Matcher[List[Token]]) =>
+def assertFilteredTokens fun(inputTokens: List[Token], matcher: duck.Matcher[List[Token]]) =>
     filterTokens(inputTokens)
         .map(fun(filteredTokens: List[Token]) =>
             assertThat(filteredTokens, matcher)
