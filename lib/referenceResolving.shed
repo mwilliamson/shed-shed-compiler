@@ -19,15 +19,15 @@ def resolveReferences fun(node: nodes.ShedNode, context: Context) => let
     val result = if classOf(node).equals(nodes.VariableReferenceNode) then
         resolveRef(node, context)
     else
-        results.success(context)
+        results.success(())
 
     val scope = scoping.scopeOf(node)
-    in result.bind(fun(context: Context) => resolveScope(scope, context))
+    in result.bind(fun(_) => resolveScope(scope, context))
 
 def resolveRef fun(ref: nodes.VariableReferenceNode, context: Context) => let
     val name = ref.identifier()
     in if context.contains(name) then
-        results.success(context)
+        results.success(())
     else
         results.failure(listOf(variableNotInScope(ref)))
     
@@ -46,20 +46,13 @@ def isVariableBinder fun(node: nodes.ShedNode) =>
 def resolveScope fun(scope: scoping.Scope, context: Context) =>
     if classOf(scope).equals(scoping.ChangePhase) then
         resolveScope(scope.scope(), context.changePhase(scope.phase()))
-            .map(fun(newContext) => newContext.changePhase(context.phase()))
     else let 
         val updatedContext = if classOf(scope).equals(scoping.SubScope) then
             addVariablesInNodes(context, scope.nodes())
         else
             context
             
-        val result = resolveAll(scope.nodes(), updatedContext)
-        
-        in match(scope,
-            matchClass(scoping.SameScope, fun(scope) => result),
-            matchClass(scoping.SubScope, fun(scope) =>
-                result.map(fun(subContext: Context) => context))
-        )
+        in resolveAll(scope.nodes(), updatedContext)
 
 def addVariablesInNodes fun(context: Context, nodes: List[ShedNode]) =>
     nodes.foldLeft(context, addVariablesInNode)
@@ -90,7 +83,7 @@ def addVariablesInSameScope fun(context: Context, scope: scoping.Scope) =>
 
 def resolveAll fun(nodes: List[nodes.ShedNode], context: Context) =>
     nodes.foldLeft(results.success(context), fun(result, child) =>
-        result.bind(fun(context: Context) => resolveReferences(child, context))
+        result.bind(fun(_) => resolveReferences(child, context))
     )
 
 def variableNotInScope fun(ref: nodes.VariableReferenceNode) => let
